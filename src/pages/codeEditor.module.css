@@ -5,3 +5,8 @@
     overflow: hidden;
     z-index: 1;
   }
+
+.resizable {
+  resize: both;
+  overflow: auto;
+}

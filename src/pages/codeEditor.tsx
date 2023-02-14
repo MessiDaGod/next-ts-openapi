@@ -1,5 +1,5 @@
-import * as monaco from 'monaco-editor';
-import Editor from "@monaco-editor/react"
+import * as monaco from "monaco-editor";
+import Editor from "@monaco-editor/react";
 import React, { useState, useRef } from "react";
 import connection from "../database";
 
@@ -21,7 +21,7 @@ const scrollbarOptions: monaco.editor.IEditorScrollbarOptions = {
 
 const editorOptions: monaco.editor.IEditorConstructionOptions = {
   automaticLayout: true,
-  wordWrap: 'on',
+  wordWrap: "on",
   scrollbar: scrollbarOptions,
 };
 
@@ -46,12 +46,12 @@ const CodeEditor: React.FC = () => {
 
   return (
     <Editor
-      height="20vh"
-      defaultLanguage="txt"
-      defaultValue={defaultValue}
-      beforeMount={handleEditorWillMount}
-      onMount={handleEditorDidMount}
-    />
+        height="20vh"
+        defaultLanguage="txt"
+        defaultValue={defaultValue}
+        beforeMount={handleEditorWillMount}
+        onMount={handleEditorDidMount}
+      />
   );
 };
 
