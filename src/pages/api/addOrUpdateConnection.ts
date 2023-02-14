@@ -1,16 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import sqlite3 from 'sqlite3';
-import path from 'path';
 
-const dbPath = path.resolve(__dirname, 'database.sqlite');
+const dbPath = "./database.sqlite";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { value, userId } = req.query;
   const tableName = 'connections';
   const valueToInsert = value ? value.toString() : value;
   const db = new sqlite3.Database(dbPath);
 
-  db.run(
+  await db.run(
     `
     CREATE TABLE IF NOT EXISTS ${tableName} (
         id INTEGER PRIMARY KEY,

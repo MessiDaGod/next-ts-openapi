@@ -11,8 +11,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     `SELECT value FROM connections WHERE userId = 1`,
     (error, row) => {
       if (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error getting value from table" });
+        res.json({ message: "No records in connections table" });
       } else {
         const value = row ? row.value : null;
         res.status(200).json({ value });

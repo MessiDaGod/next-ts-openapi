@@ -48,13 +48,13 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
-    console.info(item + " selected");
+    // console.info(item + " selected");
     setSelectedItem(item);
     setShowDropdown(false);
 
     const value = item;
     const userId = 1;
-    const url = `http://localhost:3000/api/addOrUpdateConnection?value=${value}&userId=${userId}`;
+    const url = `/api/addOrUpdateConnection?value=${value}&userId=${userId}`;
 
     fetch(url)
       .then(response => {

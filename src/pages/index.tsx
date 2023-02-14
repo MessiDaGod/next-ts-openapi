@@ -1,10 +1,9 @@
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
-import Dropdown from "./dropdown";
 import CodeEditor from "./codeEditor";
 import TopBar from "./TopBar";
+import Register from "./Register";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +26,7 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <TopBar />
+        <Register />
         <CodeEditor />
 
         <div className={styles.grid}></div>
