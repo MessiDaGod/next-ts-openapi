@@ -50,4 +50,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 //       db.close();
 //     }
 //   );
+
+    db.close();
 }

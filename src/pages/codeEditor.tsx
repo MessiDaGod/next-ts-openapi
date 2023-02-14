@@ -29,7 +29,7 @@ const CodeEditor: React.FC = () => {
   const defaultValue = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
   const [code, setCode] = useState<string>("");
   const [currentPrompt, setCurrentPrompt] = useState<string>(defaultValue);
-  const [connection, setConnection] = useState<Connection | null>(null);
+  // const [connection, setConnection] = useState<Connection | null>(null);
 
   function handleEditorWillMount(monaco: any) {
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -44,15 +44,24 @@ const CodeEditor: React.FC = () => {
     setCode(monacoRef.current.getValue());
   };
 
-  // useEffect(() => {
-  //   connectToDatabase()
-  //     .then((conn) => {
-  //       setConnection(conn);
-  //     })
-  //     .catch((err) => {
-  //       console.log("Failed to connect to database", err);
-  //     });
-  // }, []);
+  const value = 'defaultConnection';
+  const userId = 1;
+  const url = `http://localhost:3000/api/database?value=${value}&userId=${userId}`;
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error inserting value into table');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data.message);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
 
   return (
     <Editor
