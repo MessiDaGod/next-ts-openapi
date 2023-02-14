@@ -1,0 +1,26 @@
+{
+    "topBar": [
+      {
+        "id": "home",
+        "label": "Home",
+        "url": "/"
+      },
+      {
+        "id": "about",
+        "label": "About",
+        "url": "/about"
+      }
+    ],
+    "sideMenu": [
+      {
+        "id": "getStarted",
+        "label": "Get Started",
+        "url": "/get-started"
+      },
+      {
+        "id": "apiReference",
+        "label": "API Reference",
+        "url": "/api-reference"
+      }
+    ]
+  }

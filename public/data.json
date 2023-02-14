@@ -1,0 +1,44 @@
+
+{
+    "ConnectionStrings": {
+      "defaultConnection": "Database=mac;Data Source={IP};User Id=sa;Password=log-onCp9;",
+      "hiid_demo70_mac": "Database=hiid_demo70;Data Source={IP};User Id=sa;Password=log-onCp9;",
+      "hiid_demo70_windows": "Database=hiid_demo70;Data Source=192.168.1.2;User Id=messi;Password=messi;",
+      "desktop-CMLV9G9": "Database=hiid_demo70;Data Source=192.168.1.117,1433;User Id=messi;Password=messi;",
+      "gvwqxvodfnkt_test": "DataBase=gvwqxvodfnkt_test;Data Source=192.168.1.2\\MSSQLSERVER17,1435;User Id=joe;Password=joe;"
+    },
+    "Logging": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.AspNetCore": "Warning"
+      }
+    },
+    "Fields":
+    {
+      "UserName": "vic.aiws",
+      "UserCode": "vic.aiws",
+      "Password": "vic.aiws",
+      "Server": "{IP}",
+      "ServerName": "192.168.1.2",
+      "Database": "hiid_demo70",
+      "InterfaceEntity": "Vic.ai",
+      "sftp_server": "Enstoa.files.com",
+      "Odin_sftp_username": "Odin_Yardi",
+      "Odin_sftp_password": "xQ*^Z%R21!Kq",
+      "Odin_Username": "odintestuser",
+      "Odin_Password": "Vicai15",
+      "Odin_Live_Username": "Vicai",
+      "Odin_Live_Password": "1gG91uGEzD"
+    },
+    "Odin":
+    {
+      "sftp_username": "Odin_Yardi",
+      "sftp_password": "xQ*^Z%R21!Kq"
+    },
+    "BlantonTurner":
+    {
+      "sftp_username": "Blanton_Turner",
+      "sftp_password": "ujJdg3Z9Kj*T"
+    },
+    "AllowedHosts": "*"
+  }
