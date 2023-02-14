@@ -1,7 +1,7 @@
 import * as monaco from "monaco-editor";
 import Editor from "@monaco-editor/react";
-import React, { useState, useRef } from "react";
-import connection from "../database";
+import React, { useState, useRef, useEffect } from "react";
+// import { connectToDatabase, Connection } from "../database";
 
 const scrollbarOptions: monaco.editor.IEditorScrollbarOptions = {
   alwaysConsumeMouseWheel: false,
@@ -11,7 +11,6 @@ const scrollbarOptions: monaco.editor.IEditorScrollbarOptions = {
   horizontalHasArrows: false,
   horizontalScrollbarSize: 10,
   horizontalSliderSize: 0.5,
-  // mouseWheelScrollSensitivity: 1,
   vertical: "auto",
   verticalHasArrows: false,
   verticalScrollbarSize: 10,
@@ -30,6 +29,7 @@ const CodeEditor: React.FC = () => {
   const defaultValue = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
   const [code, setCode] = useState<string>("");
   const [currentPrompt, setCurrentPrompt] = useState<string>(defaultValue);
+  const [connection, setConnection] = useState<Connection | null>(null);
 
   function handleEditorWillMount(monaco: any) {
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -44,14 +44,24 @@ const CodeEditor: React.FC = () => {
     setCode(monacoRef.current.getValue());
   };
 
+  // useEffect(() => {
+  //   connectToDatabase()
+  //     .then((conn) => {
+  //       setConnection(conn);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Failed to connect to database", err);
+  //     });
+  // }, []);
+
   return (
     <Editor
-        height="20vh"
-        defaultLanguage="txt"
-        defaultValue={defaultValue}
-        beforeMount={handleEditorWillMount}
-        onMount={handleEditorDidMount}
-      />
+      height="20vh"
+      defaultLanguage="txt"
+      defaultValue={defaultValue}
+      beforeMount={handleEditorWillMount}
+      onMount={handleEditorDidMount}
+    />
   );
 };
 

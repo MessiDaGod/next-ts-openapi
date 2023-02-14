@@ -6,17 +6,17 @@ interface DropdownProps {
 }
 
 interface ButtonProps {
-    label: string;
-    children?: React.ReactNode;
-  }
+  label: string;
+  children?: any;
+}
 
-  const Button: React.FC<ButtonProps> = ({ label, children }) => {
-    return (
-      <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
-        {children}
-      </button>
-    );
-  }
+const Button: React.FC<ButtonProps> = ({ label, children }) => {
+  return (
+    <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
+      {children}
+    </button>
+  );
+}
 
 const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
   const [selectedItem, setSelectedItem] = useState("Select Connection");
@@ -43,14 +43,6 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
     setSelectedItem(item);
     setShowDropdown(false);
   };
-
-  function Button() {
-    return (
-      <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
-        {selectedItem}
-      </button>
-    );
-  }
 
   return (
     <div
