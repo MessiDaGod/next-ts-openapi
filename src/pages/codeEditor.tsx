@@ -44,24 +44,6 @@ const CodeEditor: React.FC = () => {
     setCode(monacoRef.current.getValue());
   };
 
-  const value = 'defaultConnection';
-  const userId = 1;
-  const url = `http://localhost:3000/api/database?value=${value}&userId=${userId}`;
-
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Error inserting value into table');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data.message);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-
 
   return (
     <Editor
