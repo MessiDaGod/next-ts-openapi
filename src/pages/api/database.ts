@@ -21,7 +21,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     (error) => {
       if (error) {
         res.status(500).json({ message: "Error inserting value into table" });
-        db.close();
       } else {
         db.run(
           `
@@ -41,16 +40,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
               console.info(
                 `Value ${valueToInsert} inserted or updated in ${tableName} table`
               );
-              res
-                .status(200)
-                .json({
-                  message: `Value ${valueToInsert} inserted or updated in ${tableName} table`,
-                });
+              res.status(200).json({
+                message: `Value ${valueToInsert} inserted or updated in ${tableName} table`,
+              });
             }
           }
         );
       }
-      db.close();
     }
   );
+  db.close();
 }
