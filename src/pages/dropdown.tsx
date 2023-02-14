@@ -36,6 +36,15 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
       .catch((error) => console.log(error));
   }, [jsonFileName]);
 
+  useEffect(() => {
+    fetch("/api/getConnectionValue")
+      .then((response) => response.json())
+      .then((data) => {
+        setSelectedItem(data.value || "Select Connection");
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
@@ -45,7 +54,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
 
     const value = item;
     const userId = 1;
-    const url = `http://localhost:3000/api/database?value=${value}&userId=${userId}`;
+    const url = `http://localhost:3000/api/addOrUpdateConnection?value=${value}&userId=${userId}`;
 
     fetch(url)
       .then(response => {
