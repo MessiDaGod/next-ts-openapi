@@ -1,56 +1,89 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import sqlite3 from "sqlite3";
-import path from "path";
+import React, { useState, useEffect } from "react";
+import styles from './dropdown.module.css';
 
-const dbPath = path.resolve(__dirname, "database.sqlite");
+interface DropdownProps {
+  jsonFileName: string;
+}
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { value, userId } = req.query;
-  const tableName = "connections";
-  const valueToInsert = value ? value.toString() : value;
-  const db = new sqlite3.Database(dbPath);
+interface ButtonProps {
+  label: string;
+  children?: any;
+}
 
-  db.run(
-    `
-    CREATE TABLE IF NOT EXISTS ${tableName} (
-      id INTEGER PRIMARY KEY,
-      userId INTEGER NULL UNIQUE,
-      value TEXT NULL UNIQUE
-    )
-  `,
-    (error) => {
-      if (error) {
-        res.status(500).json({ message: "Error inserting value into table" });
-      } else {
-        db.run(
-          `
-          INSERT INTO ${tableName} (value, userId)
-          VALUES ($value, $userId)
-          ON CONFLICT(userId)
-          DO UPDATE SET value = excluded.value
-        `,
-          {
-            $value: valueToInsert,
-            $userId: userId,
-          },
-          (error) => {
-            if (error) {
-              res.status(500).json({ message: "Error inserting value into table" });
-            } else {
-              console.info(
-                `Value ${valueToInsert} inserted or updated in ${tableName} table`
-              );
-              res
-                .status(200)
-                .json({
-                  message: `Value ${valueToInsert} inserted or updated in ${tableName} table`,
-                });
-            }
-            db.close();
-          }
-        );
-      }
-      db.close();
-    }
+const Button: React.FC<ButtonProps> = ({ label, children }) => {
+  return (
+    <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
+      {children}
+    </button>
   );
 }
+
+const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
+  const [selectedItem, setSelectedItem] = useState("Select Connection");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [myConnectionStrings, setConnectionStrings] = useState<Record<string, string>>({});
+  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Fetch the JSON data from an API or a local file
+    fetch(`${jsonFileName}.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Get the ConnectionStrings object from the JSON data
+        const { ConnectionStrings } = data;
+        setConnectionStrings(ConnectionStrings);
+      })
+      .catch((error) => console.log(error));
+  }, [jsonFileName]);
+
+  const handleMouseEnter = () => setShowDropdown(true);
+  const handleMouseLeave = () => setShowDropdown(false);
+  const handleItemClick = (item: string) => {
+    console.info(item + " selected");
+    setSelectedItem(item);
+    setShowDropdown(false);
+
+    const value = item;
+    const userId = 1;
+    const url = `http://localhost:3000/api/database?value=${value}&userId=${userId}`;
+
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        console.log(data.message);
+      })
+      .catch(error => {
+        // console.info(error);
+      });
+  };
+
+  return (
+    <div
+      className={"dropdown rz-dropdown"}
+      style={{ position: "relative", display: "inline-block" }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Button label="Select Connection">{selectedItem}</Button>
+      {showDropdown && (
+        <ul className={styles.dropdown}>
+          {Object.entries(myConnectionStrings).map(([key, value], index) => (
+            <li
+              key={index}
+              onClick={() => handleItemClick(key)}
+              onMouseEnter={() => setHoveredItem(index)}
+              onMouseLeave={() => setHoveredItem(null)}
+              className={hoveredItem === index ? `${styles['dropdown-item']} ${styles.hovered}` : `${styles['dropdown-item']}`}
+            >
+              {key}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default Dropdown;
