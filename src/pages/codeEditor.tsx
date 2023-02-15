@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { formatSql } from '../api/formatSql';
+import { formatSql } from './api/formatSql';
 import StandaloneCodeEditor from "@monaco-editor/react";
 import React, { useState, useRef } from "react";
 
