@@ -1,50 +1,50 @@
-import React, { useState } from "react";
-import styles from "./register.module.css";
+import React, { useState } from "react"
+import styles from "./register.module.css"
 
 interface RegisterProps {
-  name?: string;
-  email?: string;
-  username?: string;
-  password?: string;
+  name?: string
+  email?: string
+  username?: string
+  password?: string
 }
 
 const Register: React.FC<RegisterProps> = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleRegister = () => {
-    console.info("handleRegister");
-    if (!name || !email || !username || !password) return;
-    const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`;
+    console.info("handleRegister")
+    if (!name || !email || !username || !password) return
+    const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`
 
     fetch(encoded)
       .then((response) => {
-        return response.json( );
+        return response.json( )
       })
       .then((data) => {
-        console.log(data.message);
+        console.log(data.message)
       })
       .catch((_error) => {
-        // console.info(error);
-      });
-  };
+        // console.info(error)
+      })
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    console.info("onSubmit");
+    e.preventDefault()
+    console.info("onSubmit")
     if (!name || !email || !username || !password) {
-      alert('Please fill in all fields');
-      return;
+      alert('Please fill in all fields')
+      return
     }
-    const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`;
-    console.log(`${encoded}`);
+    const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`
+    console.log(`${encoded}`)
     const response = await fetch(`${encoded}`, {
       method: 'POST'
-    });
-    const data = await response.text();
-    console.log(data);
+    })
+    const data = await response.text()
+    console.log(data)
   }
 
   return (
@@ -90,7 +90,7 @@ const Register: React.FC<RegisterProps> = () => {
         />
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

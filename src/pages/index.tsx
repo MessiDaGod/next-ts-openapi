@@ -1,8 +1,5 @@
-import Head from "next/head";
-import styles from "@/styles/Home.module.css";
-import CodeEditor from "./codeEditor";
-import TopBar from "./TopBar";
-import Register from "./Register";
+import Head from "next/head"
+import styles from "@/styles/Home.module.css"
 
 export default function Home() {
   return (
@@ -22,10 +19,6 @@ export default function Home() {
         <link rel="icon" href="/dog.png" />
       </Head>
       <main className={styles.main}>
-        <TopBar />
-        <Register />
-        <CodeEditor />
-
         <div className={styles.grid}></div>
       </main>
     </>
