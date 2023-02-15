@@ -70,7 +70,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {} }) => {
 
   return (
     <div
-      className={"dropdown rz-dropdown"}
+      className={styles['dropdown']}
       style={{ position: "relative", display: "inline-block" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
