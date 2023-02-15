@@ -1,7 +1,12 @@
-import * as monaco from "monaco-editor";
-import Editor from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
+import { formatSql, OnChange } from './api/formatSql';
+import MonacoEditor from "@monaco-editor/react";
 import React, { useState, useRef, useEffect } from "react";
-// import { connectToDatabase, Connection } from "../database";
+
+interface Props {
+  value: string;
+  onChange: OnChange;
+}
 
 const scrollbarOptions: monaco.editor.IEditorScrollbarOptions = {
   alwaysConsumeMouseWheel: false,
@@ -24,33 +29,40 @@ const editorOptions: monaco.editor.IEditorConstructionOptions = {
   scrollbar: scrollbarOptions,
 };
 
-const CodeEditor: React.FC = () => {
-  const monacoRef = useRef<any>(null);
-  const defaultValue = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-  const [code, setCode] = useState<string>("");
-  const [currentPrompt, setCurrentPrompt] = useState<string>(defaultValue);
-  // const [connection, setConnection] = useState<Connection | null>(null);
+const CodeEditor: React.FC<Props> = ({ value, onChange }) => {
+  const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>(null);
+  const [editorValue, setValue] = React.useState('select * from Property');
 
-  function handleEditorWillMount(monaco: any) {
-    monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
-  }
+  const handleChange = (newValue?: string, ev?: monaco.editor.IModelContentChangedEvent) => {
+    if (newValue === undefined || newValue === '' || ev === undefined) return;
+    setValue(newValue);
+  };
+  const handleEditorDidMount = (
+    editor: monaco.editor.IStandaloneCodeEditor,
+  ) => {
+    editor.onDidChangeModelContent(async (ev: monaco.editor.IModelContentChangedEvent) => {
+      const sql = editor.getValue();
+      await formatSql(sql).then((formattedSql) => {
+        // Do something with the formatted SQL string
+        console.log(formattedSql);
+      });
 
-  function handleEditorDidMount(editor: any, monaco: any) {
-    monacoRef.current = editor;
-    monacoRef.current.setValue(currentPrompt);
-  }
-
-  const handleExecute = () => {
-    setCode(monacoRef.current.getValue());
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+      const newValue = model.getValue();
+      onChange(newValue, ev);
+    });
   };
 
-
   return (
-    <Editor
-      height="20vh"
-      defaultLanguage="txt"
-      defaultValue={defaultValue}
-      beforeMount={handleEditorWillMount}
+    <MonacoEditor
+      height="50vh"
+      language="sql"
+      defaultValue={editorValue}
+      value={editorValue}
+      onChange={handleChange}
       onMount={handleEditorDidMount}
     />
   );

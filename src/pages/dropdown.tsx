@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({ label, children }) => {
   );
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ jsonFileName }) => {
+const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {} }) => {
   const [selectedItem, setSelectedItem] = useState("Select Connection");
   const [showDropdown, setShowDropdown] = useState(false);
   const [myConnectionStrings, setConnectionStrings] = useState<Record<string, string>>({});

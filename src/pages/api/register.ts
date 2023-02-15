@@ -16,19 +16,31 @@ async function initializeDb() {
   });
 
   await db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY,
-      username TEXT UNIQUE,
-      password TEXT
-    );
-    CREATE NONCLUSTERED INDEX IF NOT EXISTS idx_users ON users (username);
+  CREATE TABLE IF NOT EXISTS Users (
+    Id		integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+    Version		integer NULL,
+    Email		nvarchar COLLATE NOCASE,
+    Password		varchar COLLATE NOCASE,
+    Username		varchar COLLATE NOCASE,
+    Name nvarchar(450) NULL COLLATE NOCASE,
+    ClaimsJson nvarchar NULL COLLATE NOCASE
+  );
+    CREATE NONCLUSTERED INDEX IF NOT EXISTS idx_users ON users (Username);
   `);
 
   return db;
 }
 
 // Register a new user
-async function registerUser(username: string, password: string) {
+async function registerUser(name: string, email: string, username: string, password: string) {
+
+  const encoded = encodeURIComponent(`${name}&email=${email}&plainUsername=${username}&plainPassword=${password}`);
+  let url = `https://localhost:5006/api/auth/DoRegister?name=${encoded}`;
+  const response = await fetch(url, {
+    method: 'POST'
+  });
+  const data = await response.text();
+  console.log(data);
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   if (username == null || password == null) return 0;
@@ -60,57 +72,23 @@ async function registerUser(username: string, password: string) {
   return userId;
 }
 
-// Log in a user and create a session
-async function loginUser(
-  username: string,
-  password: string,
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const db = await initializeDb();
-  const result = await db.get(
-    "SELECT * FROM users WHERE username = ?",
-    username
-  );
-  await db.close();
-
-  if (result) {
-    const passwordMatch = await bcrypt.compare(password, result.password);
-    if (passwordMatch) {
-      const session = (await req.session) as Session;
-      session.set("user", { id: result.id, username: result.username });
-      await session.save();
-      return true;
-    }
-  }
-
-  return false;
-}
-
 // Handler for the register API endpoint
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const searchParams = new URLSearchParams(req.url?.split("?")[1]);
+  let name: string | null = null;
+  let email: string | null = null;
   let username: string | null = null;
   let password: string | null = null;
+  name = searchParams.get("name");
+  email = searchParams.get("email");
   username = searchParams.get("username");
   password = searchParams.get("password");
   if (username !== null && password !== null) {
-
-     const userId = await registerUser(username, password);
+     const db = await initializeDb();
+     const userId = await registerUser(name, email, username, password);
      res.status(200).json({ userId });
-  }
-}
-
-// Handler for the login API endpoint
-export async function handleLogin(req: NextApiRequest, res: NextApiResponse) {
-  const { username, password } = req.body;
-  const loginSuccess = await loginUser(username, password, req, res);
-  if (loginSuccess) {
-    res.status(200).json({ success: true });
-  } else {
-    res.status(401).json({ success: false });
   }
 }
