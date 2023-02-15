@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
 import styles from "./registerPage.module.css";
 
 interface RegisterProps {
@@ -14,15 +13,10 @@ const Register: React.FC<RegisterProps> = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
-
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST,PATCH,OPTIONS",
-  };
 
   const handleRegister = () => {
+    console.info("handleRegister");
+    if (!name || !email || !username || !password) return;
     const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`;
 
     fetch(encoded)
@@ -39,6 +33,11 @@ const Register: React.FC<RegisterProps> = () => {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
+    console.info("onSubmit");
+    if (!name || !email || !username || !password) {
+      alert('Please fill in all fields');
+      return;
+    }
     const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`;
     console.log(`${encoded}`);
     const response = await fetch(`${encoded}`, {
