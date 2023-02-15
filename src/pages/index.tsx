@@ -4,6 +4,7 @@ import styles from "@/styles/Home.module.css";
 import CodeEditor from "./codeEditor";
 import TopBar from "./TopBar";
 import Register from "./Register";
+import { editor } from "monaco-editor";
 
 const inter = Inter({ subsets: ["latin"] });
 

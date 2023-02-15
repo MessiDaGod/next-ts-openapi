@@ -32,7 +32,7 @@ const Register: React.FC<RegisterProps> = () => {
       .then((data) => {
         console.log(data.message);
       })
-      .catch((error) => {
+      .catch((_error) => {
         // console.info(error);
       });
   };

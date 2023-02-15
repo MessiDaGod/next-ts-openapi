@@ -1,10 +1,9 @@
 import * as monaco from 'monaco-editor';
-import { formatSql, OnChange } from './api/formatSql';
-import MonacoEditor from "@monaco-editor/react";
+import { formatSql } from './api/formatSql';
+import StandaloneCodeEditor, { OnChange } from "@monaco-editor/react";
 import React, { useState, useRef, useEffect } from "react";
 
-interface Props {
-  value: string;
+interface EditorProps {
   onChange: OnChange;
 }
 
@@ -29,42 +28,46 @@ const editorOptions: monaco.editor.IEditorConstructionOptions = {
   scrollbar: scrollbarOptions,
 };
 
-const CodeEditor: React.FC<Props> = ({ value, onChange }) => {
-  const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>(null);
-  const [editorValue, setValue] = React.useState('select * from Property');
+const CodeEditor: React.FC<EditorProps> = ({ onChange }) => {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
+  const [editorValue, setValue] = useState('SELECT * FROM Property;');
 
-  const handleChange = (newValue?: string, ev?: monaco.editor.IModelContentChangedEvent) => {
-    if (newValue === undefined || newValue === '' || ev === undefined) return;
-    setValue(newValue);
+  const handleChange = (value: string, e: monaco.editor.IModelContentChangedEvent) => {
+    onChange(value, e);
   };
-  const handleEditorDidMount = (
-    editor: monaco.editor.IStandaloneCodeEditor,
-  ) => {
+
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    // @ts-ignore
+    editorRef.current = editor;
     editor.onDidChangeModelContent(async (ev: monaco.editor.IModelContentChangedEvent) => {
       const sql = editor.getValue();
       await formatSql(sql).then((formattedSql) => {
         // Do something with the formatted SQL string
         console.log(formattedSql);
       });
-
-      const model = editor.getModel();
-      if (!model) {
-        return;
-      }
-      const newValue = model.getValue();
-      onChange(newValue, ev);
     });
   };
 
+  const handleFormatClick = () => {
+    if (editorRef.current) {
+      const currentValue = editorRef.current.getValue();
+      formatSql(currentValue).then((formattedSql) => {
+        editorRef.current?.setValue(formattedSql);
+      });
+    }
+  };
+
   return (
-    <MonacoEditor
-      height="50vh"
-      language="sql"
-      defaultValue={editorValue}
-      value={editorValue}
-      onChange={handleChange}
-      onMount={handleEditorDidMount}
-    />
+    <div>
+      <StandaloneCodeEditor
+        height="50vh"
+        language="sql"
+        defaultValue={editorValue}
+        value={editorValue}
+        onMount={handleEditorDidMount}
+      />
+      <button onClick={handleFormatClick}>Format</button>
+    </div>
   );
 };
 
