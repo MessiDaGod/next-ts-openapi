@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styles from "./index.module.css";
-import CodeEditor from "./codeEditor";
+import CodeEditor from "./CodeEditor/codeEditor";
 
 interface Response {
   result: any;
