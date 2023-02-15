@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./registerPage.module.css";
+import styles from "./register.module.css";
 
 interface RegisterProps {
   name?: string;

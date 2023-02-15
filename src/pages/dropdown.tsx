@@ -10,7 +10,7 @@ interface ButtonProps {
   children?: any;
 }
 
-const Button: React.FC<ButtonProps> = ({ label, children }) => {
+const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
     <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
       {children}
@@ -63,7 +63,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {} }) => {
       .then(data => {
         console.log(data.message);
       })
-      .catch(error => {
+      .catch(_error => {
         // console.info(error);
       });
   };
@@ -78,7 +78,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {} }) => {
       <Button label="Select Connection">{selectedItem}</Button>
       {showDropdown && (
         <ul className={styles.dropdown}>
-          {Object.entries(myConnectionStrings).map(([key, value], index) => (
+          {Object.entries(myConnectionStrings).map(([key], index) => (
             <li
               key={index}
               onClick={() => handleItemClick(key)}

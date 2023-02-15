@@ -1,28 +1,26 @@
 .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0d1117;
-    padding: 0 20px;
-    height: 50px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-color);
+  height: 60px;
+  padding: 0 20px;
+}
 
-  .logo img {
-    height: 30px;
-  }
+.linksContainer {
+  display: flex;
+  margin-right: auto;
+  float: left;
+}
 
-  .links a {
-    margin-right: 20px;
-    color: #c9d1d9;
-    text-decoration: none;
-    font-size: 14px;
-  }
+.links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-  .links a:hover {
-    color: #fff;
-  }
-
-  .dropdown {
-    margin-left: auto;
-  }
+.topbar a {
+  color: #f9f9f9;
+  text-decoration: none;
+  padding-right: 1vw;
+}
