@@ -1,45 +1,20 @@
 import * as monaco from 'monaco-editor';
 import { formatSql } from './api/formatSql';
-import StandaloneCodeEditor, { OnChange } from "@monaco-editor/react";
-import React, { useState, useRef, useEffect } from "react";
+import StandaloneCodeEditor from "@monaco-editor/react";
+import React, { useState, useRef } from "react";
 
-interface EditorProps {
-  onChange: OnChange;
-}
+// interface EditorProps {
+//   onChange: OnChange;
+// }
 
-const scrollbarOptions: monaco.editor.IEditorScrollbarOptions = {
-  alwaysConsumeMouseWheel: false,
-  arrowSize: 11,
-  handleMouseWheel: true,
-  horizontal: "auto",
-  horizontalHasArrows: false,
-  horizontalScrollbarSize: 10,
-  horizontalSliderSize: 0.5,
-  vertical: "auto",
-  verticalHasArrows: false,
-  verticalScrollbarSize: 10,
-  verticalSliderSize: 0.5,
-  useShadows: true,
-};
-
-const editorOptions: monaco.editor.IEditorConstructionOptions = {
-  automaticLayout: true,
-  wordWrap: "on",
-  scrollbar: scrollbarOptions,
-};
-
-const CodeEditor: React.FC<EditorProps> = ({ onChange }) => {
+const CodeEditor: React.FC = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
-  const [editorValue, setValue] = useState('SELECT * FROM Property;');
-
-  const handleChange = (value: string, e: monaco.editor.IModelContentChangedEvent) => {
-    onChange(value, e);
-  };
+  const [editorValue] = useState('SELECT * FROM Property;');
 
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     // @ts-ignore
     editorRef.current = editor;
-    editor.onDidChangeModelContent(async (ev: monaco.editor.IModelContentChangedEvent) => {
+    editor.onDidChangeModelContent(async () => {
       const sql = editor.getValue();
       await formatSql(sql).then((formattedSql) => {
         // Do something with the formatted SQL string
