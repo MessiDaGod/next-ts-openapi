@@ -13,7 +13,7 @@ String.prototype.visualLength = function () {
   return 0;
 };
 
-function redoGrid() {
+export const ResizableGrid = () => {
   function $$(id: string) {
     return document.getElementById(id);
   }
@@ -38,38 +38,40 @@ function redoGrid() {
     ...document.querySelectorAll('table[id^="' + "gridjs_" + '"]'),
   ];
   tables.forEach((table) => {
-    const cells = Array.from(new Set([...table.querySelectorAll("td")]));
-    let pay = document.getElementById("payableStatus") as HTMLElement;
-    let istatus: number;
-    // istatus = !pay.value ? -1 : pay.value;
-    istatus =
-      pay !== null && pay.textContent ? parseInt(pay.textContent, 10) : -1;
+    if (window.location.href.includes("ssms")) {
+      const cells = Array.from(new Set([...table.querySelectorAll("td")]));
+      let pay = document.getElementById("payableStatus") as HTMLElement;
+      let istatus: number;
+      // istatus = !pay.value ? -1 : pay.value;
+      istatus =
+        pay !== null && pay.textContent ? parseInt(pay.textContent, 10) : -1;
 
-    cells.forEach((cell) => {
-      let attr = cell.getAttribute("data-column-id");
-      if (attr && attr === "STATUS") {
-        let span = cell.querySelector("span");
-        if (span && span.classList.length > 0) {
-          let status = "";
-          switch (istatus) {
-            case -1:
-              status = "none";
-              break;
-            case 0:
-              status = "fail";
-              break;
-            case 1:
-            case 2:
-              status = "success";
-              break;
-            default:
-              status = "none";
-              break;
+      cells.forEach((cell) => {
+        let attr = cell.getAttribute("data-column-id");
+        if (attr && attr === "STATUS") {
+          let span = cell.querySelector("span");
+          if (span && span.classList.length > 0) {
+            let status = "";
+            switch (istatus) {
+              case -1:
+                status = "none";
+                break;
+              case 0:
+                status = "fail";
+                break;
+              case 1:
+              case 2:
+                status = "success";
+                break;
+              default:
+                status = "none";
+                break;
+            }
+            span.classList.add(status);
           }
-          span.classList.add(status);
         }
-      }
-    });
+      });
+    }
   });
 
   function initResizeListeners() {
@@ -234,4 +236,4 @@ function redoGrid() {
       }
     }
   }
-}
+};
