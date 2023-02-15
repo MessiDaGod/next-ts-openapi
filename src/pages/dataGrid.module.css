@@ -1,29 +1,45 @@
 .dataGridhtml {
-    font-family: sans-serif;
-    font-size: 14px;
-    color: white;
-  }
+  font-family: sans-serif;
+  font-size: 14px;
+  color: white;
+}
 
-  .dataGridtable {
-    border: 1px solid #d3d3d3;
-  }
+.dataGridtable {
+  border: 1px solid #d3d3d3;
+}
 
-  .dataGridtbody {
-    border-bottom: 1px solid lightgray;
-  }
+.dataGridtbody {
+  border-bottom: 1px solid lightgray;
+}
 
-  .dataGridth {
-    border-bottom: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    padding: 2px 4px;
-  }
+.dataGridth:not(.columndivider) {
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  padding: 2px 4px;
+  max-height: 23px;
+}
 
-  .dataGridtd {
-    border-bottom: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    padding: 2px 4px;
-  }
+.dataGridtd:not(.columndivider) {
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  padding: 2px 4px;
+}
 
-  .dataGridtfoot {
-    display: none;
-  }
+.dataGridtfoot {
+  display: none;
+}
+
+.columndivider {
+  top: 0px;
+  right: 0px;
+  width: 5px;
+  position: absolute;
+  cursor: col-resize;
+  -webkit-user-select: all;
+  user-select: all;
+  z-index: 100;
+}
+.columndivider.hover {
+  border-style: 1px solid blue;
+  cursor: col-resize;
+}

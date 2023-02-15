@@ -4,7 +4,7 @@ import path from "path";
 
 const dbPath = path.resolve(__dirname, "database.sqlite");
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(_req: NextApiRequest, res: NextApiResponse) {
   const db = new sqlite3.Database(dbPath);
 
   db.get(

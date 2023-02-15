@@ -2,8 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { Session } from "next-iron-session";
-import withSession from "../session";
 
 const saltRounds = 10;
 const dbPath = "./database.sqlite";
@@ -86,8 +84,8 @@ export default async function handler(
   email = searchParams.get("email");
   username = searchParams.get("username");
   password = searchParams.get("password");
-  if (username !== null && password !== null) {
-     const db = await initializeDb();
+  if (username !== null && password !== null && name !== null && email !== null) {
+     await initializeDb();
      const userId = await registerUser(name, email, username, password);
      res.status(200).json({ userId });
   }
