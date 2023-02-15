@@ -12,14 +12,13 @@
   border-bottom: 1px solid lightgray;
 }
 
-.dataGridth:not(.columndivider) {
+.dataGridth {
   border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
   padding: 2px 4px;
-  max-height: 23px;
 }
 
-.dataGridtd:not(.columndivider) {
+.dataGridtd {
   border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
   padding: 2px 4px;
@@ -37,8 +36,10 @@
   cursor: col-resize;
   -webkit-user-select: all;
   user-select: all;
-  z-index: 100;
+  z-index: 1000;
+  border-style: 1px solid blue;
 }
+
 .columndivider.hover {
   border-style: 1px solid blue;
   cursor: col-resize;
