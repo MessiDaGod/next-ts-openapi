@@ -93,25 +93,6 @@ function handleSetData() {
               </tr>
             ))}
           </tbody>
-          <tfoot className={styles["dataGridtfoot"]}>
-            {table.getFooterGroups().map((footerGroup, value: number) => (
-              <tr key={`${footerGroup.id}${value}`}>
-                {footerGroup.headers.map((header) => (
-                  <th
-                    key={`${header.id}${value}`}
-                    data-column-id={vendorsColumns[value].header}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </tfoot>
         </table>
       </div>
     );

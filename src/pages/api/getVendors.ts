@@ -83,7 +83,7 @@ export type FinVendorEtl = {
     no_Duplicate_Invoice_on_Same_Date: string;
 }
 
-const emptyVendor: FinVendorEtl = {
+export const emptyVendor: FinVendorEtl = {
   id: 0,
   vendor_Code: "",
   currency: "",
