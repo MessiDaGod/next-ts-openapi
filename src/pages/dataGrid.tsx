@@ -1,12 +1,14 @@
 import React from "react";
 import styles from "./dataGrid.module.css";
 import { dataGridResize } from "./api/dataGridResize";
-import { FinVendorEtl } from "./api/FinVendorEtl";
+import { FinVendorEtl } from "./api/Objects/FinVendorEtl";
 import { getVendors, vendorProperties } from "./api/getVendors";
 import { GenerateDefaultColumns, Columns } from "./api/defaultColumnGenerator";
 import SimpleDropdown from "./simpleDropdown";
+import { GenerateDataDictionary } from "./api/DataObject";
 
 function handleSetData() {
+  GenerateDataDictionary;
   dataGridResize();
 }
 
@@ -15,10 +17,9 @@ const defaultColumns: Columns<FinVendorEtl>[] =
 
 export function DataGrid() {
   const [data, setData] = React.useState<FinVendorEtl[]>([]);
-  const [columns] = React.useState<typeof defaultColumns>(() => [
-    ...defaultColumns,
-  ]);
-
+  // const [columns] = React.useState<typeof defaultColumns>(() => [
+  //   ...defaultColumns,
+  // ]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -28,45 +29,43 @@ export function DataGrid() {
     fetchData();
   }, []);
 
-  const handleButtonClick = () => {
-    async function fetchData() {
-      const response = await getVendors();
-      setData(response);
-    }
-    fetchData();
-  };
-
   React.useEffect(() => {
     handleSetData();
   });
 
-  function generateTableFromFinVendorEtlObject() {
+
+  function generateTableFromObject() {
     const tableRows = [
-      columns.map((columnName, idx) => (
+      defaultColumns.map((columnName, idx) => (
         <th
-          key={`${columnName}${idx}`}
+          key={`${columnName.name}${idx}`}
           className={styles["dataGridth"]}
           data-column-id={columnName.name}
+          hidden={isColumnHidden(columnName.name)}
         >
           {columnName.displayName}
-          <div key={`div${columnName}${idx}`}
-          className={`${styles['columndivider']}`}
-        ></div>
+          <div
+            key={`div${columnName}${idx}`}
+            className={`${styles["columndivider"]}`}
+          ></div>
         </th>
       )),
-      ...data.map((row) => (
-        <tr key={row.Id} className={styles["gridjs-tr"]}>
-          {Object.entries(row).map(([key, value]) => (
-            <td
-              key={`${key}_${row.Id}`}
-              className={styles["dataGridtd"]}
-              data-column-id={key}
-            >
-              {value}
-            </td>
-          ))}
-        </tr>
-      )),
+      ...data
+        .filter((row) => !isRowEmpty(row))
+        .map((row) => (
+          <tr key={row.Id} className={styles["gridjs-tr"]}>
+            {Object.entries(row).map(([key, value]) => (
+              <td
+                key={`${key}_${row.Id}`}
+                className={styles["dataGridtd"]}
+                data-column-id={key}
+                hidden={isColumnHidden(key)}
+              >
+                {value}
+              </td>
+            ))}
+          </tr>
+        )),
     ];
 
     return (
@@ -79,20 +78,27 @@ export function DataGrid() {
     );
   }
 
-
-  const table = generateTableFromFinVendorEtlObject();
+  const table = generateTableFromObject();
 
   return (
     <>
-    <div className={styles["dataGridhtml"]}>
-      <i id="ruler" hidden></i>
-      <div className="h-4" />
-      <button onClick={handleButtonClick}>Get Vendors</button>
-      <SimpleDropdown jsonFileName="GetOptions" label="Get"/>
-      <i id="ruler" hidden></i>
-      {table}
-    </div>
+      <div className={styles["dataGridhtml"]}>
+        <i id="ruler" hidden></i>
+        <div className="h-4" />
+        <SimpleDropdown jsonFileName="GetOptions" label="Get" />
+        <i id="ruler" hidden></i>
+        {table}
+      </div>
     </>
   );
 
+  function isRowEmpty<T>(row: T): boolean {
+    if (!row) return true;
+    return Object.values(row).every((value) => value === null || value === "" || value === "null");
+  }
+
+  function isColumnHidden(columnName: string): boolean {
+    const columnData = data.map((row) => row[columnName]);
+    return columnData.every((value) => value === null || value === "");
+  }
 }

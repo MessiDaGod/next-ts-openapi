@@ -24,6 +24,8 @@
   border-right: 1px solid lightgray;
   padding: 2px 4px;
   white-space: nowrap;
+  overflow: hidden;
+  min-width: 1px;
 }
 
 .dataGridtfoot {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./dropdown.module.css";
-import { GetPropOptions } from "./api/PropOptions";
+import { GetPropOptions } from "./api/Objects/PropOptions";
 import { getVendors } from "./api/getVendors";
 
 interface DropdownProps {
@@ -39,7 +39,7 @@ const SimpleDropdown: React.FC<DropdownProps> = ({
       setData(json);
     }
     fetchData();
-  }, []);
+  }, [jsonFileName]);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);

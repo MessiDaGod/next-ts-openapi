@@ -1,4 +1,4 @@
-import { FinVendorEtl, emptyVendor } from "./FinVendorEtl";
+import { FinVendorEtl, emptyVendor } from "./Objects/FinVendorEtl";
 
 export const vendorProperties: FinVendorEtl = Object.keys(emptyVendor).reduce(
   (acc, key) => ({ ...acc, [key]: "" }),
