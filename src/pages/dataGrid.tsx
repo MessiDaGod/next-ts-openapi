@@ -17,10 +17,21 @@ function handleSetData() {
   export function DataGrid() {
     const [data, setData] = React.useState<FinVendorEtl[]>([]);
 
-    async function rerender() {
-      const vendors = await getVendors();
-      setData(vendors);
-    }
+    React.useEffect(() => {
+      async function fetchData() {
+        const response = await getVendors();
+        setData(response);
+      }
+      fetchData();
+    }, []);
+
+    const handleButtonClick = () => {
+      async function fetchData() {
+        const response = await getVendors();
+        setData(response);
+      }
+      fetchData();
+    };
 
     const columns: ColumnDef<FinVendorEtl>[] = Object.keys(vendorProperties).map((key, value) => {
       return {
@@ -42,6 +53,9 @@ function handleSetData() {
       data,
       columns,
       getCoreRowModel: getCoreRowModel(),
+      debugTable: true,
+      debugHeaders: true,
+      debugColumns: true,
     });
 
     React.useEffect(() => {
@@ -51,7 +65,7 @@ function handleSetData() {
     return (
       <div className={styles["dataGridhtml"]}>
         <div className="h-4" />
-        <button onClick={rerender} className="border p-2">
+        <button onClick={handleButtonClick} className="border p-2">
           Get Vendors
         </button>
         <i id="ruler" hidden></i>
