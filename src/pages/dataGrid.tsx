@@ -1,19 +1,9 @@
 import React from "react";
-
-// import {
-//   ColumnResizeMode,
-// } from "@tanstack/react-table";
 import styles from "./dataGrid.module.css";
 import { dataGridResize } from "./api/dataGridResize";
 import { FinVendorEtl } from "./api/FinVendorEtl";
 import { getVendors, vendorProperties } from "./api/getVendors";
 import { GenerateDefaultColumns, Columns } from "./api/defaultColumnGenerator";
-// import CodeEditor from "./codeEditor";
-
-// import {
-//   ColumnResizeMode,
-// } from '@tanstack/react-table'
-
 
 function handleSetData() {
   dataGridResize();
@@ -27,15 +17,11 @@ export function DataGrid() {
   const [columns] = React.useState<typeof defaultColumns>(() => [
     ...defaultColumns,
   ]);
-  // const [columnResizeMode, setColumnResizeMode] =
-  //   React.useState<ColumnResizeMode>("onChange");
+
 
   React.useEffect(() => {
     async function fetchData() {
       const response = await getVendors();
-      // response.map((vendor) => {
-      //   console.log(vendor);
-      // });
       setData(response);
     }
     fetchData();
@@ -59,10 +45,12 @@ export function DataGrid() {
         <th
           key={`${columnName}${idx}`}
           className={styles["dataGridth"]}
-          data-column-id={columnName.displayName}
+          data-column-id={columnName.name}
         >
           {columnName.displayName}
-          <div className={styles["columndivider"]}></div>
+          <div key={`div${columnName}${idx}`}
+          className={`${styles['columndivider']}`}
+        ></div>
         </th>
       )),
       ...data.map((row) => (

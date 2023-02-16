@@ -25,7 +25,7 @@ String.prototype.visualLength = function () {
 
     if (div.parentElement) {
       div.parentElement.addEventListener("mouseenter", function (e: MouseEvent): void {
-
+        e.preventDefault();
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
         let tbl = this.closest("table") as HTMLTableElement;
         if (tbl) {
@@ -39,6 +39,7 @@ String.prototype.visualLength = function () {
       });
 
       div.parentElement.addEventListener("mouseout", function (e: MouseEvent): void {
+        e.preventDefault();
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
         let tbl = this.closest("table") as HTMLTableElement;
         if (tbl) {

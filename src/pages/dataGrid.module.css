@@ -48,5 +48,6 @@
 }
 
 .gridjs-tr:hover {
-  background-color: #f67adf !important;
+  background-color: #f67adf;
+  cursor: pointer;
 }

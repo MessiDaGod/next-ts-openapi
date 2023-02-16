@@ -84,20 +84,6 @@ export type FinVendorEtl = {
     [key: string]: string | number;
 }
 
-
-// type Column<T> = {
-//   accessorKey: keyof T;
-//   header?: string;
-//   cell?: (info: any) => any;
-//   footer?: (props: any) => any;
-// };
-
-// type ColumnGroup<T> = {
-//   header?: string;
-//   columns: Array<Column<T>>;
-//   footer?: (props: any) => any;
-// };
-
 export const emptyVendor: FinVendorEtl = {
   id: 0,
   vendor_Code: "",
