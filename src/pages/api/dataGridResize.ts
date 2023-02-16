@@ -14,10 +14,6 @@ String.prototype.visualLength = function () {
     return 0;
   };
 
-  function $(id: Element) {
-    return (id ?? new Element) as HTMLElement;
-  }
-
   function setListeners(div: HTMLElement): void {
     var pageX: number | undefined,
       curCol: HTMLElement | null,
@@ -25,9 +21,7 @@ String.prototype.visualLength = function () {
       prevCol: HTMLElement | null,
       curColWidth: number | undefined,
       nxtColWidth: number | undefined,
-      // @ts-ignore
       prevColWidth: number | undefined;
-    ``;
 
     if (div.parentElement) {
       div.parentElement.addEventListener("mouseenter", function (e: MouseEvent): void {
@@ -101,6 +95,10 @@ String.prototype.visualLength = function () {
         }
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
+        if (prevCol) {
+          prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
+          prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
+        }
       }
     });
 
