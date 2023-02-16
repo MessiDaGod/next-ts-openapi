@@ -4,6 +4,7 @@ import { dataGridResize } from "./api/dataGridResize";
 import { FinVendorEtl } from "./api/FinVendorEtl";
 import { getVendors, vendorProperties } from "./api/getVendors";
 import { GenerateDefaultColumns, Columns } from "./api/defaultColumnGenerator";
+import SimpleDropdown from "./simpleDropdown";
 
 function handleSetData() {
   dataGridResize();
@@ -87,6 +88,7 @@ export function DataGrid() {
       <i id="ruler" hidden></i>
       <div className="h-4" />
       <button onClick={handleButtonClick}>Get Vendors</button>
+      <SimpleDropdown jsonFileName="GetOptions" label="Get"/>
       <i id="ruler" hidden></i>
       {table}
     </div>
