@@ -33,6 +33,7 @@ String.prototype.visualLength = function () {
           if (allCells)
             allCells.forEach((cell) => {
               (cell as HTMLElement).style.borderRight = "4px solid #0000ff";
+              (cell as HTMLElement).style.cursor = "col-resize";
             });
         }
       });
@@ -45,6 +46,7 @@ String.prototype.visualLength = function () {
           if (allCells)
             allCells.forEach((cell) => {
               (cell as HTMLElement).style.borderRight = "";
+              (cell as HTMLElement).style.cursor = "";
             });
         }
       });

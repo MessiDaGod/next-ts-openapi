@@ -6,6 +6,7 @@ import main from "@/styles/Home.module.css";
 import Dropdown from './dropdown';
 import Head from "next/head";
 import homeStyles from "@/styles/Home.module.css";
+// import './index.css'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

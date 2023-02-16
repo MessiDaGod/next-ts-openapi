@@ -40,8 +40,9 @@
   z-index: 1000;
 }
 
-.columndivider.hover {
-  border-style: 1px solid blue;
+.columndivider:hover {
+  border-style: solid;
+  border-color: #1931e4;
   cursor: col-resize;
 }
 
