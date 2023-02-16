@@ -32,7 +32,7 @@ String.prototype.visualLength = function () {
           let allCells = Array.from(new Set([...tbl.querySelectorAll('[data-column-id="' + dataColumnId + '"]')]));
           if (allCells)
             allCells.forEach((cell) => {
-              (cell as HTMLElement).style.borderRight = "4px solid #0000ff";
+              (cell as HTMLElement).style.borderRight = "solid #0000ff";
               (cell as HTMLElement).style.cursor = "col-resize";
             });
         }

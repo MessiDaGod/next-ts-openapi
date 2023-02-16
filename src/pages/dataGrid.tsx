@@ -10,6 +10,11 @@ import { getVendors, vendorProperties } from "./api/getVendors";
 import { GenerateDefaultColumns, Columns } from "./api/defaultColumnGenerator";
 // import CodeEditor from "./codeEditor";
 
+// import {
+//   ColumnResizeMode,
+// } from '@tanstack/react-table'
+
+
 function handleSetData() {
   dataGridResize();
 }
@@ -28,6 +33,9 @@ export function DataGrid() {
   React.useEffect(() => {
     async function fetchData() {
       const response = await getVendors();
+      // response.map((vendor) => {
+      //   console.log(vendor);
+      // });
       setData(response);
     }
     fetchData();
@@ -47,11 +55,11 @@ export function DataGrid() {
 
   function generateTableFromFinVendorEtlObject() {
     const tableRows = [
-      columns.map((columnName) => (
+      columns.map((columnName, idx) => (
         <th
-        key={columnName.name}
-        className={styles["dataGridth"]}
-        data-column-id={columnName.displayName}
+          key={`${columnName}${idx}`}
+          className={styles["dataGridth"]}
+          data-column-id={columnName.displayName}
         >
           {columnName.displayName}
           <div className={styles["columndivider"]}></div>
@@ -59,8 +67,14 @@ export function DataGrid() {
       )),
       ...data.map((row) => (
         <tr key={row.Id} className={styles["gridjs-tr"]}>
-          {Object.keys(row).map((key) => (
-            <td key={`${key}_${row.Id}`} className={styles["dataGridtd"]}>{row[key]}</td>
+          {Object.entries(row).map(([key, value]) => (
+            <td
+              key={`${key}_${row.Id}`}
+              className={styles["dataGridtd"]}
+              data-column-id={key}
+            >
+              {value}
+            </td>
           ))}
         </tr>
       )),
@@ -75,82 +89,20 @@ export function DataGrid() {
       </table>
     );
   }
+
+
   const table = generateTableFromFinVendorEtlObject();
 
   return (
+    <>
     <div className={styles["dataGridhtml"]}>
       <i id="ruler" hidden></i>
       <div className="h-4" />
       <button onClick={handleButtonClick}>Get Vendors</button>
       <i id="ruler" hidden></i>
       {table}
-      {/* <CodeEditor
-        initialValue={JSON.stringify(defaultColumns, null, 2)}
-        language="json"
-        height="30vh"
-      /> */}
     </div>
+    </>
   );
 
-  // return (
-  //   <div className={styles["dataGridhtml"]}>
-  //     <div className="h-4" />
-  //     <button onClick={handleButtonClick} className="border p-2">
-  //       Get Vendors
-  //     </button>
-  //     <select
-  //     value={columnResizeMode}
-  //     onChange={e => setColumnResizeMode(e.target.value as ColumnResizeMode)}
-  //     className="border p-2 border-black rounded"
-  //   >
-  //     <option value="onEnd">Resize: &quot;onEnd&quot;</option>
-  //     <option value="onChange">Resize: &quot;onChange&quot;</option>
-  //   </select>
-  //     <i id="ruler" hidden></i>
-  //     <table id={"gridjs_0"} className={styles["dataGridtable"]}>
-  //     <thead>
-  //         {table.getHeaderGroups().map((headerGroup, iHeaderGroup: number) => (
-  //           <tr>
-  //             {headerGroup.headers.map((header, iHeader: number) => (
-  //               <th
-  //                 key={`${iHeaderGroup}`}
-  //                 className={styles["dataGridth"]}
-  //                 data-column-id={headerGroup.headers[iHeader].id}
-  //                 aria-label={headerGroup.headers[iHeader].id}
-  //                 scope="col"
-  //               >
-  //                 {header.isPlaceholder
-  //                   ? null
-  //                   : flexRender(
-  //                       header.column.columnDef.header,
-  //                       header.getContext()
-  //                     )}
-  //                 <div className={styles["columndivider"]}></div>
-  //               </th>
-  //             ))}
-  //           </tr>
-  //         ))}
-  //       </thead>
-  //       <tbody>
-  //         {table.getRowModel().rows.map(row => (
-  //           <tr key={row.id} className={styles["gridjs-tr"]}>
-  //             {row.getVisibleCells().map(cell => (
-  //               <td
-  //                 {...{
-  //                   key: cell.id,
-  //                   style: {
-  //                     width: cell.column.getSize(),
-  //                   },
-  //                 }}
-  //               >
-  //                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
-  //               </td>
-  //             ))}
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //     </table>
-  //    <CodeEditor initialValue={JSON.stringify(defaultColumns, null, 2)} language="json" height="30vh"/>
-  //   </div>
-  // );
 }

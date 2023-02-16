@@ -23,6 +23,7 @@
   border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
   padding: 2px 4px;
+  white-space: nowrap;
 }
 
 .dataGridtfoot {
@@ -32,8 +33,8 @@
 .columndivider {
   top: 0px;
   right: 0px;
-  width: 5px;
-  position: absolute;
+  width: 10px;
+  position: relative;
   cursor: col-resize;
   -webkit-user-select: all;
   user-select: all;
