@@ -70,7 +70,7 @@ export function GenerateDefaultColumns<T>(
     name: "",
     data: {} as T,
     columns: defaultColumns,
-    values,
+    values: values,
   };
 }
 

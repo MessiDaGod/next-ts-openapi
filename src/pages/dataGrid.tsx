@@ -5,7 +5,10 @@ import { Vendor, vendorProperties, emptyVendor } from "./api/Objects/Vendor";
 // import { PropOptions, propOptionProperties } from "./api/Objects/PropOptions";
 import { getVendors } from "./api/getVendors";
 import { GenerateDefaultColumns } from "./api/DataObject";
-import { GetDataDictionary, DataObjectWithColumnsAndValues } from "./api/DataObject";
+import {
+  GetDataDictionary,
+  DataObjectWithColumnsAndValues,
+} from "./api/DataObject";
 // import SimpleDropdown from "./simpleDropdown";
 // import { DataObjectWithColumnsAndValues } from "./api/DataObject";
 
@@ -35,7 +38,9 @@ export function DataGrid() {
     handleSetData();
   });
 
-  function GenerateVendorData(data: Vendor | Vendor[]): DataObjectWithColumnsAndValues<Vendor> | undefined {
+  function GenerateVendorData(
+    data: Vendor | Vendor[]
+  ): DataObjectWithColumnsAndValues<Vendor> | undefined {
     const json = JSON.stringify(data);
     const vendors: Vendor[] = JSON.parse(json).map((vendor: Vendor) => ({
       ...vendor,
@@ -43,31 +48,81 @@ export function DataGrid() {
 
     if (vendors.length > 0) {
       const newVendors = GetDataDictionary(vendors);
-      // const DataObjectWithColumnsAndValues: DataObjectWithColumnsAndValues<Vendor> =
-      //   generateDefaultDataObjectWithColumnsAndValues<Vendor>(
-      //     Object.keys(myVendor[0]) as (keyof Vendor)[]
-      //   );
-
-      // Loop through each Vendor object and populate the values
-      vendors.forEach((vendor) => {
-        Object.entries(vendor).forEach(([key, value]) => {
-          newVendors.values[key].Values.push(value);
+      if (newVendors.columns.length > 0) {
+        newVendors.columns.forEach((column) => {
+          const columnName = column.name;
+          console.log(columnName);
+          const columnValues = newVendors.values[columnName].Values;
+          console.log(`${columnValues}`);
         });
-      });
-
+      }
       return newVendors;
-      // newVendors.columns.forEach((column) => {
-      //   const columnName = column.name;
-      //   console.log(columnName);
-      //   const columnValues = newVendors.values[columnName].Values;
-      //   console.log(`${columnValues}`);
-      // });
-
-      // const columnName = newVendors.columns[1].name;
-      // const columnValues = newVendors.values[columnName].Values;
-      // const value = columnValues[2];
-      // console.log(`Should be 1000b: ${value}`);
     }
+  }
+
+  function GenerateTable() {
+    if (Array.isArray(data)) {
+      const newVendors = GenerateVendorData(data);
+      if (!newVendors) return;
+      const tableColumns = [
+        newVendors.columns.map(
+          (columnName, idx) => (
+            <th
+              id={`${columnName.name}${idx}`}
+              key={`${columnName.name}${idx}`}
+              className={styles["dataGridth"]}
+              data-column-id={columnName.name}
+              // hidden={isColumnHidden(columnName.name)}
+            >
+              {columnName.displayName}
+              <div
+                key={`div${columnName}${idx}`}
+                className={`${styles["columndivider"]}`}
+              ></div>
+            </th>
+          )
+          //   <tr key={row.Id} className={styles["gridjs-tr"]}>
+          //   {Object.entries(row).map(([key, value]) => (
+          //     <td
+          //       key={`${key}_${row.Id}`}
+          //       className={styles["dataGridtd"]}
+          //       data-column-id={key}
+          //       // hidden={isColumnHidden(key)}
+          //     >
+          //       {value}
+          //     </td>
+          //   ))}
+          // </tr>
+        ),
+      ];
+
+      if (tableColumns.length > 0) {
+        return (
+          <table id={"gridjs_0"} className={styles["dataGridtable"]}>
+            <thead>
+              <tr>{tableColumns[0]}</tr>
+            </thead>
+            <tbody>{tableColumns.slice(1)}</tbody>
+          </table>
+        );
+      }
+    }
+  }
+
+  // const table = generateTableFromObject();
+  const table = GenerateTable();
+
+  if (table) {
+    return (
+      <>
+        <div className={styles["dataGridhtml"]}>
+          <i id="ruler" hidden></i>
+          <div className="h-4" />
+          <i id="ruler" hidden></i>
+          {table}
+        </div>
+      </>
+    );
   }
 
   function generateTableFromObject() {
@@ -120,21 +175,6 @@ export function DataGrid() {
     }
   }
 
-  const table = generateTableFromObject();
-
-  if (table) {
-    return (
-      <>
-        <div className={styles["dataGridhtml"]}>
-          <i id="ruler" hidden></i>
-          <div className="h-4" />
-          <i id="ruler" hidden></i>
-          {table}
-        </div>
-      </>
-    );
-  }
-
   function isRowEmpty<T>(row: T): boolean {
     if (!row) return true;
     return Object.values(row).every(
@@ -155,7 +195,11 @@ export function DataGrid() {
     const elements = document.getElementsByTagName(dataColId);
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
-      if (element instanceof HTMLElement && element.dataset.columnId === "something" && !element.offsetParent) {
+      if (
+        element instanceof HTMLElement &&
+        element.dataset.columnId === "something" &&
+        !element.offsetParent
+      ) {
         return true;
       }
     }
