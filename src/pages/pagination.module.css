@@ -4,6 +4,7 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
+    user-select: none;
   }
 
   .pagination a,
@@ -20,6 +21,7 @@
     background-color: #f03a3a;
     border-radius: 4px;
     padding: 4px 8px;
+    transition-duration: 0.5s;
   }
 
   .material-symbols-outlined {
