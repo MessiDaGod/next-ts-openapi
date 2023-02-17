@@ -4,6 +4,7 @@ import { dataGridResize } from "./api/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
+import { Pagination } from "./pagination";
 
 function handleSetData() {
   dataGridResize();
@@ -12,10 +13,24 @@ function handleSetData() {
 export function DataGrid() {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+  // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
+
+  const itemsPerPage = 25;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = Array.isArray(data)
+    ? data.slice(startIndex, endIndex)
+    : [];
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+  }
+
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getVendors();
+        const response = await getVendors(1000);
         setData(response);
       } catch (error) {
         return emptyVendor;
@@ -73,6 +88,7 @@ export function DataGrid() {
       });
       setData(sortedData);
       setSortState(!state);
+      setCurrentPage(1);
     }
   }
 
@@ -80,35 +96,55 @@ export function DataGrid() {
     if (Array.isArray(data)) {
       const newVendors = GenerateVendorData(data);
       if (!newVendors) return;
+
+      // Pagination logic
+      const totalItems = data.filter((row) => !isRowEmpty(row)).length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedData = data
+        .filter((row) => !isRowEmpty(row))
+        .slice(startIndex, endIndex);
+
       const tableRows = [
-        newVendors.columns.map((columnName, idx) => (
-          <th
-            key={`${columnName.name}${idx}`}
-            style={{ margin: "auto", cursor: "pointer" }}
-            className={styles["dataGridth"]}
-            data-column-id={columnName.name}
-            hidden={isColumnHidden(columnName.keyName)}
-          >
-            <div
-              key={`div${columnName}${idx}`}
-              className={`${styles["columndivider"]}`}
-            ></div>
-            <span
-              className="material-symbols-outlined"
-              onClick={() => handleSort(columnName.keyName)}
-              style={{
-                margin: "auto",
-                display: "inline-block",
-                cursor: "pointer",
-              }}
+        newVendors.columns.map((columnName, idx) => {
+          const columnNames = columnName.displayName.split(" ");
+          const columnNamesWithLineBreaks = columnNames.map((name) => (
+            <React.Fragment key={name}>
+              {name}
+              <br />
+            </React.Fragment>
+          ));
+          return (
+            <th
+              key={`${columnName.name}${idx}`}
+              style={{ margin: "auto", cursor: "pointer" }}
+              className={styles["dataGridth"]}
+              data-column-id={columnName.name}
+              hidden={isColumnHidden(columnName.keyName)}
             >
-              expand_more
-            </span>
-            {columnName.displayName}
-          </th>
-        )),
+              <div
+                key={`div${columnName}${idx}`}
+                className={`${styles["columndivider"]}`}
+              ></div>
+              <span
+                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                onClick={() => handleSort(columnName.keyName)}
+                style={{
+                  margin: "auto",
+                  display: "inline-block",
+                  cursor: "pointer",
+                }}
+              >
+                {!sortState ? "expand_more" : "expand_less"}
+              </span>
+              {columnNamesWithLineBreaks}
+            </th>
+          );
+        }),
         ...data
           .filter((row) => !isRowEmpty(row))
+          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((row, rowIndex: number) => (
             <tr key={row.Id} className={styles["gridjs-tr"]}>
               {Object.entries(row).map(([key, value], index: number) => (
@@ -140,7 +176,9 @@ export function DataGrid() {
 
   const table = GenerateTableHtml();
 
-  if (table) {
+  if (table && Array.isArray(data) && data.length > 0) {
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
     return (
       <>
         <div className={styles["dataGridhtml"]}>
@@ -149,6 +187,13 @@ export function DataGrid() {
           <i id="ruler" hidden></i>
           {table}
         </div>
+        <div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </>
     );
   }
@@ -156,31 +201,28 @@ export function DataGrid() {
   function isRowEmpty<T>(row: T): boolean {
     if (!row) return true;
     return Object.values(row).every(
-      (value) => value === null || value === "" || value === "null"
+      (value) =>
+        value === null ||
+        value === "" ||
+        value === "0" ||
+        value === "-1" ||
+        value === "0.000000"
     );
   }
 
   function isColumnHidden(columnName: string): boolean {
     if (Array.isArray(data)) {
       const columnData = data.map((row) => row[columnName]);
-      return columnData.every((value) => value === null || value === "");
+      return columnData.every(
+        (value) =>
+          value === null ||
+          value === "" ||
+          value === "0" ||
+          value === "-1" ||
+          value === "0.000000"
+      );
     } else {
       return true;
     }
-  }
-
-  function isAnyCellValueHidden(dataColId: string): boolean {
-    const elements = document.getElementsByTagName(dataColId);
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i];
-      if (
-        element instanceof HTMLElement &&
-        element.dataset.columnId === "something" &&
-        !element.offsetParent
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }

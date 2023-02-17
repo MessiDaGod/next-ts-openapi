@@ -1,9 +1,10 @@
 import { Vendor, emptyVendor } from "./Objects/Vendor";
 
 // Register a new user
-export async function getVendors() {
+export async function getVendors(take: number | null = null) {
     try {
-      const url = `https://localhost:5006/api/data/GetVendors`;
+      let url = `https://localhost:5006/api/data/GetVendors`;
+      if (!take) url += `?take=${take}`;
       const response = await fetch(url, {
       method: 'GET'
     });

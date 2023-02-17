@@ -3,6 +3,8 @@
   font-size: 14px;
   color: white;
   height: 70vh;
+  max-height: 70vh;
+  width: 80vw;
 }
 
 .dataGridtable {
@@ -44,6 +46,8 @@
   -webkit-user-select: all;
   user-select: all;
   z-index: 1000;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .columndivider:hover {
@@ -55,4 +59,9 @@
 .gridjs-tr:hover {
   background-color: #f67adf;
   cursor: pointer;
+}
+.material-symbols-outlined {
+  float: right;
+  padding-left: 10px;
+  margin-left: 10px;
 }
