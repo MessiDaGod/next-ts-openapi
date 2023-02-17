@@ -204,7 +204,8 @@ export function DataGrid() {
         value === "" ||
         value === "0" ||
         value === "-1" ||
-        value === "0.000000"
+        value === "0.000000" ||
+        value === "NULL"
     );
   }
 
@@ -217,7 +218,8 @@ export function DataGrid() {
           value === "" ||
           value === "0" ||
           value === "-1" ||
-          value === "0.000000"
+          value === "0.000000" ||
+          value === "NULL"
       );
     } else {
       return true;

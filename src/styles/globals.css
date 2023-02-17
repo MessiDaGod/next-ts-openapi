@@ -11,7 +11,8 @@
   table,
   .divTable {
     border: 1px solid lightgray;
-    width: fit-content;
+    /* width: fit-content; */
+    max-height: 50vh;
   }
 
   .tr {
@@ -37,7 +38,7 @@
     padding: 2px 4px;
     position: relative;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     height: 30px;
   }
 

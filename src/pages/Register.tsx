@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import styles from "./register.module.css"
+import { useRouter } from 'next/router';
 
 interface RegisterProps {
   name?: string
@@ -13,6 +14,7 @@ const Register: React.FC<RegisterProps> = () => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const router = useRouter();
 
   const handleRegister = () => {
     console.info("handleRegister")
@@ -42,7 +44,11 @@ const Register: React.FC<RegisterProps> = () => {
     const response = await fetch(`${encoded}`, {
       method: 'POST'
     })
-    const data = await response.text()
+    const data = JSON.stringify(await response.text());
+    if (data) {
+      console.log(data)
+      router.push('/');
+    }
   }
 
   return (
@@ -53,6 +59,7 @@ const Register: React.FC<RegisterProps> = () => {
         <input
           type="text"
           name="name"
+          autoComplete="on"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -61,6 +68,7 @@ const Register: React.FC<RegisterProps> = () => {
         <input
           type="email"
           name="email"
+          autoComplete="on"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -69,6 +77,7 @@ const Register: React.FC<RegisterProps> = () => {
         <input
           type="text"
           name="username"
+          autoComplete="on"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -77,6 +86,7 @@ const Register: React.FC<RegisterProps> = () => {
         <input
           type="password"
           name="password"
+          autoComplete="on"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
