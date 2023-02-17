@@ -2,6 +2,7 @@
   font-family: sans-serif;
   font-size: 14px;
   color: white;
+  height: 70vh;
 }
 
 .dataGridtable {
@@ -17,6 +18,7 @@
   border-right: 1px solid lightgray;
   padding: 2px 4px;
   white-space: nowrap;
+  min-width: 1px;
 }
 
 .dataGridtd {

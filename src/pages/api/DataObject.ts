@@ -4,7 +4,7 @@ import { Vendor } from "./Objects/Vendor";
 /**
  * Generic interface representing an object with an ID, name, and associated data of type T.
  */
-interface DataObject<T> {
+interface BaseDataObject<T> {
   id: number;
   name: string;
   data: T;
@@ -16,6 +16,7 @@ interface DataObject<T> {
 interface Column<T> {
   key: number;
   name: keyof T;
+  keyName: string;
   displayName: string;
 }
 
@@ -29,16 +30,17 @@ interface Values {
 /**
  * A type representing a DataObject of type T with associated columns.
  */
-type DataObjectWithColumns<T> = DataObject<T> & {
+export type DataTable<T> = BaseDataObject<T> & {
   columns: Column<T>[];
+  values: Values;
 };
 
 /**
  * A type representing a DataObject of type T with associated columns and a mapping of values to columns.
  */
-export type DataObjectWithColumnsAndValues<T> = DataObjectWithColumns<T> & {
-  values: Values;
-};
+// export type DataObjectWithColumnsAndValues<T> = DataObjectWithColumns<T> & {
+//   values: Values;
+// };
 
 let idCounter = 0;
 /**
@@ -48,11 +50,12 @@ let idCounter = 0;
  */
 export function GenerateDefaultColumns<T>(
   properties: (keyof T)[]
-): DataObjectWithColumnsAndValues<T> {
+): DataTable<T> {
 
   const defaultColumns: Column<T>[] = properties.map((prop, idx) => ({
     key: idx,
     name: prop,
+    keyName: prop.toString(),
     displayName: prop
     .toString()
     .split("_")
@@ -74,7 +77,7 @@ export function GenerateDefaultColumns<T>(
   };
 }
 
-export function GetDataDictionary<T>(data: T[]): DataObjectWithColumnsAndValues<T> {
+export function GetDataDictionary<T>(data: T[]): DataTable<T> {
     if (data === undefined) throw new Error("Data is undefined");
     const properties = Object.keys(data[0] as {}) as (keyof T)[];
     const defaultObject = GenerateDefaultColumns(properties);

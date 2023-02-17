@@ -1,16 +1,9 @@
 import React from "react";
 import styles from "./dataGrid.module.css";
 import { dataGridResize } from "./api/dataGridResize";
-import { Vendor, vendorProperties, emptyVendor } from "./api/Objects/Vendor";
-// import { PropOptions, propOptionProperties } from "./api/Objects/PropOptions";
+import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
-import { GenerateDefaultColumns } from "./api/DataObject";
-import {
-  GetDataDictionary,
-  DataObjectWithColumnsAndValues,
-} from "./api/DataObject";
-// import SimpleDropdown from "./simpleDropdown";
-// import { DataObjectWithColumnsAndValues } from "./api/DataObject";
+import { GetDataDictionary, DataTable } from "./api/DataObject";
 
 function handleSetData() {
   dataGridResize();
@@ -18,10 +11,6 @@ function handleSetData() {
 
 export function DataGrid() {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
-  // const [columns] = React.useState<typeof DataDictionary>(() => [
-  //   ...vendorProperties,
-  // ]);
-
   React.useEffect(() => {
     async function fetchData() {
       try {
@@ -38,9 +27,7 @@ export function DataGrid() {
     handleSetData();
   });
 
-  function GenerateVendorData(
-    data: Vendor | Vendor[]
-  ): DataObjectWithColumnsAndValues<Vendor> | undefined {
+  function GenerateVendorData(data: Vendor | Vendor[]): DataTable<Vendor> | undefined {
     const json = JSON.stringify(data);
     const vendors: Vendor[] = JSON.parse(json).map((vendor: Vendor) => ({
       ...vendor,
@@ -48,84 +35,34 @@ export function DataGrid() {
 
     if (vendors.length > 0) {
       const newVendors = GetDataDictionary(vendors);
-      if (newVendors.columns.length > 0) {
-        newVendors.columns.forEach((column) => {
-          const columnName = column.name;
-          console.log(columnName);
-          const columnValues = newVendors.values[columnName].Values;
-          console.log(`${columnValues}`);
+      vendors.forEach((vendor) => {
+        Object.entries(vendor).forEach(([key, value]) => {
+          newVendors.values[key].Values.push(value);
         });
-      }
+      });
+
       return newVendors;
     }
   }
 
-  function GenerateTable() {
+  function handleSort(columnName: string) {
     if (Array.isArray(data)) {
-      const newVendors = GenerateVendorData(data);
-      if (!newVendors) return;
-      const tableColumns = [
-        newVendors.columns.map(
-          (columnName, idx) => (
-            <th
-              id={`${columnName.name}${idx}`}
-              key={`${columnName.name}${idx}`}
-              className={styles["dataGridth"]}
-              data-column-id={columnName.name}
-              // hidden={isColumnHidden(columnName.name)}
-            >
-              {columnName.displayName}
-              <div
-                key={`div${columnName}${idx}`}
-                className={`${styles["columndivider"]}`}
-              ></div>
-            </th>
-          )
-          //   <tr key={row.Id} className={styles["gridjs-tr"]}>
-          //   {Object.entries(row).map(([key, value]) => (
-          //     <td
-          //       key={`${key}_${row.Id}`}
-          //       className={styles["dataGridtd"]}
-          //       data-column-id={key}
-          //       // hidden={isColumnHidden(key)}
-          //     >
-          //       {value}
-          //     </td>
-          //   ))}
-          // </tr>
-        ),
-      ];
-
-      if (tableColumns.length > 0) {
-        return (
-          <table id={"gridjs_0"} className={styles["dataGridtable"]}>
-            <thead>
-              <tr>{tableColumns[0]}</tr>
-            </thead>
-            <tbody>{tableColumns.slice(1)}</tbody>
-          </table>
-        );
-      }
+      const sortedData = [...data].sort((a, b) => {
+        const aValue = a[columnName];
+        const bValue = b[columnName];
+        if (aValue < bValue) {
+          return -1;
+        } else if (aValue > bValue) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      setData(sortedData);
     }
   }
 
-  // const table = generateTableFromObject();
-  const table = GenerateTable();
-
-  if (table) {
-    return (
-      <>
-        <div className={styles["dataGridhtml"]}>
-          <i id="ruler" hidden></i>
-          <div className="h-4" />
-          <i id="ruler" hidden></i>
-          {table}
-        </div>
-      </>
-    );
-  }
-
-  function generateTableFromObject() {
+  function GenerateTableHtml() {
     if (Array.isArray(data)) {
       const newVendors = GenerateVendorData(data);
       if (!newVendors) return;
@@ -135,9 +72,17 @@ export function DataGrid() {
             key={`${columnName.name}${idx}`}
             className={styles["dataGridth"]}
             data-column-id={columnName.name}
-            // hidden={isColumnHidden(columnName.name)}
+            hidden={isColumnHidden(columnName.keyName)}
           >
             {columnName.displayName}
+            <div
+              key={`div${columnName}${idx}`}
+              className={`${styles["columndivider"]}`}
+            >
+              <button onClick={() => handleSort(columnName.keyName)}>
+                Sort
+              </button>
+            </div>
             <div
               key={`div${columnName}${idx}`}
               className={`${styles["columndivider"]}`}
@@ -145,7 +90,7 @@ export function DataGrid() {
           </th>
         )),
         ...data
-          // .filter((row) => !isRowEmpty(row))
+          .filter((row) => !isRowEmpty(row))
           .map((row) => (
             <tr key={row.Id} className={styles["gridjs-tr"]}>
               {Object.entries(row).map(([key, value]) => (
@@ -153,7 +98,7 @@ export function DataGrid() {
                   key={`${key}_${row.Id}`}
                   className={styles["dataGridtd"]}
                   data-column-id={key}
-                  // hidden={isColumnHidden(key)}
+                  hidden={isColumnHidden(key)}
                 >
                   {value}
                 </td>
@@ -173,6 +118,21 @@ export function DataGrid() {
         );
       }
     }
+  }
+
+  const table = GenerateTableHtml();
+
+  if (table) {
+    return (
+      <>
+        <div className={styles["dataGridhtml"]}>
+          <i id="ruler" hidden></i>
+          <div className="h-4" />
+          <i id="ruler" hidden></i>
+          {table}
+        </div>
+      </>
+    );
   }
 
   function isRowEmpty<T>(row: T): boolean {
