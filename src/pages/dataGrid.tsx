@@ -186,8 +186,6 @@ export function DataGrid() {
           <div className="h-4" />
           <i id="ruler" hidden></i>
           {table}
-        </div>
-        <div>
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

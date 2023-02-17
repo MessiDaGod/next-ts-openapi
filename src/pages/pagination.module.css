@@ -1,9 +1,10 @@
 .pagination {
     display: flex;
     justify-content: center;
-    /* margin-top: 16px; */
-    /* padding-top: 20px; */
+    text-align: center;
     position: relative;
+    width: 100vw;
+    padding-top: 0.5vh;
   }
 
   .pagination a,
@@ -11,13 +12,20 @@
     margin: 0 8px;
     font-size: 16px;
     text-decoration: none;
-    color: #333;
+    /* color: #333; */
   }
 
   .pagination .active {
     font-weight: bold;
     color: #fff;
-    background-color: #333;
+    background-color: #f03a3a;
     border-radius: 4px;
     padding: 4px 8px;
+  }
+
+  .material-symbols-outlined {
+    padding-left: 10px;
+    margin-left: 10px;
+    color: white;
+    cursor: pointer;
   }
