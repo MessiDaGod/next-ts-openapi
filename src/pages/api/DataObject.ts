@@ -42,7 +42,7 @@ type DataObjectWithColumnsAndValues<T> = DataObjectWithColumns<T> & {
  * @param properties - An array of property names to use for columns.
  * @returns A DataObjectWithColumnsAndValues object of type T with default values for columns and values.
  */
-export function GenerateDataDictionary<T>(
+export function generateDefaultDataObjectWithColumnsAndValues<T>(
   properties: (keyof T)[]
 ): DataObjectWithColumnsAndValues<T> {
   const defaultColumns: Column<T>[] = properties.map((prop, idx) => ({
@@ -70,6 +70,24 @@ type Vendor = {
   Address: string;
 };
 
+export function createDataObjectWithColumnsAndValues<T>(data: T[]): DataObjectWithColumnsAndValues<T> {
+    if (data === undefined) throw new Error("Data is undefined");
+    const properties = Object.keys(data[0] as {}) as (keyof T)[];
+    const defaultObject = generateDefaultDataObjectWithColumnsAndValues(properties);
+
+    data.forEach((item) => {
+      properties.forEach((property) => {
+        defaultObject.values[property as string].Values.push(item[property]);
+      });
+    });
+
+    return defaultObject;
+  }
+
+
+
+/////////// Example /////////////
+
 // Create an array of Vendor objects
 const myVendor: Vendor[] = [
   {
@@ -90,7 +108,7 @@ const myVendor: Vendor[] = [
 
 // Generate the default DataObjectWithColumnsAndValues object
 export const DataObjectWithColumnsAndValues: DataObjectWithColumnsAndValues<Vendor> =
-  GenerateDataDictionary<Vendor>(
+  generateDefaultDataObjectWithColumnsAndValues<Vendor>(
     Object.keys(myVendor[0]) as (keyof Vendor)[]
   );
 

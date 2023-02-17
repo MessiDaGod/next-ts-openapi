@@ -5,10 +5,10 @@ import { FinVendorEtl } from "./api/Objects/FinVendorEtl";
 import { getVendors, vendorProperties } from "./api/getVendors";
 import { GenerateDefaultColumns, Columns } from "./api/defaultColumnGenerator";
 import SimpleDropdown from "./simpleDropdown";
-import { GenerateDataDictionary } from "./api/DataObject";
+import { DataObjectWithColumnsAndValues } from "./api/DataObject";
 
 function handleSetData() {
-  GenerateDataDictionary;
+  DataObjectWithColumnsAndValues;
   dataGridResize();
 }
 
