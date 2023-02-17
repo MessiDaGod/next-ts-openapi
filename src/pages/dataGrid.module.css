@@ -19,6 +19,7 @@
   padding: 2px 4px;
   white-space: nowrap;
   min-width: 1px;
+  cursor: pointer;
 }
 
 .dataGridtd {

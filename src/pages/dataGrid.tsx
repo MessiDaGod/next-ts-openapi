@@ -11,6 +11,7 @@ function handleSetData() {
 
 export function DataGrid() {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
+  const [sortState, setSortState] = React.useState<boolean>(true);
   React.useEffect(() => {
     async function fetchData() {
       try {
@@ -27,7 +28,9 @@ export function DataGrid() {
     handleSetData();
   });
 
-  function GenerateVendorData(data: Vendor | Vendor[]): DataTable<Vendor> | undefined {
+  function GenerateVendorData(
+    data: Vendor | Vendor[]
+  ): DataTable<Vendor> | undefined {
     const json = JSON.stringify(data);
     const vendors: Vendor[] = JSON.parse(json).map((vendor: Vendor) => ({
       ...vendor,
@@ -46,10 +49,20 @@ export function DataGrid() {
   }
 
   function handleSort(columnName: string) {
+    let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
         const aValue = a[columnName];
         const bValue = b[columnName];
+        if (state) {
+          if (aValue < bValue) {
+            return 1;
+          } else if (aValue > bValue) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
         if (aValue < bValue) {
           return -1;
         } else if (aValue > bValue) {
@@ -59,6 +72,7 @@ export function DataGrid() {
         }
       });
       setData(sortedData);
+      setSortState(!state);
     }
   }
 
@@ -70,32 +84,36 @@ export function DataGrid() {
         newVendors.columns.map((columnName, idx) => (
           <th
             key={`${columnName.name}${idx}`}
+            style={{ margin: "auto", cursor: "pointer" }}
             className={styles["dataGridth"]}
             data-column-id={columnName.name}
             hidden={isColumnHidden(columnName.keyName)}
           >
-            {columnName.displayName}
-            <div
-              key={`div${columnName}${idx}`}
-              className={`${styles["columndivider"]}`}
-            >
-              <button onClick={() => handleSort(columnName.keyName)}>
-                Sort
-              </button>
-            </div>
             <div
               key={`div${columnName}${idx}`}
               className={`${styles["columndivider"]}`}
             ></div>
+            <span
+              className="material-symbols-outlined"
+              onClick={() => handleSort(columnName.keyName)}
+              style={{
+                margin: "auto",
+                display: "inline-block",
+                cursor: "pointer",
+              }}
+            >
+              expand_more
+            </span>
+            {columnName.displayName}
           </th>
         )),
         ...data
           .filter((row) => !isRowEmpty(row))
-          .map((row) => (
+          .map((row, rowIndex: number) => (
             <tr key={row.Id} className={styles["gridjs-tr"]}>
-              {Object.entries(row).map(([key, value]) => (
+              {Object.entries(row).map(([key, value], index: number) => (
                 <td
-                  key={`${key}_${row.Id}`}
+                  key={`${key}_${row.Id.toString()}_${rowIndex}_${index}`}
                   className={styles["dataGridtd"]}
                   data-column-id={key}
                   hidden={isColumnHidden(key)}
