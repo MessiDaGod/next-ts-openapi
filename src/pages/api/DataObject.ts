@@ -1,3 +1,6 @@
+import { getVendors } from "./getVendors";
+import { Vendor } from "./Objects/Vendor";
+
 /**
  * Generic interface representing an object with an ID, name, and associated data of type T.
  */
@@ -33,30 +36,37 @@ type DataObjectWithColumns<T> = DataObject<T> & {
 /**
  * A type representing a DataObject of type T with associated columns and a mapping of values to columns.
  */
-type DataObjectWithColumnsAndValues<T> = DataObjectWithColumns<T> & {
+export type DataObjectWithColumnsAndValues<T> = DataObjectWithColumns<T> & {
   values: Values;
 };
 
+let idCounter = 0;
 /**
  * Generates a default DataObjectWithColumnsAndValues of type T using a list of property names for columns.
  * @param properties - An array of property names to use for columns.
  * @returns A DataObjectWithColumnsAndValues object of type T with default values for columns and values.
  */
-export function generateDefaultDataObjectWithColumnsAndValues<T>(
+export function GenerateDefaultColumns<T>(
   properties: (keyof T)[]
 ): DataObjectWithColumnsAndValues<T> {
+
   const defaultColumns: Column<T>[] = properties.map((prop, idx) => ({
     key: idx,
     name: prop,
-    displayName: prop.toString(),
+    displayName: prop
+    .toString()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" "),
   }));
+
   const values: Values = {};
   defaultColumns.forEach((column) => {
     values[column.name as string] = { Values: [] };
   });
 
   return {
-    id: 0,
+    id: idCounter++,
     name: "",
     data: {} as T,
     columns: defaultColumns,
@@ -64,16 +74,10 @@ export function generateDefaultDataObjectWithColumnsAndValues<T>(
   };
 }
 
-type Vendor = {
-  Id: number;
-  VendorName: string;
-  Address: string;
-};
-
-export function createDataObjectWithColumnsAndValues<T>(data: T[]): DataObjectWithColumnsAndValues<T> {
+export function GetDataDictionary<T>(data: T[]): DataObjectWithColumnsAndValues<T> {
     if (data === undefined) throw new Error("Data is undefined");
     const properties = Object.keys(data[0] as {}) as (keyof T)[];
-    const defaultObject = generateDefaultDataObjectWithColumnsAndValues(properties);
+    const defaultObject = GenerateDefaultColumns(properties);
 
     data.forEach((item) => {
       properties.forEach((property) => {
@@ -84,43 +88,38 @@ export function createDataObjectWithColumnsAndValues<T>(data: T[]): DataObjectWi
     return defaultObject;
   }
 
-
-
 /////////// Example /////////////
 
+// create a function that exports a Vendor[] object using getVendors();
+// export const Vendors = async (): Promise<[Vendor]> => {
+//   const vendors = await getVendors();
+//   return vendors;
+// }
+
 // Create an array of Vendor objects
-const myVendor: Vendor[] = [
-  {
-    Id: 1,
-    VendorName: "Vendor 1",
-    Address: "123 Main St",
-  },
-  {
-    Id: 2,
-    VendorName: "Vendor 2",
-    Address: "456 Oak St",
-  },
-];
+// export const vendors = async (): Promise<Vendor | Vendor[] | null> => [
+//   await getVendors();
+// ];
 
-/**
- * An example of using generateDefaultDataObjectWithColumnsAndValues to create a DataObjectWithColumnsAndValues of type Vendor.
- */
+// /**
+//  * An example of using generateDefaultDataObjectWithColumnsAndValues to create a DataObjectWithColumnsAndValues of type Vendor.
+//  */
 
-// Generate the default DataObjectWithColumnsAndValues object
-export const DataObjectWithColumnsAndValues: DataObjectWithColumnsAndValues<Vendor> =
-  generateDefaultDataObjectWithColumnsAndValues<Vendor>(
-    Object.keys(myVendor[0]) as (keyof Vendor)[]
-  );
 
-// Loop through each Vendor object and populate the values
-myVendor.forEach((vendor) => {
-  Object.entries(vendor).forEach(([key, value]) => {
-    DataObjectWithColumnsAndValues.values[key].Values.push(value);
-  });
-});
+// const DataObjectWithColumnsAndValues: DataObjectWithColumnsAndValues<Vendor> =
+//   generateDefaultDataObjectWithColumnsAndValues<Vendor>(
+//     Object.keys(myVendor[0]) as (keyof Vendor)[]
+//   );
 
-// The DataObjectWithColumnsAndValues object now includes the columns, keys, and values for all the properties in the Vendor objects
-const columnName = DataObjectWithColumnsAndValues.columns[1].name;
-const columnValues = DataObjectWithColumnsAndValues.values[columnName].Values;
-const value = columnValues[0];
-console.log(value);
+// // Loop through each Vendor object and populate the values
+// myVendor.forEach((vendor) => {
+//   Object.entries(vendor).forEach(([key, value]) => {
+//     DataObjectWithColumnsAndValues.values[key].Values.push(value);
+//   });
+// });
+
+// // The DataObjectWithColumnsAndValues object now includes the columns, keys, and values for all the properties in the Vendor objects
+// const columnName = DataObjectWithColumnsAndValues.columns[1].name;
+// const columnValues = DataObjectWithColumnsAndValues.values[columnName].Values;
+// const value = columnValues[0];
+// console.log(value);

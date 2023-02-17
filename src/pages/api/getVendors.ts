@@ -1,16 +1,15 @@
-import { FinVendorEtl, emptyVendor } from "./Objects/FinVendorEtl";
-
-export const vendorProperties: FinVendorEtl = Object.keys(emptyVendor).reduce(
-  (acc, key) => ({ ...acc, [key]: "" }),
-  {} as FinVendorEtl
-);
+import { Vendor, emptyVendor } from "./Objects/Vendor";
 
 // Register a new user
 export async function getVendors() {
-    let url = `https://localhost:5006/api/data/GetVendors`;
-    const response = await fetch(url, {
+    try {
+      const url = `https://localhost:5006/api/data/GetVendors`;
+      const response = await fetch(url, {
       method: 'GET'
     });
-    const vendors: FinVendorEtl[] = JSON.parse(await response.text());
+    const vendors: Vendor[] = JSON.parse(await response.text());
     return vendors;
+  } catch (error) {
+    return emptyVendor;
+  }
 }

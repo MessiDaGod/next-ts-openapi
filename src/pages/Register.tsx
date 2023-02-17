@@ -24,7 +24,7 @@ const Register: React.FC<RegisterProps> = () => {
         return response.json( )
       })
       .then((data) => {
-        console.log(data.message)
+
       })
       .catch((_error) => {
         // console.info(error)
@@ -39,12 +39,10 @@ const Register: React.FC<RegisterProps> = () => {
       return
     }
     const encoded = `https://localhost:5006/api/auth/DoRegister?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&plainUsername=${encodeURIComponent(username)}&plainPassword=${encodeURIComponent(password)}`
-    console.log(`${encoded}`)
     const response = await fetch(`${encoded}`, {
       method: 'POST'
     })
     const data = await response.text()
-    console.log(data)
   }
 
   return (

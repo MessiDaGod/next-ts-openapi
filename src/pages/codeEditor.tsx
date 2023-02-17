@@ -31,7 +31,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
       const sql = editor.getValue();
       await formatSql(sql).then((formattedSql) => {
         // Do something with the formatted SQL string
-        console.log(formattedSql);
+        // console.log(formattedSql);
       });
     });
   };
