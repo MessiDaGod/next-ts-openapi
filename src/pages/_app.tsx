@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Link from "next/link";
-import styles from "@/styles/Home.module.css";
+import styles from "@/styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -41,12 +41,13 @@ function Sidebar() {
         isExpanded ? styles.expanded : styles.collapsed
       }`}
     >
-      <button
-        className={styles.expandButton}
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <span className={`material-symbols-outlined ${styles.expandIcon}`}>menu</span>
-      </button>
+  <button
+    className={`${styles.expandButton} ${styles.customExpandButton}`}
+    onClick={() => setIsExpanded(!isExpanded)}
+  >
+    <span className={`material-symbols-outlined ${styles.expandIcon}`}>menu</span>
+  </button>
+
       <nav>
         <ul className={styles["sidebar-ul"]}>
           {sidebarItems.map((item) => (
