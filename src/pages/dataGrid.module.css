@@ -1,4 +1,4 @@
-.dataGridhtml {
+.datagriddiv {
   font-family: sans-serif;
   font-size: 14px;
   color: white;
@@ -62,4 +62,14 @@
 }
 .material-symbols-outlined {
   float: right;
+}
+
+.datagrid {
+  margin-left: 20vw; /* Replace with the width of the sidebar when retracted */
+  width: calc(100% - 20vw); /* Replace with the width of the sidebar when retracted */
+}
+
+.sidebar.collapsed + .datagrid {
+  margin-left: 50px; /* Replace with the width of the sidebar when expanded */
+  width: calc(100% - 50px); /* Replace with the width of the sidebar when expanded */
 }

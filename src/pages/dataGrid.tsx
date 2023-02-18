@@ -181,7 +181,7 @@ export function DataGrid() {
 
     return (
       <>
-        <div className={styles["dataGridhtml"]}>
+        <div className={styles["datagriddiv"]}>
           <i id="ruler" hidden></i>
           <div className="h-4" />
           <i id="ruler" hidden></i>

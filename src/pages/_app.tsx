@@ -1,12 +1,71 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Link from "next/link";
-import topBarStyles from "./TopBar.module.css";
-import main from "@/styles/Home.module.css";
+import styles from "@/styles/Home.module.css";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
-import homeStyles from "@/styles/Home.module.css";
-// import './index.css'
+import { useEffect, useState } from "react";
+
+interface SidebarItem {
+  Name: string;
+  Path: string;
+  Icon: string;
+  New?: boolean;
+  Updated?: boolean;
+}
+
+interface Menu {
+  topBar: { id: string; label: string; url: string }[];
+  sideMenu: { id: string; label: string; url: string }[];
+  sidebar: SidebarItem[];
+}
+
+function Sidebar() {
+  const [sidebarItems, setSidebarItems] = useState<SidebarItem[]>([]);
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  useEffect(() => {
+    async function fetchMenu() {
+      const response = await fetch("/menu.json");
+      const data = await response.json();
+      setSidebarItems(data.sidebar);
+    }
+
+    fetchMenu();
+  }, []);
+
+  // Render the sidebar items
+  return (
+    <div
+      className={`${styles.sidebar} ${
+        isExpanded ? styles.expanded : styles.collapsed
+      }`}
+    >
+      <button
+        className={styles.expandButton}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <span className={`material-symbols-outlined ${styles.expandIcon}`}>menu</span>
+      </button>
+      <nav>
+        <ul>
+          {sidebarItems.map((item) => (
+            <li key={item.Path} className={styles["sidebar__item"]}>
+              <a href={item.Path}>
+                <span className={`material-symbols-outlined ${styles.icon}`}>
+                  {item.Icon}&nbsp;
+                </span>
+                {item.Name}
+                {item.New && <span>New</span>}
+                {item.Updated && <span>Updated</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -25,23 +84,24 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/dog.png" />
       </Head>
-      <div className={main.main}>
-        <div className={topBarStyles["topbar"]}>
-          <div className={topBarStyles.logo}></div>
-          <div className={topBarStyles["linksContainer"]}>
-            <Link className={homeStyles["links"]} href="/">
+      <div className={styles.main}>
+        <div className={styles["topbar"]}>
+          <div className={styles.logo}></div>
+          <div className={styles["linksContainer"]}>
+            <Link className={styles["links"]} href="/">
               Home
             </Link>
-            <Link className={homeStyles["links"]} href="/register">
+            <Link className={styles["links"]} href="/register">
               Register
             </Link>
-            <Link className={homeStyles["links"]} href="/propOptions">
+            <Link className={styles["links"]} href="/propOptions">
               Prop Options
             </Link>
-            <Link className={homeStyles["links"]} href="/codeEditor">
+            <Link className={styles["links"]} href="/codeEditor">
               Code Editor
             </Link>
           </div>
+            <Sidebar />
             <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
         <Component {...pageProps} />
