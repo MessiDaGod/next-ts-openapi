@@ -3,22 +3,24 @@
     color: white;
   }
 :root {
-  --sb-bgc: #082042;
-  --tb-bgc: #072f6a;
+  --sb-bg: #252525;
+  --tb-bg: #252525;
   --tb-height: 50px;
-  --sb-width: 15vw;
+  --sb-width: 10vw;
   --rz-badge-padding: 0.125rem 0.25rem;
   --rz-badge-font-size: 0.75rem;
   --rz-badge-font-weight: 500;
   --rz-badge-line-height: 500;
-  --rz-badge-text-transform: uppercase;
   --rz-badge-border-spacing: 4px;
   --rz-badge-letter-spacing: 0.02rem;
-  --hover-color: #072ef0;
+  --rz-body-padding: 1rem;
+  --transform: transition: transform 0.3s ease-in-out;
 }
   html {
     font-family: sans-serif;
     font-size: 14px;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
   }
 
   table,
@@ -103,4 +105,11 @@
     width: 1em;
     height: 1em;
     overflow: hidden;
+  }
+
+  nav {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: var(--bg-color);
   }

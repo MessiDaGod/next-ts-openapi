@@ -5,6 +5,7 @@
   height: 70vh;
   max-height: 70vh;
   width: 80vw;
+  margin-left: calc(var(--sb-width));
 }
 
 .dataGridtable {
@@ -65,11 +66,5 @@
 }
 
 .datagrid {
-  margin-left: 20vw; /* Replace with the width of the sidebar when retracted */
-  width: calc(100% - 20vw); /* Replace with the width of the sidebar when retracted */
-}
-
-.sidebar.collapsed + .datagrid {
-  margin-left: 50px; /* Replace with the width of the sidebar when expanded */
-  width: calc(100% - 50px); /* Replace with the width of the sidebar when expanded */
+  margin-left: calc(100% - var(--sb-width));
 }

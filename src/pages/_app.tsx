@@ -5,6 +5,8 @@ import styles from "@/styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import { cn } from "./classNames";
+import { useRouter } from "next/router";
 
 interface SidebarItem {
   Name: string;
@@ -13,12 +15,12 @@ interface SidebarItem {
   New?: boolean;
   Updated?: boolean;
 }
-
 interface Menu {
   sidebarItems: SidebarItem[];
 }
 
-const Sidebar: React.FC = () => {
+export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -35,44 +37,14 @@ const Sidebar: React.FC = () => {
     setCollapsed(!collapsed);
   };
 
-  return (
-    <>
-      <div
-        className={styles["dropdown"]}
-        style={{ position: "relative", display: "inline-block" }}
-      >
-        <button
-          className={`${styles["expandButton"]} ${
-            collapsed ? styles.expandButtoncollapsed : ""
-          }`}
-          onClick={handleCollapse}
-        >
-          {collapsed ? (
-            <span className="material-symbols-outlined">arrow_right</span>
-          ) : (
-            <span className="material-symbols-outlined">arrow_left</span>
-          )}
-        </button>
-      </div>
-      <nav
-        className={`${styles["sidebar"]} ${
-          collapsed ? styles.collapsed : styles.expanded
-        }`}
-      >
-        <ul className={styles["ul"]}>
-          {menu?.sidebarItems.map((item, index: number) => (
-            <li key={index} className={styles["sidebar__item"]}>
-              <span className="material-symbols-outlined">{item.Icon}</span>
-              <a href={item.Path}>{item.Name}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </>
-  );
-};
+  function getBodyClasses() {
 
-export default function App({ Component, pageProps }: AppProps) {
+  }
+
+  function goHome(): void {
+    router.push("/");
+  }
+
   return (
     <>
       <Head>
@@ -89,28 +61,82 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/dog.png" />
       </Head>
-      <div className={styles.main}>
-        <Sidebar />
+      <nav>
+        <>
+          <div
+            className={styles["dropdown"]}
+            style={{ position: "relative", display: "inline-block" }}
+          >
+            <button
+              className={`${styles["expandButton"]} ${
+                collapsed ? styles.collapsed : styles.expanded
+              }`}
+              onClick={handleCollapse}
+            >
+              {collapsed ? (
+                <span className="material-symbols-outlined">menu</span>
+              ) : (
+                <span className="material-symbols-outlined">menu</span>
+              )}
+            </button>
+          </div>
+          <nav
+            className={`${styles["sidebar"]} ${
+              collapsed ? styles.collapsed : styles.expanded
+            }`}
+          >
+            <ul className={styles["ul"]}>
+              {menu?.sidebarItems.map((item, index: number) => (
+                <li key={index} className={styles["sidebar__item"]}>
+                  <span className="material-symbols-outlined">{item.Icon}</span>
+                  <a href={item.Path}>{item.Name}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </>
         <div className={styles["topbar"]}>
-          <div className={styles.logo}></div>
+          <a
+            type="button"
+            className={styles.sitelogo}
+            onClick={() => goHome()}
+            style={{ justifyContent: "flex-start", paddingRight: "50px" }}
+          >
+            <span
+              style={{
+                fontSize: "24px",
+                userSelect: "none",
+                cursor: "pointer",
+              }}
+            >
+              Shakely Consulting
+            </span>
+          </a>
+
           <div className={styles["linksContainer"]}>
             <Link className={styles["links"]} href="/">
               Home
             </Link>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Link className={styles["links"]} href="/register">
               Register
             </Link>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Link className={styles["links"]} href="/propOptions">
               Prop Options
             </Link>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Link className={styles["links"]} href="/codeEditor">
               Code Editor
             </Link>
+            &nbsp;&nbsp;&nbsp;&nbsp;
           </div>
           <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
-        <Component {...pageProps} />
-      </div>
+        <div className={cn(styles["rz-body"], collapsed ? styles["body-retracted"] : "")}>
+          <Component {...pageProps} />
+        </div>
+      </nav>
     </>
   );
 }

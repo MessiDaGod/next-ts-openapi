@@ -2,23 +2,23 @@
 .topbar {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  // left: 0;
+  // right: 0;
   height: var(--tb-height);
-  background-color: var(--sb-bgc);
+  background-color: var(--sb-bg);
   color: #fff;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
+  // align-items: center;
   z-index: 1;
+  width: 100%;
+}
+.rz-body {
+  padding-top: var(--tb-height);
 }
 
-/* styles for main content */
-.main {
-  margin-top: 50px;
-  padding: 20px;
-  padding-left: translateX(-var(--sb-width));
+.body-retracted {
+  transform: translateX(calc(var(--sb-width) * -1));
+  transition: var(--transform);
 }
 
 .sidebar {
@@ -27,9 +27,9 @@
   position: fixed;
   top: var(--tb-height);
   left: 0;
-  background-color: var(--sb-bgc);
+  background-color: var(--sb-bg);
   z-index: 1;
-  transition: transform 0.3s ease-in-out;
+  transition: var(--transform);
   overflow-y: auto;
 
   &.collapsed {
@@ -44,7 +44,7 @@
     text-decoration: none;
 
     &:hover {
-      background-color: black;
+      background-color: rgb(65, 62, 62);
     }
 
     &--active {
@@ -86,33 +86,27 @@
   }
 }
 
-
 .expandButton {
   background-color: transparent;
   border: none;
   cursor: pointer;
   position: relative;
   position: fixed;
-  top: var(--tb-height);
-  left: var(--sb-width);
-}
-
-.expandButtoncollapsed {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  position: fixed;
-  top: var(--tb-height);
+  top: 0;
   left: 0;
 }
 
-.sidebar__item {
-  list-style: none;
-  text-decoration: none;
-  cursor: pointer;
+.expandButton.expanded {
+  // top: var(--tb-height);
+  // left: calc(var(--sb-width));
 }
 
+.expandButton.collapsed {
+  // top: var(--tb-height);
+  // left: 0;
+}
+
+.sidebar__item,
 .sidebar__item a {
   list-style: none;
   text-decoration: none;
@@ -120,16 +114,20 @@
 }
 
 .links {
-  padding-right: 1vw;
   text-decoration: none;
   color: white;
-  user-select: all;
-
+  user-select: none;
+  transition: background-color 1s ease-out;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  align-items: center;
+  margin-top: 15px;
+  justify-content: flex-end;
 }
 
 .links:hover {
-  background-color: #1733c0;
-  transition: background-color 0.5s ease-out;
+  border-bottom: 2px solid #f7f7f7;
+  transition: border-bottom 0.3s;
 }
 
 .rz-badge-success {
@@ -148,14 +146,10 @@
   background-color: green;
 }
 
-.expanded {
-  transform: translateX(0);
-}
 
 .dropdown {
   position: relative;
   display: inline-block;
-  margin-right: 1rem;
   z-index: 4;
 }
 
@@ -168,4 +162,18 @@
   margin-inline-end: 0px;
   padding-inline-start: 0px;
   width: 100%;
+}
+
+.linksContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sitelogo {
+  color: white;
+  white-space: nowrap;
+  align-items: center;
+  display: block;
+  position: relative;
+  margin-left: 40px;
 }
