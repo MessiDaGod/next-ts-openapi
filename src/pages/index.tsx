@@ -4,11 +4,13 @@ import Sidebar from "./sidebar";
 
 export default function Home() {
   return (
-    <div>
-      <main className={styles.main}>
-      <Sidebar />
-      {DataGrid()}
-      </main>
+    <div className={styles["rz-layout"]}>
+      <div className={styles["rz-body"]}>
+        <main className={styles.main}>
+          <Sidebar />
+          {DataGrid()}
+        </main>
+      </div>
     </div>
   );
 }

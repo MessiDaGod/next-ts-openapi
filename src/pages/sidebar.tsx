@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./sidebar.module.css";
+import styles from '../styles/sidebar.module.scss'
 
 interface SidebarItem {
   Name: string;
@@ -45,10 +45,10 @@ function Sidebar() {
       <nav>
         <ul>
           {sidebarItems.map((item) => (
-            <li key={item.Path} className={styles["li"]}>
+            <li key={item.Path} className={styles["sidebar__item"]}>
               <a href={item.Path}>
                 <span className={`material-symbols-outlined ${styles.icon}`}>
-                  {item.Icon}
+                  {item.Icon}&nbsp;
                 </span>
                 {item.Name}
                 {item.New && <span>New</span>}
