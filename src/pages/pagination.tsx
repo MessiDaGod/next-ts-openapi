@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./pagination.module.css";
+import styles from "./pagination.module.scss";
 
 interface PaginationProps {
   currentPage: number;
@@ -61,32 +61,34 @@ export function Pagination({
   }
 
   return (
-    <div className={styles["pagination"]}>
-      {showChevrons && (
-        <span
-          className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          chevron_left
-        </span>
-      )}
-      {pageNumbers.map((pageNumber, index: number) => (
-        <button
-          key={pageNumber}
-          onClick={() => handlePageChange(pageNumber)}
-          className={pageNumber === currentPage ? styles.active : ""}
-        >
-          {pageNumber}
-        </button>
-      ))}
-      {showChevrons && (
-        <span
-          className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          chevron_right
-        </span>
-      )}
+    <div className={styles["pagination-container"]}>
+      <div className={styles["pagination"]}>
+        {showChevrons && (
+          <span
+            className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            chevron_left
+          </span>
+        )}
+        {pageNumbers.map((pageNumber, index: number) => (
+          <button
+            key={pageNumber}
+            onClick={() => handlePageChange(pageNumber)}
+            className={pageNumber === currentPage ? styles.active : ""}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        {showChevrons && (
+          <span
+            className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            chevron_right
+          </span>
+        )}
+      </div>
     </div>
   );
 }

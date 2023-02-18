@@ -1,6 +1,7 @@
 * {
     box-sizing: border-box;
     color: white;
+    border-style: none;
   }
 :root {
   --sb-bg: #252525;
@@ -14,7 +15,7 @@
   --rz-badge-border-spacing: 4px;
   --rz-badge-letter-spacing: 0.02rem;
   --rz-body-padding: 1rem;
-  --transform: transition: transform 0.3s ease-in-out;
+  --transform: transform 0.2s ease-in-out;
 }
   html {
     font-family: sans-serif;
@@ -22,7 +23,9 @@
     line-height: 1.15;
     -webkit-text-size-adjust: 100%;
   }
-
+div {
+  display: flex;
+}
   table,
   .divTable {
     border: 1px solid lightgray;
