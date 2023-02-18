@@ -6,7 +6,7 @@
   --sb-bgc: #082042;
   --tb-bgc: #072f6a;
   --tb-height: 50px;
-  --sb-width: 10vw;
+  --sb-width: 15vw;
   --rz-badge-padding: 0.125rem 0.25rem;
   --rz-badge-font-size: 0.75rem;
   --rz-badge-font-weight: 500;
@@ -95,7 +95,6 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    padding: 0.5rem 1rem;
     transition: all 0.2s ease-in-out;
   }
 

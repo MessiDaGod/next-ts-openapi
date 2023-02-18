@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   height: var(--tb-height);
-  background-color: var(--tb-bgc);
+  background-color: var(--sb-bgc);
   color: #fff;
   display: flex;
   justify-content: space-between;
@@ -18,16 +18,17 @@
 .main {
   margin-top: 50px;
   padding: 20px;
+  padding-left: translateX(-var(--sb-width));
 }
 
 .sidebar {
-  width: 250px;
+  width: var(--sb-width);
   height: 100vh;
   position: fixed;
-  top: 0;
+  top: var(--tb-height);
   left: 0;
   background-color: var(--sb-bgc);
-  z-index: 2;
+  z-index: 1;
   transition: transform 0.3s ease-in-out;
   overflow-y: auto;
 
@@ -87,31 +88,23 @@
 
 
 .expandButton {
-  background-color: black;
+  background-color: transparent;
   border: none;
   cursor: pointer;
   position: relative;
   position: fixed;
-  top: 0;
-  left: 10vw;
-
-  &:hover {
-    background-color: purple;
-  }
+  top: var(--tb-height);
+  left: var(--sb-width);
 }
 
 .expandButtoncollapsed {
-  background-color: black;
+  background-color: transparent;
   border: none;
   cursor: pointer;
   position: relative;
   position: fixed;
-  top: 0;
+  top: var(--tb-height);
   left: 0;
-
-  &:hover {
-    background-color: purple;
-  }
 }
 
 .sidebar__item {
@@ -164,4 +157,15 @@
   display: inline-block;
   margin-right: 1rem;
   z-index: 4;
+}
+
+.ul {
+  display: inline-block;
+  list-style-type: disc;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+  width: 100%;
 }

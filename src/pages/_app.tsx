@@ -59,7 +59,7 @@ const Sidebar: React.FC = () => {
           collapsed ? styles.collapsed : styles.expanded
         }`}
       >
-        <ul>
+        <ul className={styles["ul"]}>
           {menu?.sidebarItems.map((item, index: number) => (
             <li key={index} className={styles["sidebar__item"]}>
               <span className="material-symbols-outlined">{item.Icon}</span>
