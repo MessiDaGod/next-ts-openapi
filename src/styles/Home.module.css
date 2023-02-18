@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 50px;
+    height: var(--tb-height);
     background-color: var(--tb-bgc);
     color: #fff;
     display: flex;
@@ -32,19 +32,24 @@
     overflow-y: auto;
   }
 
+  .sidebar-ul {
+    width: 100%;
+  }
+
   .sidebar__item {
     margin-bottom: 10px;
+    background-color: transparent;
   }
 
   .sidebar__item a {
     display: block;
-    padding: 10px;
-    color: #333;
+    width: 100%;
     text-decoration: none;
   }
 
   .sidebar__item a:hover {
-    background-color: #ddd;
+    background-color: var(--hover-color);
+    transition: transform 0.3s ease-out;
   }
 
   .sidebar {
@@ -52,7 +57,7 @@
     top: var(--tb-height);
     left: 0;
     bottom: 0;
-    width: 250px;
+    width: var(--sb-width);
     background-color: var(--sb-bgc);
     color: #fff;
     transition: transform 0.3s ease-out;
@@ -63,13 +68,14 @@
   }
 
   .expandButton {
-    position: absolute;
-    top: var(--tb-height);
-    background-color: #130354;
+    /* position: absolute; */
+    margin-left:  10vw;
+    top: calc(var(--tb-height) * 0.1);
+    background-color: #dc2f09;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease-out;
-    z-index: 2;
+    z-index: 3;
   }
 
   .expandButton:hover {
@@ -77,8 +83,14 @@
   }
 
   .expandIcon {
-    font-size: 30px;
-    color: #fff;
+    position: absolute;
+    margin-left:  10vw;
+    top: calc(var(--tb-height) * 0.1);
+    background-color: #130354;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+    z-index: 3;
   }
 
   .sidebar__item {
@@ -87,4 +99,30 @@
 
 .links {
     padding-right: 1vw;
+    text-decoration: none;
+    color: white;
+    user-select: all;
+
+}
+.links:hover {
+    background-color: #1733c0;
+    transition: background-color 0.5s ease-out;
+}
+.rz-badge-success {
+    color: var(--rz-text-contrast-color);
+    display: inline-block;
+    padding: var(--rz-badge-padding);
+    font-size: var(--rz-badge-font-size);
+    text-align: center;
+    text-transform: var(--rz-badge-text-transform);
+    white-space: nowrap;
+    border-radius: var(--rz-badge-border-radius);
+    letter-spacing: var(--rz-badge-letter-spacing);
+}
+
+.rz-badge-success {
+    background-color: green;
+}
+.expanded {
+    transform: translateX(0);
 }

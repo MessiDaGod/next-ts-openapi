@@ -48,7 +48,7 @@ function Sidebar() {
         <span className={`material-symbols-outlined ${styles.expandIcon}`}>menu</span>
       </button>
       <nav>
-        <ul>
+        <ul className={styles["sidebar-ul"]}>
           {sidebarItems.map((item) => (
             <li key={item.Path} className={styles["sidebar__item"]}>
               <a href={item.Path}>
@@ -56,7 +56,7 @@ function Sidebar() {
                   {item.Icon}&nbsp;
                 </span>
                 {item.Name}
-                {item.New && <span>New</span>}
+                {item.New && <span className={styles["rz-badge-success"]}>New</span>}
                 {item.Updated && <span>Updated</span>}
               </a>
             </li>

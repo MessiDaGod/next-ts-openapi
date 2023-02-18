@@ -3,10 +3,18 @@
     color: white;
   }
 :root {
-  --sb-bgc: #0d1117;
+  --sb-bgc: #082042;
   --tb-bgc: #072f6a;
   --tb-height: 50px;
-  --sb-width: 25vw;
+  --sb-width: 10vw;
+  --rz-badge-padding: 0.125rem 0.25rem;
+  --rz-badge-font-size: 0.75rem;
+  --rz-badge-font-weight: 500;
+  --rz-badge-line-height: 500;
+  --rz-badge-text-transform: uppercase;
+  --rz-badge-border-spacing: 4px;
+  --rz-badge-letter-spacing: 0.02rem;
+  --hover-color: #072ef0;
 }
   html {
     font-family: sans-serif;
