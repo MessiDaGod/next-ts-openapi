@@ -1,24 +1,24 @@
 export type PropOptions = {
   id: number;
   property_Code: string;
-  property_Name: string | null;
-  type: string | null;
-  stringValue: string | null;
-  handleValue: string | null;
-  handleValueInt: number | null;
-  date: string | null;
-  [key: string]: string | number | null;
+  property_Name: string;
+  type: string;
+  stringValue: string;
+  handleValue: string;
+  handleValueInt: number;
+  date: string;
+  [key: string]: string | number;
 };
 
 export const emptyPropOptions: PropOptions = {
   id: 0,
   property_Code: "",
-  property_Name: null,
-  type: null,
-  stringValue: null,
-  handleValue: null,
-  handleValueInt: null,
-  date: null,
+  property_Name: "",
+  type: "",
+  stringValue: "",
+  handleValue: "",
+  handleValueInt: 0,
+  date: "",
 };
 
 export const propOptionProperties: PropOptions = Object.keys(

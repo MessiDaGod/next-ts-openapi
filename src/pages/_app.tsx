@@ -35,6 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
             <Link className={homeStyles["links"]} href="/register">
               Register
             </Link>
+            <Link className={homeStyles["links"]} href="/propOptions">
+              Prop Options
+            </Link>
             <Link className={homeStyles["links"]} href="/codeEditor">
               Code Editor
             </Link>

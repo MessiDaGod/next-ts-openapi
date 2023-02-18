@@ -52,20 +52,20 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label 
     setSelectedItem(item);
     setShowDropdown(false);
 
-    const value = item;
-    const userId = 1;
-    const url = `/api/addOrUpdateConnection?value=${value}&userId=${userId}`;
+    // const value = item;
+    // const userId = 1;
+    // const url = `/api/addOrUpdateConnection?value=${value}&userId=${userId}`;
 
-    fetch(url)
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        console.log(data.message);
-      })
-      .catch(_error => {
-        // console.info(error);
-      });
+    // fetch(url)
+    //   .then(response => {
+    //     return response.json();
+    //   })
+    //   .then(data => {
+    //     console.log(data.message);
+    //   })
+    //   .catch(_error => {
+    //     // console.info(error);
+    //   });
   };
 
   return (
