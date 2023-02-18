@@ -4,7 +4,7 @@ import Link from "next/link";
 import styles from "@/styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface SidebarItem {
   Name: string;
@@ -15,58 +15,93 @@ interface SidebarItem {
 }
 
 interface Menu {
-  topBar: { id: string; label: string; url: string }[];
-  sideMenu: { id: string; label: string; url: string }[];
-  sidebar: SidebarItem[];
+  sidebarItems: SidebarItem[];
 }
 
-function Sidebar() {
-  const [sidebarItems, setSidebarItems] = useState<SidebarItem[]>([]);
-  const [isExpanded, setIsExpanded] = useState(true);
+const Sidebar: React.FC = () => {
+  const [menu, setMenu] = useState<Menu | null>(null);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    async function fetchMenu() {
-      const response = await fetch("/menu.json");
-      const data = await response.json();
-      setSidebarItems(data.sidebar);
+    async function fetchData() {
+      fetch("/menu.json")
+      .then((response) => response.json())
+      .then((data) => setMenu(data))
     }
-
-    fetchMenu();
+    fetchData();
   }, []);
 
-  // Render the sidebar items
-  return (
-    <div
-      className={`${styles.sidebar} ${
-        isExpanded ? styles.expanded : styles.collapsed
-      }`}
-    >
-  <button
-    className={`${styles.expandButton} ${styles.customExpandButton}`}
-    onClick={() => setIsExpanded(!isExpanded)}
-  >
-    <span className={`material-symbols-outlined ${styles.expandIcon}`}>menu</span>
-  </button>
+  const handleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
 
-      <nav>
-        <ul className={styles["sidebar-ul"]}>
-          {sidebarItems.map((item) => (
-            <li key={item.Path} className={styles["sidebar__item"]}>
-              <a href={item.Path}>
-                <span className={`material-symbols-outlined ${styles.icon}`}>
-                  {item.Icon}&nbsp;
-                </span>
-                {item.Name}
-                {item.New && <span className={styles["rz-badge-success"]}>New</span>}
-                {item.Updated && <span>Updated</span>}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
+  return (
+    <nav className={`${styles["sidebar"]} ${collapsed ? styles.collapsed : styles.expanded}`}>
+      <button className={`${styles["expandButton"]} ${collapsed ? styles.expandButtoncollapsed : ""}`} onClick={handleCollapse}>
+        {collapsed ? <span className="material-symbols-outlined">arrow_right</span> : <span className="material-symbols-outlined">arrow_left</span>}
+      </button>
+      <ul>
+        {menu?.sidebarItems.map((item, index: number) => (
+          <li
+            key={index}
+            className={styles["sidebar__item"]}>
+             <span className="material-symbols-outlined">{item.Icon}</span><a href={item.Path}>{item.Name}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
-}
+};
+
+
+
+// interface Menu {
+//   topBar: { id: string; label: string; url: string }[];
+//   sideMenu: { id: string; label: string; url: string }[];
+//   sidebar: SidebarItem[];
+// }
+
+// function Sidebar() {
+//   const [sidebarItems, setSidebarItems] = useState<SidebarItem[]>([]);
+//   const [isExpanded, setIsExpanded] = useState(true);
+
+//   useEffect(() => {
+//     async function fetchMenu() {
+//       const response = await fetch("/menu.json");
+//       const data = await response.json();
+//       setSidebarItems(data.sidebar);
+//     }
+
+//     fetchMenu();
+//   }, []);
+
+//   // Render the sidebar items
+//   return (
+//     <div
+//       className={`${styles.sidebar} ${
+//         isExpanded ? styles.expanded : styles.collapsed
+//       }`}
+//     >
+//       <div className={styles.expandButtonContainer}>
+//         <button
+//           className={styles.expandButton}
+//           onClick={() => setIsExpanded(!isExpanded)}
+//         >
+//           <span className={`material-symbols-outlined  ${styles.expandIcon}`}>
+//             menu
+//           </span>
+//         </button>
+//       </div>
+//       {/* <nav> */}
+//         <div className={styles.sidebar}>
+//           {sidebarItems.map((item) => (
+//             <div key={item.Name} className={styles.sidebar}>{item.Name}</div>
+//           ))}
+//         </div>
+//       {/* </nav> */}
+//     </div>
+//   );
+// }
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -102,8 +137,8 @@ export default function App({ Component, pageProps }: AppProps) {
               Code Editor
             </Link>
           </div>
-            <Sidebar />
-            <ConnectionDropdown jsonFileName="connections" label="Connections" />
+          <Sidebar />
+          <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
         <Component {...pageProps} />
       </div>
