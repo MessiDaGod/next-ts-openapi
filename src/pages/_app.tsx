@@ -25,8 +25,8 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       fetch("/menu.json")
-      .then((response) => response.json())
-      .then((data) => setMenu(data))
+        .then((response) => response.json())
+        .then((data) => setMenu(data));
     }
     fetchData();
   }, []);
@@ -36,23 +36,41 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <nav className={`${styles["sidebar"]} ${collapsed ? styles.collapsed : styles.expanded}`}>
-      <button className={`${styles["expandButton"]} ${collapsed ? styles.expandButtoncollapsed : ""}`} onClick={handleCollapse}>
-        {collapsed ? <span className="material-symbols-outlined">arrow_right</span> : <span className="material-symbols-outlined">arrow_left</span>}
-      </button>
-      <ul>
-        {menu?.sidebarItems.map((item, index: number) => (
-          <li
-            key={index}
-            className={styles["sidebar__item"]}>
-             <span className="material-symbols-outlined">{item.Icon}</span><a href={item.Path}>{item.Name}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <>
+      <div
+        className={styles["dropdown"]}
+        style={{ position: "relative", display: "inline-block" }}
+      >
+        <button
+          className={`${styles["expandButton"]} ${
+            collapsed ? styles.expandButtoncollapsed : ""
+          }`}
+          onClick={handleCollapse}
+        >
+          {collapsed ? (
+            <span className="material-symbols-outlined">arrow_right</span>
+          ) : (
+            <span className="material-symbols-outlined">arrow_left</span>
+          )}
+        </button>
+      </div>
+      <nav
+        className={`${styles["sidebar"]} ${
+          collapsed ? styles.collapsed : styles.expanded
+        }`}
+      >
+        <ul>
+          {menu?.sidebarItems.map((item, index: number) => (
+            <li key={index} className={styles["sidebar__item"]}>
+              <span className="material-symbols-outlined">{item.Icon}</span>
+              <a href={item.Path}>{item.Name}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </>
   );
 };
-
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -72,6 +90,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/dog.png" />
       </Head>
       <div className={styles.main}>
+        <Sidebar />
         <div className={styles["topbar"]}>
           <div className={styles.logo}></div>
           <div className={styles["linksContainer"]}>
@@ -88,7 +107,6 @@ export default function App({ Component, pageProps }: AppProps) {
               Code Editor
             </Link>
           </div>
-          <Sidebar />
           <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
         <Component {...pageProps} />
