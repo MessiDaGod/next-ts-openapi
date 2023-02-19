@@ -118,7 +118,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <div className={styles["linksContainer"]}>
             {menu?.topBar.map((item, index: number) => (
-              <><Link key={item.id} className={styles["links"]} href={item.url}>
+              <><Link key={index} className={styles["links"]} href={item.url}>
                 {item.label}
               </Link>&nbsp;&nbsp;&nbsp;&nbsp;</>
             ))}
