@@ -75,7 +75,7 @@ export function Pagination({
           <button
             key={pageNumber}
             onClick={() => handlePageChange(pageNumber)}
-            className={pageNumber === currentPage ? styles.active : ""}
+            className={pageNumber === currentPage ? styles.active : styles.button}
           >
             {pageNumber}
           </button>

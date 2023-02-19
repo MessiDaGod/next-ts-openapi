@@ -12,23 +12,26 @@
 }
 
 .rz-body {
-  position: relative;
-  overflow-x: scroll;
+  position: fixed;
   padding: 0;
   border: blue;
   border-style: solid;
   max-width: 90vw;
+  width: 90vw;
   left: var(--sb-width);
   top: var(--tb-height);
-  max-height: calc(100vh - var(--tb-height));
-  transition: var(--transform);
+  height: 95vh;
 }
 .rz-body.rz-body-collapsed {
   max-width: 100%;
+  width: 100%;
   left: 0;
   transition: var(--transform);
 }
 
+#__next {
+  height: 100%;
+}
 .sidebar {
   width: var(--sb-width);
   height: 100vh;
@@ -136,7 +139,7 @@
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 20px;
   justify-content: flex-end;
 }
 
@@ -540,18 +543,23 @@
 
 .pagination {
     position: fixed;
-    bottom: 0;
+    bottom: 10vh;
     left: 50%;
     // transform: calc(translateX(var(--sb-width)) + translateX(-50%));
     z-index: 1;
     user-select: none;
     transition: none;
-    display: block;
+    display: flex;
   }
+.button {
+  margin-left:10px;
+  margin-right:10px;
+}
 
   .pagination a,
   .pagination span {
-    margin: 0 8px;
+    border-radius: 4px;
+    padding: 4px 8px;
     font-size: 16px;
     text-decoration: none;
   }
@@ -569,3 +577,85 @@
     color: white;
     cursor: pointer;
   }
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 40%;
+}
+
+.register-form label,
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"],
+.register-form input[type="submit"] {
+  display: block;
+  margin-bottom: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.register-form input[type="text"] {
+  width: 15rem;
+  padding: 0.3rem;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  background-color: blue;
+  color: white;
+}
+
+.register-form input[type="email"] {
+  width: 15rem;
+  padding: 0.3rem;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  background-color: blue;
+}
+
+.register-form input[type="password"] {
+  width: 15rem;
+  padding: 0.3rem;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  background-color: blue;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.register-form input[type="submit"] {
+  margin-top: 20px;
+  display: block;
+  padding: 0.3rem;
+  border: none;
+  border-radius: 3px;
+  width: 10rem;
+  background-color: green;
+  cursor: pointer;
+}
+
+.h2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  border-width: 2px solid aqua;
+  border-style: solid;
+  width: 20vw;
+}

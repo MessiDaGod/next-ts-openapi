@@ -4,6 +4,8 @@ import styles from "./connectionDropdown.module.css";
 interface DropdownProps {
   jsonFileName: string;
   label: string;
+  selected: string;
+  onChange?: (item: string) => void;
 }
 
 interface ButtonProps {
@@ -28,7 +30,7 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   );
 };
 
-const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
+const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label, selected, onChange }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
   const [items, setItems] = useState<Menu | null>(null);
@@ -48,6 +50,10 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
+    setSelectedItem(selected);
+    if (onChange) {
+      onChange(item);
+    }
     setShowDropdown(false);
   };
 
