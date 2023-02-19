@@ -1,7 +1,11 @@
 * {
     box-sizing: border-box;
     color: white;
-    border-style: none;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    border-style: solid;
+    -webkit-font-smoothing: antialiased;
   }
 :root {
   --sb-bg: #252525;

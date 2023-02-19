@@ -143,16 +143,15 @@ export default function App({ Component, pageProps }: AppProps) {
         <Dropdown jsonFileName="GetOptions" label="Get" />
         <ConnectionDropdown jsonFileName="connections" label="Connections" />
       </div>
-      <div className={styles["body"]}>
         <div
           className={cn(
             styles["rz-body"],
-            collapsed ? styles["body-retracted"] : styles["rz-body-expanded"]
+            styles["body"],
+            collapsed ? styles["rz-body-collapsed"] : styles["rz-body"]
           )}
         >
           <Component {...pageProps} />
         </div>
-      </div>
     </>
   );
 }

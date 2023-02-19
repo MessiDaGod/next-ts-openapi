@@ -11,34 +11,41 @@
   width: 100%;
 }
 
-.body {
-  margin: 0;
-  padding: 0;
-  border: red;
-  border-style: solid;
-  max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-  transform: translateY(calc(var(--tb-height)));
-}
-
 .rz-body {
+  position: relative;
+  overflow-x: scroll;
+  padding: 0;
   border: blue;
   border-style: solid;
+  max-width: 90vw;
+  left: var(--sb-width);
+}
+.rz-body.rz-body-collapsed {
+  max-width: 100%;
+  left: 0;
 }
 
-.rz-body-expanded {
-  max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-  transform: translateX(calc(100vw + (calc(var(--sb-width) * 200%))));
-  transition: var(--transform);
-}
+// .rz-body {
+//   border: blue;
+//   border-style: solid;
+//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
+//   transform: translateY(calc(var(--tb-height)));
+// }
 
-.main {
-  max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-}
+// .rz-body-expanded {
+//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
+//   transform: translateX(calc(100vw + (calc(var(--sb-width) * 200%))));
+//   transition: var(--transform);
+// }
 
-.body-retracted {
-  transform: translateX(calc(100vw + (calc(var(--sb-width) * -100%))));
-  transition: var(--transform);
-}
+// .main {
+//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
+// }
+
+// .body-retracted {
+//   transform: translateX(calc(100vw + (calc(var(--sb-width) * -100%))));
+//   transition: var(--transform);
+// }
 
 .sidebar {
   width: var(--sb-width);
