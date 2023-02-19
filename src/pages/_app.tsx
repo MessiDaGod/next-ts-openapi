@@ -37,9 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
     setCollapsed(!collapsed);
   };
 
-  function getBodyClasses() {
-
-  }
+  function getBodyClasses() {}
 
   function goHome(): void {
     router.push("/");
@@ -133,8 +131,15 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
           <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
-        <div className={cn(styles["rz-body"], collapsed ? styles["body-retracted"] : "")}>
-          <Component {...pageProps} />
+        <div
+          className={cn(
+            styles["rz-body"],
+            collapsed ? styles["body-retracted"] : ""
+          )}
+        >
+          <main>
+            <Component {...pageProps} />
+          </main>
         </div>
       </nav>
     </>

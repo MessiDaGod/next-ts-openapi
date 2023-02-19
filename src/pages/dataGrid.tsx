@@ -183,8 +183,6 @@ export function DataGrid() {
       <>
         <div className={styles["datagriddiv"]}>
           <i id="ruler" hidden></i>
-          <div className="h-4" />
-          <i id="ruler" hidden></i>
           {table}
           <Pagination
             currentPage={currentPage}

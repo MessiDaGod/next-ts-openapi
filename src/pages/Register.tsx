@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import styles from "./register.module.css"
+import styles from "./register.module.scss"
 import { useRouter } from 'next/router';
 
 interface RegisterProps {

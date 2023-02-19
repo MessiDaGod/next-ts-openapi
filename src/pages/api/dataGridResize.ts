@@ -5,88 +5,97 @@ declare global {
 }
 
 String.prototype.visualLength = function () {
-    if (!document) return 0;
-    const ruler = document.getElementById("ruler") as HTMLElement;
-    if (ruler) {
-      ruler.innerHTML = this as string;
-      return ruler.offsetWidth;
-    }
-    return 0;
-  };
+  if (!document) return 0;
+  const ruler = document.getElementById("ruler") as HTMLElement;
+  if (ruler) {
+    ruler.innerHTML = this as string;
+    return ruler.offsetWidth;
+  }
+  return 0;
+};
 
-  function setListeners(div: HTMLElement): void {
-    var pageX: number | undefined,
-      curCol: HTMLElement | null,
-      nxtCol: HTMLElement | null,
-      prevCol: HTMLElement | null,
-      curColWidth: number | undefined,
-      nxtColWidth: number | undefined,
-      prevColWidth: number | undefined;
+function setListeners(div: HTMLElement): void {
+  var pageX: number | undefined,
+    curCol: HTMLElement | null,
+    nxtCol: HTMLElement | null,
+    prevCol: HTMLElement | null,
+    curColWidth: number | undefined,
+    nxtColWidth: number | undefined,
+    prevColWidth: number | undefined;
 
-    if (div.parentElement) {
-      div.parentElement.addEventListener("mouseenter", function (e: MouseEvent): void {
+  if (div.parentElement) {
+    div.parentElement.addEventListener(
+      "mouseenter",
+      function (e: MouseEvent): void {
         e.preventDefault();
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
         let tbl = this.closest("table") as HTMLTableElement;
         if (tbl) {
-          let allCells = Array.from(new Set([...tbl.querySelectorAll('[data-column-id="' + dataColumnId + '"]')]));
+          let allCells = Array.from(
+            new Set([
+              ...tbl.querySelectorAll(
+                '[data-column-id="' + dataColumnId + '"]'
+              ),
+            ])
+          );
           if (allCells)
             allCells.forEach((cell) => {
               (cell as HTMLElement).style.borderRight = "solid #0000ff";
               (cell as HTMLElement).style.cursor = "col-resize";
             });
         }
-      });
+      }
+    );
 
-      div.parentElement.addEventListener("mouseout", function (e: MouseEvent): void {
+    div.parentElement.addEventListener(
+      "mouseout",
+      function (e: MouseEvent): void {
         e.preventDefault();
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
         let tbl = this.closest("table") as HTMLTableElement;
         if (tbl) {
-          let allCells = Array.from(new Set([...tbl.querySelectorAll('[data-column-id="' + dataColumnId + '"]')]));
+          let allCells = Array.from(
+            new Set([
+              ...tbl.querySelectorAll(
+                '[data-column-id="' + dataColumnId + '"]'
+              ),
+            ])
+          );
           if (allCells)
             allCells.forEach((cell) => {
               (cell as HTMLElement).style.borderRight = "";
               (cell as HTMLElement).style.cursor = "";
             });
         }
-      });
+      }
+    );
 
-
-      div.parentElement.addEventListener("dblclick", function (_e: MouseEvent): void {
-      var tbl = this.closest("table") as HTMLTableElement;
-      var columns = Array.from(new Set([...tbl.querySelectorAll("th")]));
-      columns.forEach((th) => {
-        if (th.textContent)
-          th.style.width = th.textContent.visualLength() + 13 + "px";
-      });
-    });
-
-    div.parentElement.addEventListener("mousedown", function (e: MouseEvent): void {
-      var target = e.target as HTMLElement;
-      curCol = target ? target : null;
-      var nextCol = curCol
-        ? (curCol.nextElementSibling as HTMLElement)
-        : null;
-      nextCol = nextCol
-        ? (nextCol?.nextElementSibling as HTMLElement)
-        : null;
-      if (curCol)
-        prevCol = curCol
-          ? (curCol.previousElementSibling as HTMLElement)
+    div.parentElement.addEventListener(
+      "mousedown",
+      function (e: MouseEvent): void {
+        var target = e.target as HTMLElement;
+        curCol = target ? target : null;
+        var nextCol = curCol
+          ? (curCol.nextElementSibling as HTMLElement)
           : null;
-      pageX = e.pageX;
+        nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
+        if (curCol)
+          prevCol = curCol
+            ? (curCol.previousElementSibling as HTMLElement)
+            : null;
+        pageX = e.pageX;
 
-      const padding = curCol ? paddingDiff(curCol) : 0;
+        const padding = curCol ? paddingDiff(curCol) : 0;
 
-      curColWidth =
-        curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-          ? curCol.offsetWidth - padding
-          : 0;
-      if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+        curColWidth =
+          curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+            ? curCol.offsetWidth - padding
+            : 0;
+        if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
 
-      if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
-    });
+        if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
+      }
+    );
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
       if (curCol) {
@@ -115,25 +124,27 @@ String.prototype.visualLength = function () {
   }
 }
 
-  function paddingDiff(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padLeft = getStyleVal(col, "padding-left");
-    const padRight = getStyleVal(col, "padding-right");
-    return parseInt(padLeft) + parseInt(padRight);
+function paddingDiff(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
   }
+  const padLeft = getStyleVal(col, "padding-left");
+  const padRight = getStyleVal(col, "padding-right");
+  return parseInt(padLeft) + parseInt(padRight);
+}
 
-  function getStyleVal(elm: HTMLElement, css: string): string {
-    return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
+function getStyleVal(elm: HTMLElement, css: string): string {
+  return window.getComputedStyle(elm, null).getPropertyValue(css);
+}
 
 export const dataGridResize = () => {
-
   initResizeListeners();
-  let resizeDivs = Array.from(new Set([...document.querySelectorAll('div[class*="' + "columndivider" + '"]')]));
-  if (resizeDivs && resizeDivs.length > 0)
-  {
+  let resizeDivs = Array.from(
+    new Set([
+      ...document.querySelectorAll('div[class*="' + "columndivider" + '"]'),
+    ])
+  );
+  if (resizeDivs && resizeDivs.length > 0) {
     for (let i = 0; i < resizeDivs.length; i++) {
       setListeners(resizeDivs[i] as HTMLDivElement);
     }

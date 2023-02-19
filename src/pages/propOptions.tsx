@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@/styles/Home.module.scss";
+import styles from "./propOptions.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { PropOptions, emptyPropOptions } from "./api//Objects/PropOptions";
 import { getPropOptions } from "./api/getPropOptions";
@@ -186,8 +186,6 @@ function PropOptionsPage() {
             <React.Fragment>
                 <>
                     <div className={styles["datagriddiv"]}>
-                        <i id="ruler" hidden></i>
-                        <div className="h-4" />
                         <i id="ruler" hidden></i>
                         {table}
                         <Pagination

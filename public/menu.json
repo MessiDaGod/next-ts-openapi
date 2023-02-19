@@ -13,11 +13,6 @@
   ],
   "sidebarItems": [
     {
-      "Name": "Vendors",
-      "Path": "/dataGrid",
-      "Icon": "dns"
-    },
-    {
       "Name": "Prop Options",
       "Path": "/propOptions",
       "Icon": "analytics",
