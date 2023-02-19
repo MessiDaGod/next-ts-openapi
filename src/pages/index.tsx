@@ -1,5 +1,7 @@
-import { DataGrid } from "./dataGrid";
-
 export default function Home() {
-  return <>{DataGrid()}</>;
+  return (
+    <div key="home" className="container">
+
+    </div>
+  )
 }

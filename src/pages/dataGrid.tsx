@@ -10,7 +10,7 @@ function handleSetData() {
   dataGridResize();
 }
 
-export function DataGrid() {
+const DataGrid = () => {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -180,17 +180,19 @@ export function DataGrid() {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
     return (
-      <>
-        <div className={styles["datagriddiv"]}>
-          <i id="ruler" hidden></i>
-          {table}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      </>
+      <React.Fragment>
+        <>
+          <div className={styles["datagriddiv"]}>
+            <i id="ruler" hidden></i>
+            {table}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
+      </React.Fragment>
     );
   }
 
@@ -224,3 +226,5 @@ export function DataGrid() {
     }
   }
 }
+
+export default DataGrid;

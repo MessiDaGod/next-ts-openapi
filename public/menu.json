@@ -1,20 +1,36 @@
 {
   "topBar": [
     {
-      "id": "home",
-      "label": "Home",
-      "url": "/"
+      "id": "register",
+      "label": "Register",
+      "url": "/register"
     },
     {
-      "id": "about",
-      "label": "About",
-      "url": "/about"
+      "id": "codeEditor",
+      "label": "Code Editor",
+      "url": "/codeEditor"
+    },
+    {
+      "id": "vendor",
+      "label": "Vendors",
+      "url": "/dataGrid"
+    },
+    {
+      "id": "propoption",
+      "label": "Prop Options",
+      "url": "/propOptions"
     }
   ],
   "sidebarItems": [
     {
       "Name": "Prop Options",
       "Path": "/propOptions",
+      "Icon": "analytics",
+      "New": true
+    },
+    {
+      "Name": "Vendors",
+      "Path": "/dataGrid",
       "Icon": "analytics",
       "New": true
     }

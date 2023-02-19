@@ -15,8 +15,15 @@ interface SidebarItem {
   New?: boolean;
   Updated?: boolean;
 }
+
+interface TopBar {
+  id: string;
+  label: string;
+  url: string;
+}
 interface Menu {
   sidebarItems: SidebarItem[];
+  topBar: TopBar[];
 }
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -36,8 +43,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const handleCollapse = () => {
     setCollapsed(!collapsed);
   };
-
-  function getBodyClasses() {}
 
   function goHome(): void {
     router.push("/");
@@ -112,22 +117,11 @@ export default function App({ Component, pageProps }: AppProps) {
           </a>
 
           <div className={styles["linksContainer"]}>
-            <Link className={styles["links"]} href="/">
-              Home
-            </Link>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Link className={styles["links"]} href="/register">
-              Register
-            </Link>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Link className={styles["links"]} href="/propOptions">
-              Prop Options
-            </Link>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <Link className={styles["links"]} href="/codeEditor">
-              Code Editor
-            </Link>
-            &nbsp;&nbsp;&nbsp;&nbsp;
+            {menu?.topBar.map((item, index: number) => (
+              <><Link key={item.id} className={styles["links"]} href={item.url}>
+                {item.label}
+              </Link>&nbsp;&nbsp;&nbsp;&nbsp;</>
+            ))}
           </div>
           <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
@@ -137,7 +131,7 @@ export default function App({ Component, pageProps }: AppProps) {
             collapsed ? styles["body-retracted"] : ""
           )}
         >
-          <main>
+          <main key="main">
             <Component {...pageProps} />
           </main>
         </div>
