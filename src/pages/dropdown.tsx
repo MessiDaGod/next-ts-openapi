@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from './connectionDropdown.module.css';
+import styles from "./connectionDropdown.module.css";
 
 interface DropdownProps {
   jsonFileName: string;
@@ -11,31 +11,35 @@ interface ButtonProps {
   children?: any;
 }
 
+interface Item {
+  Value: string;
+}
+interface Menu {
+  Items: Item[];
+}
+
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
-    <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
+    <button
+      className={`${styles.btn} ${styles["btn-101"]} ${styles["btn-glow"]}`}
+    >
       {children}
     </button>
   );
-}
+};
 
 const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [items, setItems] = useState<string[]>([]);
+  const [items, setItems] = useState<Menu | null>(null);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   useEffect(() => {
     async function getItems() {
-
-    if (items.length > 0)
-    for (let i = 0; i < items.length; i++) {
-        console.log(items[i]);
-    }
-    fetch(`${jsonFileName}.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        setItems(data);
-      })
+      fetch(`${jsonFileName}.json`)
+        .then((response) => response.json())
+        .then((data) => {
+          setItems(data);
+        });
     }
     getItems();
   }, [jsonFileName, label, items]);
@@ -49,7 +53,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
 
   return (
     <div
-      className={styles['dropdown']}
+      className={styles["dropdown"]}
       style={{ position: "relative", display: "inline-block" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -57,15 +61,19 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
       <Button label={label}>{selectedItem}</Button>
       {showDropdown && (
         <ul className={styles.dropdown}>
-          {Object.entries(items).map(([key], index) => (
+          {items?.Items.map((item, index) => (
             <li
               key={index}
-              onClick={() => handleItemClick(key)}
+              onClick={() => handleItemClick(item.Value)}
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
-              className={hoveredItem === index ? `${styles['dropdown-item']} ${styles.hovered}` : `${styles['dropdown-item']}`}
+              className={
+                hoveredItem === index
+                  ? `${styles["dropdown-item"]} ${styles.hovered}`
+                  : `${styles["dropdown-item"]}`
+              }
             >
-              {key}
+              {item.Value}
             </li>
           ))}
         </ul>
