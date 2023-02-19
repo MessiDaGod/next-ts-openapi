@@ -30,7 +30,7 @@ div {
   .divTable {
     border: 1px solid lightgray;
     /* width: fit-content; */
-    max-height: 50vh;
+    max-height: calc(100% - var(--tb-height));
   }
 
   .tr {
