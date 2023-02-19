@@ -10,6 +10,6 @@ export async function getPropOptions(take: number | null = null) {
     const propOptions: PropOptions[] = JSON.parse(await response.text());
     return propOptions;
   } catch (error) {
-    return emptyPropOptions;
+     // ignore
   }
 }

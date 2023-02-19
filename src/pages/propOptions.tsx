@@ -30,7 +30,8 @@ function PropOptionsPage() {
         async function fetchData() {
             try {
                 const response = await getPropOptions(1000);
-                setData(response);
+                const items = JSON.parse(JSON.stringify(response));
+                setData(items);
             } catch (error) {
                 return emptyPropOptions;
             }

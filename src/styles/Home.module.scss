@@ -2,6 +2,7 @@
 .topbar {
   position: fixed;
   top: 0;
+  left: 0;
   height: var(--tb-height);
   background-color: var(--sb-bg);
   color: #fff;
@@ -249,8 +250,4 @@
 }
 .material-symbols-outlined {
   float: right;
-}
-
-.datagrid {
-  margin-left: calc(100% - var(--sb-width));
 }

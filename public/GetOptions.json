@@ -1,6 +1,10 @@
 {
-    "Get": [
-        "GetPropOptions",
-        "GetVendors"
+    "Items": [
+        {
+            "Value": "GetVendors"
+        },
+        {
+            "Value": "GetPropOptions"
+        }
     ]
 }

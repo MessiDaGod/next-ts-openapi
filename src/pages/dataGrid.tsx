@@ -10,10 +10,7 @@ function handleSetData() {
   dataGridResize();
 }
 
-interface Props {
-
-}
-const DataGrid: React.FC<Props> = (name) => {
+function DataGrid() {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);

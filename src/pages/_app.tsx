@@ -7,6 +7,7 @@ import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import { cn } from "./classNames";
 import { useRouter } from "next/router";
+import Dropdown from "./dropdown";
 
 interface SidebarItem {
   Name: string;
@@ -118,11 +119,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <div className={styles["linksContainer"]}>
             {menu?.topBar.map((item, index: number) => (
-              <><Link key={index} className={styles["links"]} href={item.url}>
+              <Link key={`${item}_${index}`} className={styles["links"]} href={item.url} style={{ marginRight: "1rem" }}>
                 {item.label}
-              </Link>&nbsp;&nbsp;&nbsp;&nbsp;</>
+              </Link>
             ))}
           </div>
+          <Dropdown jsonFileName="GetOptions" label="Get" />
           <ConnectionDropdown jsonFileName="connections" label="Connections" />
         </div>
         <div
