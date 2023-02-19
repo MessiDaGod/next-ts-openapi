@@ -65,72 +65,94 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/dog.png" />
       </Head>
-      <nav>
-        <>
-          <div
-            className={styles["dropdown"]}
-            style={{ position: "relative", display: "inline-block" }}
-          >
-            <button
-              className={`${styles["expandButton"]} ${
-                collapsed ? styles.collapsed : styles.expanded
-              }`}
-              onClick={handleCollapse}
-            >
-              {<span className="material-symbols-outlined" style={{ paddingLeft: "2px"}}>menu</span>}
-            </button>
-          </div>
-          <nav
-            className={`${styles["sidebar"]} ${
+      <>
+        <div
+          className={styles["dropdown"]}
+          style={{ position: "relative", display: "inline-block" }}
+        >
+          <button
+            className={`${styles["expandButton"]} ${
               collapsed ? styles.collapsed : styles.expanded
             }`}
+            onClick={handleCollapse}
           >
-            <div className={styles["ul"]}>
-              {menu?.sidebarItems.map((item, index: number) => (
-                  <a key={index} className={styles["sidebar__item"]} href={item.Path} style={{ width: "100%" }}><span className="material-symbols-outlined">{item.Icon}</span>{item.Name}</a>
-              ))}
-            </div>
-          </nav>
-        </>
-        <div className={styles["topbar"]}>
-          <a
-            type="button"
-            className={styles.sitelogo}
-            onClick={() => goHome()}
-            style={{ justifyContent: "flex-start", paddingRight: "50px" }}
-          >
-            <span
-              style={{
-                fontSize: "24px",
-                userSelect: "none",
-                cursor: "pointer",
-              }}
-            >
-              Shakely Consulting
-            </span>
-          </a>
-
-          <div className={styles["linksContainer"]}>
-            {menu?.topBar.map((item, index: number) => (
-              <Link key={`${item}_${index}`} className={styles["links"]} href={item.url} style={{ marginRight: "1rem" }}>
-                {item.label}
-              </Link>
+            {
+              <span
+                className="material-symbols-outlined"
+                style={{ paddingLeft: "2px" }}
+              >
+                menu
+              </span>
+            }
+          </button>
+        </div>
+        <nav
+          className={`${styles["sidebar"]} ${
+            collapsed ? styles.collapsed : styles.expanded
+          }`}
+        >
+          <div className={styles["ul"]}>
+            {menu?.sidebarItems.map((item, index: number) => (
+              <a
+                key={index}
+                className={styles["sidebar__item"]}
+                href={item.Path}
+                style={{ width: "100%" }}
+              >
+                <span className="material-symbols-outlined">{item.Icon}</span>
+                {item.Name}
+              </a>
             ))}
           </div>
-          <Dropdown jsonFileName="GetOptions" label="Get" />
-          <ConnectionDropdown jsonFileName="connections" label="Connections" />
+        </nav>
+      </>
+      <div className={styles["topbar"]}>
+        <a
+          type="button"
+          className={styles.sitelogo}
+          onClick={() => goHome()}
+          style={{
+            justifyContent: "flex-start",
+            paddingRight: "50px",
+            width: "100%",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "24px",
+              userSelect: "none",
+              cursor: "pointer",
+            }}
+          >
+            Shakely Consulting
+          </span>
+        </a>
+
+        <div className={styles["linksContainer"]}>
+          {menu?.topBar.map((item, index: number) => (
+            <Link
+              key={`${item}_${index}`}
+              className={styles["links"]}
+              href={item.url}
+              style={{ marginRight: "1rem" }}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
+        <Dropdown jsonFileName="GetOptions" label="Get" />
+        <ConnectionDropdown jsonFileName="connections" label="Connections" />
+      </div>
+      <div className={styles["body"]}>
         <div
           className={cn(
             styles["rz-body"],
-            collapsed ? styles["body-retracted"] : ""
+            collapsed ? styles["body-retracted"] : styles["rz-body-expanded"]
           )}
         >
-          <main key="main">
-            <Component {...pageProps} />
-          </main>
+          <Component {...pageProps} />
         </div>
-      </nav>
+      </div>
     </>
   );
 }

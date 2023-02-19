@@ -2,6 +2,7 @@ import * as monaco from "monaco-editor";
 import { formatSql } from "./api/formatSql";
 import StandaloneCodeEditor from "@monaco-editor/react";
 import React, { useState, useRef, useEffect } from "react";
+import styles from "../styles/Home.module.scss";
 
 interface CodeEditorProps {
   initialValue: string;
@@ -59,22 +60,19 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
   }
 
   return (
-    <>
-      <div>
-        <StandaloneCodeEditor
-          height={height ?? "50vh"}
-          language={language ?? "sql"}
-          defaultValue={initialValue}
-          value={editorValueRef.current}
-          onMount={handleEditorDidMount}
-        />
-        <button onClick={handleFormatClick}>Format</button>
-        <button onClick={handleSetEditorValue}>Set Value</button>
-      </div>
-      <pre>
-
-      </pre>
-    </>
+    <div className={styles.container}>
+      <StandaloneCodeEditor
+        height={height ?? "50vh"}
+        language={language ?? "sql"}
+        defaultValue={initialValue}
+        value={editorValueRef.current}
+        onMount={handleEditorDidMount}
+      />
+      <button style={{ display: "block" }} onClick={handleFormatClick}>
+        Format
+      </button>
+      <button onClick={handleSetEditorValue}>Set Value</button>
+    </div>
   );
 };
 

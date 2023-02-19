@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./dataGrid.module.css";
+import styles from "../styles/Home.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
@@ -10,7 +10,7 @@ function handleSetData() {
   dataGridResize();
 }
 
-function DataGrid() {
+function Vendors() {
   const [data, setData] = React.useState<Vendor | Vendor[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -227,4 +227,4 @@ function DataGrid() {
   }
 }
 
-export default DataGrid;
+export default Vendors;

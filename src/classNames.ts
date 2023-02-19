@@ -1,6 +1,5 @@
 function cn(...classes: (string | undefined)[]): string {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter((cls) => cls && cls.trim().length > 0).join(" ");
 }
 
 export { cn };
-

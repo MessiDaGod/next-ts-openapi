@@ -13,7 +13,7 @@
     {
       "id": "vendor",
       "label": "Vendors",
-      "url": "/dataGrid"
+      "url": "/vendors"
     },
     {
       "id": "propoption",
@@ -30,7 +30,7 @@
     },
     {
       "Name": "Vendors",
-      "Path": "/dataGrid",
+      "Path": "/vendors",
       "Icon": "analytics",
       "New": true
     }
