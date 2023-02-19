@@ -19,33 +19,15 @@
   border-style: solid;
   max-width: 90vw;
   left: var(--sb-width);
+  top: var(--tb-height);
+  max-height: calc(100vh - var(--tb-height));
+  transition: var(--transform);
 }
 .rz-body.rz-body-collapsed {
   max-width: 100%;
   left: 0;
+  transition: var(--transform);
 }
-
-// .rz-body {
-//   border: blue;
-//   border-style: solid;
-//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-//   transform: translateY(calc(var(--tb-height)));
-// }
-
-// .rz-body-expanded {
-//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-//   transform: translateX(calc(100vw + (calc(var(--sb-width) * 200%))));
-//   transition: var(--transform);
-// }
-
-// .main {
-//   max-width: calc(100vw - (calc(var(--sb-width) * 100%)));
-// }
-
-// .body-retracted {
-//   transform: translateX(calc(100vw + (calc(var(--sb-width) * -100%))));
-//   transition: var(--transform);
-// }
 
 .sidebar {
   width: var(--sb-width);
