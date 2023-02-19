@@ -4,7 +4,7 @@ import { dataGridResize } from "./api/dataGridResize";
 import { PropOptions, emptyPropOptions } from "./api//Objects/PropOptions";
 import { getPropOptions } from "./api/getPropOptions";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
-import { Pagination } from "./pagination";
+import { Pagination } from "../pagination";
 
 function handleSetData() {
   dataGridResize();

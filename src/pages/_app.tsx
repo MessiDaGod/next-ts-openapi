@@ -5,7 +5,7 @@ import styles from "@/styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
-import { cn } from "./classNames";
+import { cn } from "../classNames";
 import { useRouter } from "next/router";
 import Dropdown from "./dropdown";
 
@@ -77,11 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
               }`}
               onClick={handleCollapse}
             >
-              {collapsed ? (
-                <span className="material-symbols-outlined">menu</span>
-              ) : (
-                <span className="material-symbols-outlined">menu</span>
-              )}
+              {<span className="material-symbols-outlined" style={{ paddingLeft: "2px"}}>menu</span>}
             </button>
           </div>
           <nav
@@ -89,14 +85,11 @@ export default function App({ Component, pageProps }: AppProps) {
               collapsed ? styles.collapsed : styles.expanded
             }`}
           >
-            <ul className={styles["ul"]}>
+            <div className={styles["ul"]}>
               {menu?.sidebarItems.map((item, index: number) => (
-                <li key={index} className={styles["sidebar__item"]}>
-                  <span className="material-symbols-outlined">{item.Icon}</span>
-                  <a href={item.Path}>{item.Name}</a>
-                </li>
+                  <a key={index} className={styles["sidebar__item"]} href={item.Path} style={{ width: "100%" }}><span className="material-symbols-outlined">{item.Icon}</span>{item.Name}</a>
               ))}
-            </ul>
+            </div>
           </nav>
         </>
         <div className={styles["topbar"]}>

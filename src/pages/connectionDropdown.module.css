@@ -1,7 +1,8 @@
 .dropdown {
   position: relative;
   display: inline-block;
-  margin-top: 10px;
+  padding-top: 10px;
+  z-index: 10;
 }
 
 .dropdown button {
@@ -14,6 +15,7 @@
   cursor: pointer;
   font-size: 1rem;
   color: white;
+  z-index: 2;
 }
 
 .dropdown button:after {
@@ -25,6 +27,7 @@
   border: 5px solid transparent;
   border-top-color: var(--bg-color);
   vertical-align: middle;
+  z-index: 2;
 }
 
 .dropdown ul {

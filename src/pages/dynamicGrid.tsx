@@ -3,7 +3,7 @@ import styles from "./dataGrid.module.css";
 import { dataGridResize } from "./api/dataGridResize";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
-import { Pagination } from "./pagination";
+import { Pagination } from "../pagination";
 import { Vendor } from "./api/Objects/Vendor";
 
 function handleSetData() {

@@ -115,4 +115,5 @@ div {
     justify-content: flex-start;
     width: 100%;
     background-color: var(--bg-color);
+    left: 0.5vw;
   }

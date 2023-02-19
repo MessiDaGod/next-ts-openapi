@@ -4,7 +4,7 @@ import { dataGridResize } from "./api/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
-import { Pagination } from "./pagination";
+import { Pagination } from "../pagination";
 
 function handleSetData() {
   dataGridResize();
