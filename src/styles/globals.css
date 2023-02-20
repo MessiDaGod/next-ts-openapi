@@ -11,7 +11,7 @@
   --rz-badge-border-spacing: 4px;
   --rz-badge-letter-spacing: 0.02rem;
   --rz-body-padding: 1rem;
-  --transform: transform 200ms ease-in-out;
+  --transform: transform 0.3s ease-in-out;
   --dgpadding: 2px 4px;
   --logopadding: 5px;
 }
@@ -22,9 +22,6 @@
   margin: 0;
   padding: 0;
   border-width: 0;
-  /* border-style: solid;
-  -webkit-font-smoothing: antialiased; */
-  transition: var(--transform);
 }
   html {
     font-family: sans-serif;

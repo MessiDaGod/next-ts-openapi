@@ -14,7 +14,6 @@
 .rz-body {
   position: fixed;
   padding: 0;
-  // border: blue;
   border-style: solid;
   max-width: 90vw;
   width: 90vw;
@@ -22,12 +21,15 @@
   top: var(--tb-height);
   height: 95vh;
   overflow: auto;
+  transition: var(--transform);
+  transition-duration: 0.3s;
 }
 .rz-body.rz-body-collapsed {
   max-width: 100%;
   width: 100%;
   left: 0;
   transition: var(--transform);
+  transition-duration: 0.3s;
 }
 
 #__next {
@@ -42,10 +44,13 @@
   background-color: var(--sb-bg);
   z-index: 1;
   transition: var(--transform);
+  transition-duration: 0.3s;
   overflow-y: auto;
 
   &.collapsed {
     transform: translateX(calc(var(--sb-width) * -1));
+    transition: var(--transform);
+    transition-duration: 0.3s;
   }
 
   &__item {
@@ -191,7 +196,8 @@
   max-width: calc(100vw - var(--sb-width) - 10);
   width: calc(100vw - var(--sb-width) - 10);
   overflow: auto;
-  transition: none;
+  transition: var(--transform);
+  transition-duration: 0.3s;
 }
 
 .sitelogo {
@@ -677,6 +683,9 @@
 	transform: translate3d(0, 0, 0);
 }
 
+.undefined {
+  transform: var(--transform);
+}
 .st-effect-1.st-menu::after {
 	display: none;
 }
