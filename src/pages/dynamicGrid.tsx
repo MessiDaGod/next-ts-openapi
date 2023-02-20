@@ -127,7 +127,7 @@ function DynamicGrid<T>(selectItem: string) {
         );
       }
     }
-  };
+  }
 
   const table = GenerateTableHtml();
 
