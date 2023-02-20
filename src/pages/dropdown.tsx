@@ -50,38 +50,35 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
+
     setSelectedItem(item);
     setShowDropdown(false);
+
   };
 
   return (
     <div
-      className={styles["dropdown"]}
-      style={{ position: "relative", display: "inline-block" }}
+      className={styles['dropdown']}
+      style={{ position: "relative", display: "inline-block", zIndex: 10}}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Button id="dd" label={selectedItem}>{selectedItem}</Button>
+      <Button label={label}>{selectedItem}</Button>
       {showDropdown && (
         <ul className={styles.dropdown}>
-          {items?.Items.map((item, index) => (
+          {items?.Items.map((value, index) => (
             <li
               key={index}
-              onClick={() => handleItemClick(item.Value)}
+              onClick={() => handleItemClick(value.Value)}
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
-              className={
-                hoveredItem === index
-                  ? `${styles["dropdown-item"]} ${styles.hovered}`
-                  : `${styles["dropdown-item"]}`
-              }
+              className={hoveredItem === index ? `${styles['dropdown-item']} ${styles.hovered}` : `${styles['dropdown-item']}`}
             >
-              {item.Value}
+              {value.Value}
             </li>
           ))}
         </ul>
       )}
-    {DynamicGrid(selectedItem)}
     </div>
   );
 };

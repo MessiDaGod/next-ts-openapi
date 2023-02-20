@@ -169,6 +169,8 @@ export default function App({ Component, pageProps }: AppProps) {
             justifyContent: "flex-start",
             paddingRight: "50px",
             width: "100%",
+            borderStyle: "none",
+            borderColor: "transparent"
           }}
         >
           <span
