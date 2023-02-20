@@ -1,0 +1,39 @@
+[
+    {
+        "Name": "STATUS"
+    },
+    {
+        "Name": "PERSON"
+    },
+    {
+        "Name": "DATE"
+    },
+    {
+        "Name": "DUEDATE"
+    },
+    {
+        "Name": "POSTMONTH"
+    },
+    {
+        "Name": "AMOUNT"
+    },
+    {
+        "Name": "PROPERTY"
+    },
+    {
+        "Name": "ACCOUNT"
+    },
+    {
+        "Name": "DESC",
+        "Value": "DESC"
+    },
+    {
+        "Name": "SEGMENT1"
+    },
+    {
+        "Name": "EXPENSETYPE"
+    },
+    {
+        "Name": "DELETE"
+    }
+]
