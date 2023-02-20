@@ -5,9 +5,15 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import axios from "axios";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import styles from "../styles/Home.module.scss";
+import { dataGridResize } from "./api/dataGridResize";
 
 const queryClient = new QueryClient();
 
+function handleSetData() {
+  console.info("resizing...");
+  dataGridResize();
+  return true;
+}
 
 export default function App() {
   return (
@@ -22,6 +28,7 @@ function Example<T>() {
   const [myData, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [resize, setResize] = React.useState<boolean>(false);
   const itemsPerPage = 25;
   const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
     axios
@@ -36,6 +43,11 @@ function Example<T>() {
     }
     fetchData();
   }, [data, myData]);
+
+  useEffect(() => {
+    let result = handleSetData();
+    setResize(result);
+  }, [resize]);
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -165,7 +177,7 @@ function Example<T>() {
     <>
       <div>
         <h1>Dimensions</h1>
-        <p>{Array.from(new Set(myData)).length}</p>
+        <p>Count: {Array.from(new Set(myData)).length}</p>
         {table}
         <div>{isFetching ? "Updating..." : ""}</div>
         <ReactQueryDevtools initialIsOpen />
