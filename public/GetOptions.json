@@ -5,6 +5,9 @@
         },
         {
             "Value": "GetPropOptions"
+        },
+        {
+            "Value": "GetAccounts"
         }
     ]
 }

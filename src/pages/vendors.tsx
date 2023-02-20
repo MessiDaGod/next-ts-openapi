@@ -27,16 +27,14 @@ function Vendors() {
       try {
         const response = await getVendors(1000);
         setData(response);
+        handleSetData();
+        console.log("useEffect");
       } catch (error) {
         return emptyVendor;
       }
     }
     fetchData();
   }, []);
-
-  React.useEffect(() => {
-    handleSetData();
-  });
 
   function GenerateVendorData(
     data: Vendor | Vendor[]
@@ -193,7 +191,8 @@ function Vendors() {
         value === "0" ||
         value === "-1" ||
         value === "0.000000" ||
-        value === "NULL"
+        value === "NULL" ||
+        value === 0
     );
   }
 
@@ -207,7 +206,8 @@ function Vendors() {
           value === "0" ||
           value === "-1" ||
           value === "0.000000" ||
-          value === "NULL"
+          value === "NULL" ||
+          value === 0
       );
     } else {
       return true;

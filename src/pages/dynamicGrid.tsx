@@ -1,16 +1,14 @@
 import React from "react";
-import styles from "./dataGrid.module.css";
-import { dataGridResize } from "./api/dataGridResize";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
+import { getPropOptions } from "./api/getPropOptions";
+import { dataGridResize } from "./api/dataGridResize";
+import { getAccounts } from "./api/getAccounts";
+import styles from "../styles/Home.module.scss";
 
-function handleSetData() {
-  dataGridResize();
-}
-
-function DynamicGrid<T>(myData: T[]) {
-  const [data, setData] = React.useState<T[]>([]);
+function DynamicGrid<T>(selectItem: string) {
+  const [data, setData] = React.useState<T[]>(null);
   const [sortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
@@ -24,24 +22,29 @@ function DynamicGrid<T>(myData: T[]) {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        console.log(typeof myData);
-        const response = await getVendors(1000);
-        const items = JSON.parse(JSON.stringify(response));
-        setData(items);
+        let response = [];
+        switch (selectItem) {
+          case "GetVendors":
+            response = await getVendors(1000);
+            setData(response);
+            break;
+          case "GetPropOptions":
+            response = await getPropOptions(1000);
+            setData(response);
+            break;
+            case "GetAccounts":
+            response = await getAccounts(1000);
+            break;
+        }
       } catch (error) {
-        return [];
+        console.error(error);
       }
     }
+    dataGridResize();
     fetchData();
-  }, [myData]);
+  }, [selectItem]);
 
-  React.useEffect(() => {
-    handleSetData();
-  });
-
-  function GenerateDynamicData(
-    data: T | T[]
-  ): DataTable<T> | undefined {
+  function GenerateDynamicData(data: T | T[]): DataTable<T> | undefined {
     const json = JSON.stringify(data);
     const dataSet: T[] = JSON.parse(json).map((vendor: T) => ({
       ...vendor,
@@ -49,16 +52,11 @@ function DynamicGrid<T>(myData: T[]) {
 
     if (dataSet.length > 0) {
       const newItems = GetDataDictionary(dataSet);
-    //   dataSet.forEach((item) => {
-    //     Object.entries(item).forEach(([key, value]) => {
-    //       newItems.values[key].Values.push(value);
-    //     });
-    //   });
+      console.log("generating dynamic data...");
 
       return newItems;
     }
   }
-
 
   function GenerateTableHtml() {
     if (Array.isArray(data)) {
@@ -82,7 +80,7 @@ function DynamicGrid<T>(myData: T[]) {
               style={{ margin: "auto", cursor: "pointer" }}
               className={styles["dataGridth"]}
               data-column-id={columnName.name}
-            //   hidden={isColumnHidden(columnName.keyName)}
+              //   hidden={isColumnHidden(columnName.keyName)}
             >
               <div
                 key={`div${columnName}${idx}`}
@@ -103,20 +101,19 @@ function DynamicGrid<T>(myData: T[]) {
           );
         }),
         ...data
-        //   .filter((row) => !isRowEmpty(row))
+          //   .filter((row) => !isRowEmpty(row))
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
             <tr key={rowIndex} className={styles["gridjs-tr"]}>
-              {/* {Object.entries(row).map(([key, value], index: number) => (
+              {Object.entries(_row).map(([key, value], index: number) => (
                 <td
-                  key={`${key}_${row.Id.toString()}_${rowIndex}_${index}`}
+                  key={`${key}_${rowIndex}_${index}`}
                   className={styles["dataGridtd"]}
                   data-column-id={key}
-                  hidden={isColumnHidden(key)}
                 >
                   {value}
                 </td>
-              ))} */}
+              ))}
             </tr>
           )),
       ];
@@ -155,7 +152,6 @@ function DynamicGrid<T>(myData: T[]) {
       </React.Fragment>
     );
   }
-
 }
 
 export default DynamicGrid;

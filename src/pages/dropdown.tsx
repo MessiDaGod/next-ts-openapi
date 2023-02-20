@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import styles from "./connectionDropdown.module.css";
+import DynamicGrid from "./dynamicGrid";
+import styles from "../styles/Home.module.scss";
 
 interface DropdownProps {
   jsonFileName: string;
   label: string;
-  onChange?: (item: string) => void;
+  // onChange?: (item: string) => void;
 }
 
 interface ButtonProps {
   label: string;
   children?: any;
+  id: string;
 }
 
 interface Item {
@@ -29,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   );
 };
 
-const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label, onChange }) => {
+const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
   const [items, setItems] = useState<Menu | null>(null);
@@ -43,15 +45,12 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label, onChange 
         });
     }
     getItems();
-  }, [jsonFileName, label, items]);
+  }, [jsonFileName]);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
-    if (onChange) {
-      onChange(selectedItem);
-    }
     setShowDropdown(false);
   };
 
@@ -62,7 +61,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label, onChange 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Button label={label}>{selectedItem}</Button>
+      <Button id="dd" label={selectedItem}>{selectedItem}</Button>
       {showDropdown && (
         <ul className={styles.dropdown}>
           {items?.Items.map((item, index) => (
@@ -82,6 +81,7 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label, onChange 
           ))}
         </ul>
       )}
+    {DynamicGrid(selectedItem)}
     </div>
   );
 };

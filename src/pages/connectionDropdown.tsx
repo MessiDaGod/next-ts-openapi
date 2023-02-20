@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from './connectionDropdown.module.css';
+import styles from "../styles/Home.module.scss";
 
 interface DropdownProps {
   jsonFileName: string;

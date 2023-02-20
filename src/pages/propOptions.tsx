@@ -196,7 +196,8 @@ function PropOptionsPage() {
                 value === "0" ||
                 value === "-1" ||
                 value === "0.000000" ||
-                value === "NULL"
+                value === "NULL" ||
+                value === 0
         );
     }
 
@@ -209,7 +210,8 @@ function PropOptionsPage() {
                     value === "0" ||
                     value === "-1" ||
                     value === "0.000000" ||
-                    value === "NULL"
+                    value === "NULL" ||
+                    value === 0
             );
         } else {
             return true;
