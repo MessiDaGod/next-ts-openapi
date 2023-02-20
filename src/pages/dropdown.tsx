@@ -92,7 +92,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </a>
           ))}
       </div>
-      <>{DynamicGrid(selectedItem)}</>
+      <div className={styles["table-container"]}>{DynamicGrid(selectedItem)}</div>
     </>
   );
 };
