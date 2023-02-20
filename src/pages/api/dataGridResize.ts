@@ -137,7 +137,8 @@ function getStyleVal(elm: HTMLElement, css: string): string {
   return window.getComputedStyle(elm, null).getPropertyValue(css);
 }
 
-export const dataGridResize = () => {
+export function dataGridResize() {
+
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([
@@ -151,6 +152,7 @@ export const dataGridResize = () => {
   }
 
   function initResizeListeners() {
+    if (!document) return;
     const tables = [
       ...document.querySelectorAll('table[id^="' + "gridjs_" + '"]'),
     ];

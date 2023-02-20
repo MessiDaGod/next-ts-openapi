@@ -178,6 +178,8 @@ export default function App({ Component, pageProps }: AppProps) {
               fontSize: "24px",
               userSelect: "none",
               cursor: "pointer",
+              marginLeft: "10px",
+              marginTop: "10px",
             }}
           >
             Shakely Consulting

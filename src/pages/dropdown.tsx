@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { CSSProperties, useState, useEffect } from "react";
 import DynamicGrid from "./dynamicGrid";
 import styles from "../styles/Home.module.scss";
 
 interface DropdownProps {
   jsonFileName: string;
   label: string;
-  // onChange?: (item: string) => void;
+  style?: CSSProperties;
 }
 
 interface ButtonProps {
   label: string;
   children?: any;
   id: string;
+  style?: CSSProperties;
 }
 
 interface Item {
@@ -24,14 +25,27 @@ interface Menu {
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
     <button
-      className={`${styles.btn} ${styles["btn-101"]} ${styles["btn-glow"]}`}
+      style={{
+        width: "150px",
+        borderStyle: "solid",
+        borderColor: "white",
+        borderWidth: "1px",
+        cursor: "pointer",
+        margin: "10px",
+        marginBottom: "0px",
+        borderRadius: "10px",
+      }}
     >
       {children}
     </button>
   );
 };
 
-const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  jsonFileName = {},
+  label,
+  style,
+}) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
   const [items, setItems] = useState<Menu | null>(null);
@@ -55,33 +69,31 @@ const Dropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label }) => {
   };
 
   return (
-    <><div
-      className={styles["dropdown"]}
-      style={{ position: "relative", display: "inline-block", zIndex: 10 }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Button id="dd" label={label}>
-        {selectedItem}
-      </Button>
-      {showDropdown && (
-        <ul className={styles.dropdown}>
-          {items?.Items.map((value, index) => (
-            <li
+    <>
+      <div
+        className={styles["dropdown"]}
+        style={style}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Button id="dd" label={label}>
+          {selectedItem}
+        </Button>
+        {showDropdown &&
+          items?.Items.map((value, index) => (
+            <a
               key={index}
               onClick={() => handleItemClick(value.Value)}
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
-              className={hoveredItem === index
-                ? `${styles["dropdown-item"]} ${styles.hovered}`
-                : `${styles["dropdown-item"]}`}
+              className={styles["dropdown-item"]}
             >
               {value.Value}
-            </li>
+            </a>
           ))}
-        </ul>
-      )}
-    </div><>{DynamicGrid(selectedItem)}</></>
+      </div>
+      <>{DynamicGrid(selectedItem)}</>
+    </>
   );
 };
 export default Dropdown;
