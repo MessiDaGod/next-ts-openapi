@@ -7,8 +7,10 @@ import { dataGridResize } from "./api/dataGridResize";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";
 
+
+
 function DynamicGrid<T>(selectItem: string) {
-  const [data, setData] = React.useState<T[]>(null);
+  const [data, setData] = React.useState<T[]>([]);
   const [sortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
@@ -34,6 +36,7 @@ function DynamicGrid<T>(selectItem: string) {
             break;
             case "GetAccounts":
             response = await getAccounts(1000);
+            setData(response);
             break;
         }
       } catch (error) {
@@ -53,7 +56,6 @@ function DynamicGrid<T>(selectItem: string) {
     if (dataSet.length > 0) {
       const newItems = GetDataDictionary(dataSet);
       console.log("generating dynamic data...");
-
       return newItems;
     }
   }
