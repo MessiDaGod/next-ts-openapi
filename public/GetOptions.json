@@ -8,6 +8,9 @@
         },
         {
             "Value": "GetAccounts"
+        },
+        {
+            "Value": "GetDimensions"
         }
     ]
 }

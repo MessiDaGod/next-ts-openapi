@@ -7,7 +7,7 @@ import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 
-function DynamicGrid<T>(selectItem: string) {
+function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
   const [data, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -34,13 +34,16 @@ function DynamicGrid<T>(selectItem: string) {
             response = await getAccounts(100);
             setData(response);
             break;
+          case undefined:
+              setData(myData);
+              break;
         }
       } catch (error) {
         console.error(error);
       }
     }
     fetchData();
-  }, [selectItem]);
+  }, [selectItem, myData]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedData = React.useMemo(() => GenerateDynamicData(data), [data]);

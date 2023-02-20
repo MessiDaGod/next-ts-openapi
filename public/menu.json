@@ -39,6 +39,12 @@
       "Path": "/codeEditor",
       "Icon": "code",
       "New": true
+    },
+    {
+      "Name": "Dimensions",
+      "Path": "/dimensions",
+      "Icon": "code",
+      "New": true
     }
   ]
 }
