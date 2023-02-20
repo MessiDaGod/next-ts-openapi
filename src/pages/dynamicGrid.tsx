@@ -7,14 +7,10 @@ import { dataGridResize } from "./api/dataGridResize";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";
 
-
-
 function DynamicGrid<T>(selectItem: string) {
   const [data, setData] = React.useState<T[]>([]);
   const [sortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
-
   const itemsPerPage = 25;
 
   function handlePageChange(page: number) {
@@ -34,7 +30,7 @@ function DynamicGrid<T>(selectItem: string) {
             response = await getPropOptions(1000);
             setData(response);
             break;
-            case "GetAccounts":
+          case "GetAccounts":
             response = await getAccounts(1000);
             setData(response);
             break;
@@ -46,6 +42,8 @@ function DynamicGrid<T>(selectItem: string) {
     dataGridResize();
     fetchData();
   }, [selectItem]);
+
+  const memoizedData = React.useMemo(() => GenerateDynamicData(data), [data]);
 
   function GenerateDynamicData(data: T | T[]): DataTable<T> | undefined {
     const json = JSON.stringify(data);
@@ -62,7 +60,7 @@ function DynamicGrid<T>(selectItem: string) {
 
   function GenerateTableHtml() {
     if (Array.isArray(data)) {
-      const gridItems = GenerateDynamicData(data);
+      const gridItems = memoizedData;
       if (!gridItems) return;
 
       // Pagination logic
@@ -82,7 +80,6 @@ function DynamicGrid<T>(selectItem: string) {
               style={{ margin: "auto", cursor: "pointer" }}
               className={styles["dataGridth"]}
               data-column-id={columnName.name}
-              //   hidden={isColumnHidden(columnName.keyName)}
             >
               <div
                 key={`div${columnName}${idx}`}
@@ -103,7 +100,6 @@ function DynamicGrid<T>(selectItem: string) {
           );
         }),
         ...data
-          //   .filter((row) => !isRowEmpty(row))
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
             <tr key={rowIndex} className={styles["gridjs-tr"]}>
@@ -131,7 +127,7 @@ function DynamicGrid<T>(selectItem: string) {
         );
       }
     }
-  }
+  };
 
   const table = GenerateTableHtml();
 
