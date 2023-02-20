@@ -8,6 +8,7 @@ import React, { useState, useEffect } from "react";
 import { cn } from "../classNames";
 import { useRouter } from "next/router";
 import classnames from "classnames";
+import { setListeners } from "./helpers";
 
 interface SidebarItem {
   Name: string;
@@ -29,6 +30,7 @@ interface Menu {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const [dropdownId, setDropdownId] = useState("condd");
   const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -41,6 +43,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
     fetchData();
   }, []);
+
+
+  useEffect(() => {
+    setListeners(dropdownId, styles["linksContainer"]);
+  }, [dropdownId]);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -185,8 +192,8 @@ export default function App({ Component, pageProps }: AppProps) {
             Shakely Consulting
           </span>
         </a>
+        <ConnectionDropdown id={dropdownId} jsonFileName="connections" label="Connections" style={{ display: "flex-end" }} />
         <div className={styles["linksContainer"]}>
-          <ConnectionDropdown jsonFileName="connections" label="Connections" />
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}

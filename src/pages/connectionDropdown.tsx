@@ -1,33 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { CSSProperties, useState, useEffect } from "react";
 import styles from "../styles/Home.module.scss";
+import { setListeners } from "./helpers";
 
 interface DropdownProps {
   jsonFileName: string;
   label: string;
+  style?: CSSProperties;
+  id?: string;
 }
 
 interface ButtonProps {
   label: string;
   children?: any;
+  id: string;
+  style?: CSSProperties;
+}
+
+interface Item {
+  Value: string;
+}
+interface Menu {
+  Items: Item[];
 }
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
-  return <button>{children}</button>;
+  return (
+    <button
+      style={{
+        width: "150px",
+        borderStyle: "solid",
+        borderColor: "white",
+        borderWidth: "1px",
+        cursor: "pointer",
+        margin: "10px",
+        marginBottom: "0px",
+        borderRadius: "10px",
+      }}
+    >
+      {children}
+    </button>
+  );
 };
 
 const ConnectionDropdown: React.FC<DropdownProps> = ({
   jsonFileName = {},
   label,
+  style,
+  id,
 }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [myConnectionStrings, setConnectionStrings] = useState<
     Record<string, string>
   >({});
-  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+  const [setId] = useState(id);
+
   useEffect(() => {
-    async function getConnections() {
-      // Fetch the JSON data from an API or a local file
+    async function getItems() {
       fetch(`${jsonFileName}.json`)
         .then((response) => response.json())
         .then((data) => {
@@ -36,39 +66,47 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
           setConnectionStrings(ConnectionStrings);
         });
     }
-    getConnections();
-  }, [jsonFileName, label]);
+    getItems();
+  }, [jsonFileName, label, style]);
+
+  useEffect(() => {
+    setListeners(id, styles["linksContainer"]);
+  }, [id]);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
     setShowDropdown(false);
+    setHoveredItem(null);
   };
 
   return (
-    <>
-      <div
-        className={styles["dropdown"]}
-        style={{ position: "relative", display: "inline-block", zIndex: 10 }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <Button label={label}>{selectedItem}</Button>
-        {showDropdown &&
-          Object.entries(myConnectionStrings).map(([key], index) => (
-            <a
-              key={index}
-              onClick={() => handleItemClick(key)}
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className={`${styles["dropdown-item"]} ${styles.hovered}`}
-            >
-              {key}
-            </a>
-          ))}
-      </div>
-    </>
+    <div
+      id={setId}
+      className={styles["dropdown"]}
+      // style={style}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Button id="dd" label={label}>
+        {selectedItem}
+      </Button>
+      {showDropdown &&
+        Object.entries(myConnectionStrings).map(([key], index) => (
+          <a
+            key={key}
+            onClick={() => handleItemClick(key)}
+            onMouseEnter={() => setHoveredItem(index)}
+            onMouseLeave={() => setHoveredItem(null)}
+            className={`${styles["dropdown-item"]} ${
+              index === hoveredItem ? styles.hovered : ""
+            }`}
+          >
+            {key}
+          </a>
+        ))}
+    </div>
   );
 };
 

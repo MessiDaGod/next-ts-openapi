@@ -678,7 +678,7 @@
 .dropdown {
   position: relative;
   display: inline-block;
-  padding-top: 10px;
+  // padding-top: 10px;
   z-index: 15;
 }
 
@@ -731,6 +731,9 @@
   display: block;
   padding: 10px;
   margin-left: 10px;
+}
+.hovered {
+  display: block;
 }
 
 .dropdown-item:hover {
@@ -794,4 +797,10 @@
   border-radius: var(--bs-btn-border-radius);
   background-color: var(--bs-btn-bg);
   transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.topbar .dropdown {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
