@@ -29,7 +29,7 @@ const Register: React.FC<RegisterProps> = () => {
       .then((response) => {
         return response.json();
       })
-      .then((data) => {})
+      .then(() => {})
       .catch((_error) => {
         // console.info(error)
       });

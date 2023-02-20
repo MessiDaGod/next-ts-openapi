@@ -16,11 +16,6 @@ function PropOptionsPage() {
     const [currentPage, setCurrentPage] = React.useState<number>(1);
 
     const itemsPerPage = 25;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentData = Array.isArray(data)
-        ? data.slice(startIndex, endIndex)
-        : [];
 
     function handlePageChange(page: number) {
         setCurrentPage(page);
@@ -102,13 +97,6 @@ function PropOptionsPage() {
                 return;
 
             // Pagination logic
-            const totalItems = data.filter((row) => !isRowEmpty(row)).length;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedData = data
-                .filter((row) => !isRowEmpty(row))
-                .slice(startIndex, endIndex);
 
             const tableRows = [
                 newPropOptionss.columns.map((columnName, idx) => {

@@ -1,6 +1,3 @@
-import { getVendors } from "./getVendors";
-import { Vendor } from "./Objects/Vendor";
-
 /**
  * Generic interface representing an object with an ID, name, and associated data of type T.
  */

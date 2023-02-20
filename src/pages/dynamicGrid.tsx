@@ -4,7 +4,6 @@ import { dataGridResize } from "./api/dataGridResize";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
-import { Vendor } from "./api/Objects/Vendor";
 
 function handleSetData() {
   dataGridResize();
@@ -12,16 +11,11 @@ function handleSetData() {
 
 function DynamicGrid<T>(myData: T[]) {
   const [data, setData] = React.useState<T[]>([]);
-  const [sortState, setSortState] = React.useState<boolean>(true);
+  const [sortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
 
   const itemsPerPage = 25;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = Array.isArray(data)
-    ? data.slice(startIndex, endIndex)
-    : [];
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -72,13 +66,6 @@ function DynamicGrid<T>(myData: T[]) {
       if (!gridItems) return;
 
       // Pagination logic
-      const totalItems = data.filter((row) => !isRowEmpty(row)).length;
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const paginatedData = data
-        .filter((row) => !isRowEmpty(row))
-        .slice(startIndex, endIndex);
 
       const tableRows = [
         gridItems.columns.map((columnName, idx) => {
@@ -118,7 +105,7 @@ function DynamicGrid<T>(myData: T[]) {
         ...data
         //   .filter((row) => !isRowEmpty(row))
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((row, rowIndex: number) => (
+          .map((_row, rowIndex: number) => (
             <tr key={rowIndex} className={styles["gridjs-tr"]}>
               {/* {Object.entries(row).map(([key, value], index: number) => (
                 <td
@@ -169,18 +156,6 @@ function DynamicGrid<T>(myData: T[]) {
     );
   }
 
-  function isRowEmpty<T>(row: T): boolean {
-    if (!row) return true;
-    return Object.values(row).every(
-      (value) =>
-        value === null ||
-        value === "" ||
-        value === "0" ||
-        value === "-1" ||
-        value === "0.000000" ||
-        value === "NULL"
-    );
-  }
 }
 
 export default DynamicGrid;

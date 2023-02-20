@@ -71,7 +71,7 @@ export function Pagination({
             chevron_left
           </span>
         )}
-        {pageNumbers.map((pageNumber, index: number) => (
+        {pageNumbers.map((pageNumber) => (
           <button
             key={pageNumber}
             onClick={() => handlePageChange(pageNumber)}

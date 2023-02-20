@@ -7,7 +7,7 @@ import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import { cn } from "../classNames";
 import { useRouter } from "next/router";
-import Dropdown from "./dropdown";
+import classnames from "classnames";
 
 interface SidebarItem {
   Name: string;
@@ -34,6 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     async function fetchData() {
+      search();
       fetch("/menu.json")
         .then((response) => response.json())
         .then((data) => setMenu(data));
@@ -47,6 +48,34 @@ export default function App({ Component, pageProps }: AppProps) {
 
   function goHome(): void {
     router.push("/");
+  }
+
+  function search(): void {
+    const searchInput = document.querySelector("#search-input");
+    searchInput.addEventListener("input", handleSearchInput);
+
+    function handleSearchInput() {
+      const sidebarItems = document.querySelectorAll(
+        `.${classnames(styles["sidebar__item"])}`
+      ) as NodeListOf<HTMLElement>;
+      let input = searchInput as HTMLInputElement;
+      const query = input.value.toLowerCase();
+
+      for (const item of sidebarItems) {
+        if (item) {
+          let newItem = item as HTMLElement;
+          if (newItem) {
+            const title = newItem
+              .dataset.columnId.toLowerCase();
+            if (title.includes(query)) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          }
+        }
+      }
+    }
   }
 
   return (
@@ -91,13 +120,38 @@ export default function App({ Component, pageProps }: AppProps) {
             collapsed ? styles.collapsed : styles.expanded
           }`}
         >
+          <div>
+            <input
+              id="search-input"
+              type="search"
+              className="rz-textbox findcomponent"
+              placeholder="Find component ..."
+              autoComplete="on"
+              style={{
+                padding: "1rem",
+                color: "white",
+                backgroundColor: "inherit",
+                fontSize: "16px",
+                borderBottom: "1px solid #2f333d",
+                borderTop: "1px solid #2f333d",
+                width: "100%",
+                cursor: "pointer",
+              }}
+            ></input>
+          </div>
           <div className={styles["ul"]}>
             {menu?.sidebarItems.map((item, index: number) => (
               <a
                 key={index}
                 className={styles["sidebar__item"]}
                 href={item.Path}
-                style={{ width: "100%" }}
+                data-column-id={item.Name}
+                style={{
+                  fontSize: "16px",
+                  borderBottom: "1px solid #2f333d",
+                  borderTop: "1px solid #2f333d",
+                  width: "100%",
+                }}
               >
                 <span className="material-symbols-outlined">{item.Icon}</span>
                 {item.Name}
@@ -127,31 +181,30 @@ export default function App({ Component, pageProps }: AppProps) {
             Shakely Consulting
           </span>
         </a>
-
         <div className={styles["linksContainer"]}>
+          <ConnectionDropdown jsonFileName="connections" label="Connections" />
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
               href={item.url}
               style={{ marginRight: "1rem" }}
+              title={item.label}
             >
               {item.label}
             </Link>
           ))}
         </div>
-        <Dropdown jsonFileName="GetOptions" label="Get" />
-        <ConnectionDropdown jsonFileName="connections" label="Connections" />
       </div>
-        <div
-          className={cn(
-            styles["rz-body"],
-            styles["body"],
-            collapsed ? styles["rz-body-collapsed"] : styles["rz-body"]
-          )}
-        >
-          <Component {...pageProps} />
-        </div>
+      <div
+        className={cn(
+          styles["rz-body"],
+          styles["body"],
+          collapsed ? styles["rz-body-collapsed"] : styles["rz-body"]
+        )}
+      >
+        <Component {...pageProps} />
+      </div>
     </>
   );
 }

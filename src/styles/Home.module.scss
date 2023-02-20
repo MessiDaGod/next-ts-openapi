@@ -14,19 +14,22 @@
 .rz-body {
   position: fixed;
   padding: 0;
-  border: blue;
+  // border: blue;
   border-style: solid;
   max-width: 90vw;
   width: 90vw;
   left: var(--sb-width);
   top: var(--tb-height);
   height: 95vh;
+  overflow: auto;
 }
 .rz-body.rz-body-collapsed {
   max-width: 100%;
   width: 100%;
   left: 0;
   transition: var(--transform);
+	-webkit-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
 }
 
 #__next {
@@ -209,10 +212,6 @@
   color: white;
   height: 70vh;
   max-height: 70vh;
-}
-
-.dataGridtable {
-  border: 1px solid red;
 }
 
 .dataGridtbody {
@@ -658,4 +657,22 @@
   border-width: 2px solid aqua;
   border-style: solid;
   width: 20vw;
+}
+
+
+/* Effect 1: Slide in on top */
+.st-effect-1.st-menu {
+	visibility: visible;
+	-webkit-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
+}
+
+.st-effect-1.st-menu-open .st-effect-1.st-menu {
+	visibility: visible;
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.st-effect-1.st-menu::after {
+	display: none;
 }

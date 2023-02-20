@@ -1,4 +1,4 @@
-import { PropOptions, emptyPropOptions } from "./Objects/PropOptions";
+import { PropOptions } from "./Objects/PropOptions";
 
 // Register a new user
 export async function getPropOptions(take: number | null = null) {

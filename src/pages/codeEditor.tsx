@@ -29,11 +29,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
     // @ts-ignore
     editorRef.current = editor;
     editor.onDidChangeModelContent(async () => {
-      const sql = editor.getValue();
-      await formatSql(sql).then((formattedSql) => {
-        // Do something with the formatted SQL string
-        // console.log(formattedSql);
-      });
+      // const sql = editor.getValue();
+      // await formatSql(sql);
     });
   };
 
@@ -47,17 +44,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
     }
   };
 
-  async function handleSetEditorValue() {
-    const value = await GetValue();
-    if (value) seteditorValue(value);
-  }
+  // async function handleSetEditorValue() {
+  //   const value = await GetValue();
+  //   if (value) seteditorValue(value);
+  // }
 
-  async function GetValue() {
-    if (editorRef.current) {
-      const newValue = editorRef.current.getValue();
-      return newValue;
-    }
-  }
+  // async function GetValue() {
+  //   if (editorRef.current) {
+  //     const newValue = editorRef.current.getValue();
+  //     return newValue;
+  //   }
+  // }
 
   return (
     <div className={styles.container}>
@@ -71,7 +68,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
       <button style={{ display: "block" }} onClick={handleFormatClick}>
         Format
       </button>
-      <button onClick={handleSetEditorValue}>Set Value</button>
     </div>
   );
 };

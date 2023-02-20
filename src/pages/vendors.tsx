@@ -17,11 +17,6 @@ function Vendors() {
   // const [itemsPerPage, setItemsPerPage] = React.useState<number>(25);
 
   const itemsPerPage = 25;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = Array.isArray(data)
-    ? data.slice(startIndex, endIndex)
-    : [];
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -98,13 +93,6 @@ function Vendors() {
       if (!newVendors) return;
 
       // Pagination logic
-      const totalItems = data.filter((row) => !isRowEmpty(row)).length;
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const paginatedData = data
-        .filter((row) => !isRowEmpty(row))
-        .slice(startIndex, endIndex);
 
       const tableRows = [
         newVendors.columns.map((columnName, idx) => {

@@ -33,6 +33,12 @@
       "Path": "/vendors",
       "Icon": "analytics",
       "New": true
+    },
+    {
+      "Name": "Code Editor",
+      "Path": "/codeEditor",
+      "Icon": "code",
+      "New": true
     }
   ]
 }

@@ -13,7 +13,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
-    <button className={`${styles.btn} ${styles['btn-101']} ${styles['btn-glow']}`}>
+    <button>
       {children}
     </button>
   );
@@ -71,7 +71,7 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({ jsonFileName = {}, label 
   return (
     <div
       className={styles['dropdown']}
-      style={{ position: "relative", display: "inline-block" }}
+      style={{ position: "relative", display: "inline-block", zIndex: 10}}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
