@@ -30,24 +30,22 @@ interface Menu {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [dropdownId, setDropdownId] = useState("condd");
+  // const [dropdownId, setDropdownId] = useState("condd");
   const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [myId, setId] = useState("");
 
   useEffect(() => {
     async function fetchData() {
+      setId("condd");
       search();
       fetch("/menu.json")
         .then((response) => response.json())
         .then((data) => setMenu(data));
     }
     fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    setListeners(dropdownId, styles["linksContainer"]);
-  }, [dropdownId]);
+    // setListeners(dropdownId, styles["linksContainer"]);
+  }, [myId, menu, collapsed]);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -192,7 +190,7 @@ export default function App({ Component, pageProps }: AppProps) {
             Shakely Consulting
           </span>
         </a>
-        <ConnectionDropdown id={dropdownId} jsonFileName="connections" label="Connections" style={{ display: "flex-end" }} />
+        <ConnectionDropdown id={"condd"} jsonFileName="connections" label="Connections" style={{ display: "flex-end" }} />
         <div className={styles["linksContainer"]}>
           {menu?.topBar.map((item, index: number) => (
             <Link

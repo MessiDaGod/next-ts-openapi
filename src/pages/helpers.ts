@@ -8,7 +8,7 @@ export function setListeners(id: string, classNames: string): void {
     let width = 0;
     if (chidlren && chidlren.length > 0) {
         for (let j = 0; j < chidlren.length; j++) {
-            console.log("children exist!!!");
+            console.info("children exist!!!");
             let a = chidlren[j] as Element;
             width += a.clientWidth;
         }

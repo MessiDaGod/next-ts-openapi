@@ -27,10 +27,10 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
     <button
       style={{
-        width: "150px",
+        width: "200px",
         borderStyle: "solid",
         borderColor: "white",
-        borderWidth: "1px",
+        borderWidth: "0.01rem",
         cursor: "pointer",
         margin: "10px",
         marginBottom: "0px",
@@ -54,8 +54,6 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
   const [myConnectionStrings, setConnectionStrings] = useState<
     Record<string, string>
   >({});
-  const [setId] = useState(id);
-
   useEffect(() => {
     async function getItems() {
       fetch(`${jsonFileName}.json`)
@@ -67,11 +65,8 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
         });
     }
     getItems();
-  }, [jsonFileName, label, style]);
+  }, [id, jsonFileName, label, style]);
 
-  useEffect(() => {
-    setListeners(id, styles["linksContainer"]);
-  }, [id]);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
@@ -83,9 +78,9 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
 
   return (
     <div
-      id={setId}
+      id={id}
       className={styles["dropdown"]}
-      // style={style}
+      style={{ right: "400px" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
