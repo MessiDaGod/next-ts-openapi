@@ -25,8 +25,8 @@ interface DataSet {
 //   return data.map((item: any) => item.Name);
 // }
 
-function GenerateDynamicData(
-  data: [] | undefined
+function GenerateDynamicData<T>(
+  data: T[] | undefined
 ) : DataSet[] {
   if (!data) return;
   if (data.length === 0) return;
@@ -44,7 +44,6 @@ function GenerateDynamicData(
   //   return Object.keys(myDataSet).includes(col);
   // });
 
-  console.log(myDataSet);
   return myDataSet;
 }
 
@@ -59,6 +58,7 @@ export default function App() {
 
 function Example<T>() {
   const [data, setData] = React.useState<T[]>([]);
+  const [size, setSize] = React.useState<Boolean>(null);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const itemsPerPage = 25;
@@ -68,25 +68,24 @@ function Example<T>() {
       .then((res) => setData(res.data))
   );
 
-  function handleSetData() {
-    console.info("resizing...");
-    dataGridResize();
-  }
 
   useEffect(() => {
-    const handleListeners = () => { handleSetData(); }
+
     async function fetchData() {
       // console.info(data);
       setData(data);
     }
     fetchData();
-    handleListeners();
 
-    // document.addEventListener('DOMContentLoaded', handleListeners);
-    // return () => {
-    //   document.removeEventListener('DOMContentLoaded', handleListeners);
-    // };
   }, [data]);
+
+  useEffect(() => {
+    async function handleListeners() {
+      dataGridResize();
+      setSize(true);
+    }
+    handleListeners();
+  }, [size]);
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -190,7 +189,6 @@ function Example<T>() {
 
 
       if (tableRows.length > 0) {
-        console.log(tableRows);
         return (
           <table id={"gridjs_0"} className={styles["dataGridtable"]}>
             <thead>

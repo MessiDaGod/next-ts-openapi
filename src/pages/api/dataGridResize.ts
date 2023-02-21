@@ -86,16 +86,19 @@ function setListeners(div: HTMLElement): void {
       }
     });
 
-    document.addEventListener('dblclick', function(e: MouseEvent): void {
-      e.preventDefault();
-      const tbl = document.getElementsByTagName('table')[0];
-      const columns = Array.from(new Set([...tbl.querySelectorAll('th')]));
-      columns.forEach((th) => {
-          if (th.getAttribute("data-column-id") === "NOTES")
-            console.log(`${th.getAttribute("data-column-id")}: ${Math.round(th.getBoundingClientRect().width)}`);
-          th.style.width = Math.round(th.getBoundingClientRect().width) + "px";
-      });
-  });
+  //   document.addEventListener('dblclick', function(e: MouseEvent): void {
+  //     e.preventDefault();
+  //     const tbl = document.getElementsByTagName('table')[0];
+  //     const columns = Array.from(new Set([...tbl.querySelectorAll('th')]));
+  //     columns.forEach((th) => {
+  //       const width = Math.round(th.getBoundingClientRect().width) + "px";
+  //       th.style.width = width;
+  //       const cells = Array.from(new Set([...tbl.querySelectorAll('td')]));
+  //       cells.forEach((td) => {
+  //         td.style.width = width;
+  //       });
+  //     });
+  // });
 
     document.addEventListener("mouseup", function (_e: MouseEvent): void {
       curCol = null;
@@ -121,6 +124,7 @@ function getStyleVal(elm: HTMLElement, css: string): string {
 }
 
 export function dataGridResize() {
+  console.log("resizing...");
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([
