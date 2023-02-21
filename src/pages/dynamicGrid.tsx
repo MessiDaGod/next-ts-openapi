@@ -5,7 +5,22 @@ import { Pagination } from "../pagination";
 import { getPropOptions } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";
-import { dataGridResize } from "./api/dataGridResize";
+import { parseValue } from "./utils";
+
+async function GetDimensions(take: number | null = null) {
+  try {
+    let url = `https://localhost:5006/api/data/GetDimensions${
+      take ? `?take=${take}` : ""
+    }`;
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    return JSON.parse(await response.text());
+  } catch (error) {
+    return error;
+  }
+}
+
 
 function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
   const [data, setData] = React.useState<T[]>([]);
@@ -34,8 +49,11 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
             response = await getAccounts(100);
             setData(response);
             break;
+            case "GetDimensions":
+              response = await GetDimensions(2);
+              setData(response);
+              break;
           case undefined:
-              setData(myData);
               break;
         }
       } catch (error) {
@@ -143,7 +161,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
                   className={styles["dataGridtd"]}
                   data-column-id={key}
                 >
-                  {value}
+                  {parseValue(value, key)}
                 </td>
               ))}
             </tr>

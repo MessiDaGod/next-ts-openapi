@@ -116,10 +116,6 @@ function Example<T>() {
               className={styles["dataGridth"]}
               data-column-id={columnName.name}
             >
-              <div
-                key={`div${columnName}${idx}`}
-                className={`${styles["columndivider"]}`}
-              ></div>
               <span
                 className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
                 onClick={() => handleSort(columnName.keyName)}
@@ -132,6 +128,7 @@ function Example<T>() {
                 {!sortState ? "expand_more" : "expand_less"}
               </span>
               {columnNamesWithLineBreaks}
+              <div className={styles["columndivider"]}></div>
             </th>
           );
         }),

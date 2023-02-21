@@ -1,19 +1,3 @@
-declare global {
-  interface String {
-    visualLength(): number;
-  }
-}
-
-String.prototype.visualLength = function () {
-  if (!document) return 0;
-  const ruler = document.getElementById("ruler") as HTMLElement;
-  if (ruler) {
-    ruler.innerHTML = this as string;
-    return ruler.offsetWidth;
-  }
-  return 0;
-};
-
 function setListeners(div: HTMLElement): void {
   var pageX: number | undefined,
     curCol: HTMLElement | null,
@@ -98,20 +82,20 @@ function setListeners(div: HTMLElement): void {
     );
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
+      const diffX = e.pageX - (pageX ?? 0);
       if (curCol) {
-        const diffX = e.pageX - (pageX ?? 0);
-
-        if (nxtCol) {
-          nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
-          nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-        }
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-        if (prevCol) {
-          prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
-          prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
-        }
       }
+
+      if (nxtCol) {
+        nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
+        nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
+      }
+      // if (prevCol) {
+      //   prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
+      //   prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
+      // }
     });
 
     document.addEventListener("mouseup", function (_e: MouseEvent): void {
@@ -138,7 +122,6 @@ function getStyleVal(elm: HTMLElement, css: string): string {
 }
 
 export function dataGridResize() {
-
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([
@@ -161,9 +144,8 @@ export function dataGridResize() {
         new Set([...tables[i].querySelectorAll("th")])
       );
       columns.forEach((th) => {
-        th.style.width =
-          (th.textContent ? th.textContent.visualLength() + 12 : 0).toString() +
-          "px";
+        th.style.width = th.getBoundingClientRect().width + "px";
+        th.style.minWidth = th.getBoundingClientRect().width + "px";
       });
       resizableGrid(tables[i] as HTMLTableElement);
     }
@@ -202,4 +184,4 @@ export function dataGridResize() {
       }
     }
   }
-};
+}
