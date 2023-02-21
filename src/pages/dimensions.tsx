@@ -6,13 +6,9 @@ import axios from "axios";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import styles from "../styles/Home.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
+import { parseValue } from "./utils";
 
 const queryClient = new QueryClient();
-
-function handleSetData() {
-  console.info("resizing...");
-  dataGridResize();
-}
 
 export default function App() {
   return (
@@ -24,15 +20,20 @@ export default function App() {
 }
 
 function Example<T>() {
-  const [myData, setData] = React.useState<T[]>([]);
+  const [data, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const itemsPerPage = 25;
-  const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
+  const { isLoading, error, isFetching } = useQuery("repoData", () =>
     axios
       .get("https://localhost:5006/api/data/GetDimensions")
-      .then((res) => res.data)
+      .then((res) => setData(res.data))
   );
+
+  function handleSetData() {
+    console.info("resizing...");
+    dataGridResize();
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -40,12 +41,12 @@ function Example<T>() {
       setData(data);
     }
     fetchData();
-    // handleSetData();
+    const handleListeners = () => { handleSetData(); }
+    document.addEventListener('DOMContentLoaded', handleListeners);
+    return () => {
+      document.removeEventListener('DOMContentLoaded', handleListeners);
+    };
   }, [data]);
-
-  useEffect(() => {
-    handleSetData();
-  });
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -76,9 +77,9 @@ function Example<T>() {
     }
   }
 
-  const memoizedData = React.useMemo(() => GenerateDynamicData(data), [myData]);
+  const memoizedData = React.useMemo(() => GenerateDynamicData(), [GenerateDynamicData]);
 
-  function GenerateDynamicData<T>(myData: T | T[]): DataTable<T> | undefined {
+  function GenerateDynamicData<T>(): DataTable<T> | undefined {
 
     if (!data) return;
     const json = JSON.stringify(data);
@@ -142,7 +143,7 @@ function Example<T>() {
                   className={styles["dataGridtd"]}
                   data-column-id={key}
                 >
-                  {value as string}
+                  {parseValue(value as string, key)}
                 </td>
               ))}
             </tr>
@@ -172,7 +173,7 @@ function Example<T>() {
     <>
       <div>
         <h1>Dimensions</h1>
-        <p>Count: {Array.from(new Set(myData)).length}</p>
+        <p>Count: {Array.from(new Set(data)).length}</p>
         {table}
         <div>{isFetching ? "Updating..." : ""}</div>
         <ReactQueryDevtools initialIsOpen />

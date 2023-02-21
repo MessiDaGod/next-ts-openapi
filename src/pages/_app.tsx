@@ -33,18 +33,15 @@ export default function App({ Component, pageProps }: AppProps) {
   // const [dropdownId, setDropdownId] = useState("condd");
   const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
-  const [myId, setId] = useState("");
 
   useEffect(() => {
     async function fetchData() {
-      setId("condd");
       search();
       fetch("/menu.json")
         .then((response) => response.json())
         .then((data) => setMenu(data));
     }
     fetchData();
-    setListeners("condd", styles["linksContainer"]);
   }, []);
 
   const handleCollapse = () => {
@@ -171,9 +168,6 @@ export default function App({ Component, pageProps }: AppProps) {
           className={styles.sitelogo}
           onClick={() => goHome()}
           style={{
-            justifyContent: "flex-start",
-            paddingRight: "50px",
-            width: "100%",
             borderStyle: "none",
             borderColor: "transparent"
           }}
@@ -190,14 +184,14 @@ export default function App({ Component, pageProps }: AppProps) {
             Shakely Consulting
           </span>
         </a>
-        <ConnectionDropdown id={"condd"} jsonFileName="connections" label="Connections" style={{ display: "flex-end" }} />
         <div className={styles["linksContainer"]}>
+          <a style={{ display: "flex", justifyContent: "flex-start", marginRight: "1rem" }}><ConnectionDropdown jsonFileName="connections" label="Connections" /></a>
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
               href={item.url}
-              style={{ marginRight: "1rem" }}
+              style={{ display: "flex-end", marginRight: "1rem" }}
               title={item.label}
             >
               {item.label}

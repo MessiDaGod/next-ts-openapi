@@ -27,7 +27,6 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
     <button
       style={{
-        width: "200px",
         borderStyle: "solid",
         borderColor: "white",
         borderWidth: "0.01rem",
@@ -35,6 +34,8 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
         margin: "10px",
         marginBottom: "0px",
         borderRadius: "10px",
+        justifyContent: "flex-start",
+        display: "flex",
       }}
     >
       {children}
@@ -80,7 +81,6 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
     <div
       id={id}
       className={styles["dropdown"]}
-      style={{ right: "400px" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

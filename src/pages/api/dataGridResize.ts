@@ -2,10 +2,8 @@ function setListeners(div: HTMLElement): void {
   var pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
-    prevCol: HTMLElement | null,
     curColWidth: number | undefined,
-    nxtColWidth: number | undefined,
-    prevColWidth: number | undefined;
+    nxtColWidth: number | undefined;
 
   if (div.parentElement) {
     div.parentElement.addEventListener(
@@ -63,10 +61,6 @@ function setListeners(div: HTMLElement): void {
           ? (curCol.nextElementSibling as HTMLElement)
           : null;
         nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
-        if (curCol)
-          prevCol = curCol
-            ? (curCol.previousElementSibling as HTMLElement)
-            : null;
         pageX = e.pageX;
 
         const padding = curCol ? paddingDiff(curCol) : 0;
@@ -76,8 +70,6 @@ function setListeners(div: HTMLElement): void {
             ? curCol.offsetWidth - padding
             : 0;
         if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-        if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
       }
     );
 
@@ -92,11 +84,18 @@ function setListeners(div: HTMLElement): void {
         nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
         nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
       }
-      // if (prevCol) {
-      //   prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
-      //   prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
-      // }
     });
+
+    document.addEventListener('dblclick', function(e: MouseEvent): void {
+      e.preventDefault();
+      const tbl = document.getElementsByTagName('table')[0];
+      const columns = Array.from(new Set([...tbl.querySelectorAll('th')]));
+      columns.forEach((th) => {
+          if (th.getAttribute("data-column-id") === "NOTES")
+            console.log(`${th.getAttribute("data-column-id")}: ${Math.round(th.getBoundingClientRect().width)}`);
+          th.style.width = Math.round(th.getBoundingClientRect().width) + "px";
+      });
+  });
 
     document.addEventListener("mouseup", function (_e: MouseEvent): void {
       curCol = null;

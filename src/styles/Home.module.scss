@@ -191,6 +191,7 @@
 .linksContainer {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 .container {
   max-width: calc(100vw - var(--sb-width) - 10);
@@ -207,6 +208,7 @@
   display: block;
   position: relative;
   margin-left: 40px;
+  padding: 0;
   padding-top: 10px;
 }
 
@@ -251,6 +253,7 @@
 .columndivider {
   top: 0px;
   right: 0px;
+  width: 50px;
   position: relative;
   cursor: col-resize;
   -webkit-user-select: all;
@@ -692,11 +695,7 @@
 }
 
 .dropdown {
-  position: absolute;
-  display: inline-block;
-  // padding-top: 10px;
   border-width: 1px;
-  z-index: 15;
   border-radius: 4px;
 }
 
@@ -802,10 +801,4 @@
   border-radius: var(--bs-btn-border-radius);
   background-color: var(--bs-btn-bg);
   transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-.topbar .dropdown {
-  position: absolute;
-  top: 0;
-  right: 0;
 }
