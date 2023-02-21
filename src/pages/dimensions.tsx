@@ -12,7 +12,6 @@ const queryClient = new QueryClient();
 function handleSetData() {
   console.info("resizing...");
   dataGridResize();
-  return true;
 }
 
 export default function App() {
@@ -28,7 +27,6 @@ function Example<T>() {
   const [myData, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [resize, setResize] = React.useState<boolean>(false);
   const itemsPerPage = 25;
   const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
     axios
@@ -42,12 +40,12 @@ function Example<T>() {
       setData(data);
     }
     fetchData();
-  }, [data, myData]);
+    // handleSetData();
+  }, [data]);
 
   useEffect(() => {
-    let result = handleSetData();
-    setResize(result);
-  }, [resize]);
+    handleSetData();
+  });
 
   function handleSort(columnName: string) {
     let state = sortState;
