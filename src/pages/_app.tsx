@@ -44,8 +44,8 @@ export default function App({ Component, pageProps }: AppProps) {
         .then((data) => setMenu(data));
     }
     fetchData();
-    // setListeners(dropdownId, styles["linksContainer"]);
-  }, [myId, menu, collapsed]);
+    setListeners("condd", styles["linksContainer"]);
+  }, []);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
