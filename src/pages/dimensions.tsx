@@ -10,6 +10,43 @@ import { parseValue } from "./utils";
 
 const queryClient = new QueryClient();
 
+
+interface DataSet {
+  [key: number]: number | undefined;
+  row: number | undefined;
+  columnName: string | undefined;
+  value: string | undefined;
+}
+
+// async function getGoodColumns(): Promise<string[]> {
+//   const response = await fetch("/GoodColumns.json");
+//   const data = await response.json();
+//   return data.map((item: any) => item.Name);
+// }
+
+function GenerateDynamicData(
+  data: [] | undefined
+) : DataSet[] {
+  if (!data) return;
+  if (data.length === 0) return;
+  const myDataSet: DataSet[] = [];
+
+  // const goodColumns = await getGoodColumns();
+  for (let i = 0; i < data.length; i++) {
+    const values = Object.entries(data[i]);
+    values.map((value) => {
+      myDataSet.push({ row: i, columnName: value[0], value: value[1] as string });
+    });
+  }
+
+  // const newColumns = goodColumns.filter((col) => {
+  //   return Object.keys(myDataSet).includes(col);
+  // });
+
+  console.log(myDataSet);
+  return myDataSet;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
