@@ -15,6 +15,7 @@ interface DataSet {
   [key: number]: number | undefined;
   row: number | undefined;
   columnName: string | undefined;
+  columnIndex: number | undefined;
   value: string | undefined;
 }
 
@@ -34,8 +35,8 @@ function GenerateDynamicData(
   // const goodColumns = await getGoodColumns();
   for (let i = 0; i < data.length; i++) {
     const values = Object.entries(data[i]);
-    values.map((value) => {
-      myDataSet.push({ row: i, columnName: value[0], value: value[1] as string });
+    values.map((value, idx: number) => {
+      myDataSet.push({ row: i, columnName: value[0], columnIndex: idx, value: value[1] as string });
     });
   }
 
@@ -57,7 +58,7 @@ export default function App() {
 }
 
 function Example<T>() {
-  const [data, setData] = React.useState<T[]>([]);
+  const [data, setData] = React.useState<[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const itemsPerPage = 25;
@@ -74,7 +75,7 @@ function Example<T>() {
 
   useEffect(() => {
     async function fetchData() {
-      console.info(data);
+      // console.info(data);
       setData(data);
     }
     fetchData();
@@ -114,33 +115,33 @@ function Example<T>() {
     }
   }
 
-  const memoizedData = React.useMemo(() => GenerateDynamicData(), [GenerateDynamicData]);
+  // const memoizedData = React.useMemo(() => GenerateDynamicData(), [GenerateDynamicData]);
 
-  function GenerateDynamicData<T>(): DataTable<T> | undefined {
+  // function GenerateDynamicData<T>(): DataTable<T> | undefined {
 
-    if (!data) return;
-    const json = JSON.stringify(data);
-    const dataSet: T[] = JSON.parse(json).map((vendor: T) => ({
-      ...vendor,
-    }));
-    if (dataSet.length > 0) {
-      const newItems = GetDataDictionary(dataSet);
-      console.log("generating dynamic data...");
-      return newItems;
-    }
-  }
+  //   if (!data) return;
+  //   const json = JSON.stringify(data);
+  //   const dataSet: T[] = JSON.parse(json).map((vendor: T) => ({
+  //     ...vendor,
+  //   }));
+  //   if (dataSet.length > 0) {
+  //     const newItems = GetDataDictionary(dataSet);
+  //     console.log("generating dynamic data...");
+  //     return newItems;
+  //   }
+  // }
 
 
   function GenerateTableHtml() {
     if (Array.isArray(data)) {
-      const gridItems = memoizedData;
+      const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
       // Pagination logic
 
       const tableRows = [
-        gridItems.columns.map((columnName, idx) => {
-          const columnNames = columnName.displayName.split(" ");
+        gridItems.map((item, idx) => {
+          const columnNames = item.columnName.replaceAll("_", " ").split(" ");
           const columnNamesWithLineBreaks = columnNames.map((name) => (
             <React.Fragment key={name}>
               {name}
@@ -152,11 +153,11 @@ function Example<T>() {
               key={`${idx}`}
               style={{ margin: "auto", cursor: "pointer" }}
               className={styles["dataGridth"]}
-              data-column-id={columnName.name}
+              data-column-id={item.columnName}
             >
               <span
                 className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-                onClick={() => handleSort(columnName.keyName)}
+                onClick={() => handleSort(item.columnName)}
                 style={{
                   margin: "auto",
                   display: "inline-block",
@@ -170,19 +171,17 @@ function Example<T>() {
             </th>
           );
         }),
-        ...data
+        ...gridItems
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <tr key={rowIndex} className={styles["gridjs-tr"]}>
-              {Object.entries(_row).map(([key, value], index: number) => (
+            <tr key={_row.row} className={styles["gridjs-tr"]}>
                 <td
-                  key={`${key}_${rowIndex}_${index}`}
+                  key={`${_row.columnName}_${_row.row}`}
                   className={styles["dataGridtd"]}
-                  data-column-id={key}
+                  data-column-id={_row.columnName}
                 >
-                  {parseValue(value as string, key)}
+                  {parseValue(_row.value, _row.columnName)}
                 </td>
-              ))}
             </tr>
           )),
       ];
