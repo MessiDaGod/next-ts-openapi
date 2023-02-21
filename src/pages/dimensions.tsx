@@ -58,7 +58,7 @@ export default function App() {
 }
 
 function Example<T>() {
-  const [data, setData] = React.useState<[]>([]);
+  const [data, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const itemsPerPage = 25;
@@ -74,16 +74,18 @@ function Example<T>() {
   }
 
   useEffect(() => {
+    const handleListeners = () => { handleSetData(); }
     async function fetchData() {
       // console.info(data);
       setData(data);
     }
     fetchData();
-    const handleListeners = () => { handleSetData(); }
-    document.addEventListener('DOMContentLoaded', handleListeners);
-    return () => {
-      document.removeEventListener('DOMContentLoaded', handleListeners);
-    };
+    handleListeners();
+
+    // document.addEventListener('DOMContentLoaded', handleListeners);
+    // return () => {
+    //   document.removeEventListener('DOMContentLoaded', handleListeners);
+    // };
   }, [data]);
 
   function handleSort(columnName: string) {
@@ -133,7 +135,7 @@ function Example<T>() {
 
 
   function GenerateTableHtml() {
-    if (Array.isArray(data)) {
+    if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
@@ -142,10 +144,19 @@ function Example<T>() {
       const tableRows = [
         gridItems.map((item, idx) => {
           const columnNames = item.columnName.replaceAll("_", " ").split(" ");
-          const columnNamesWithLineBreaks = columnNames.map((name) => (
+          const columnNamesWithLineBreaks = columnNames.map((name, index) => (
             <React.Fragment key={name}>
               {name}
-              <br />
+              <span
+                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                onClick={() => handleSort(item.columnName)}
+                style={{
+                  margin: "auto",
+                  display: "inline-block",
+                  cursor: "pointer",
+                }}
+              >{!sortState ? "expand_more" : "expand_less"}
+              </span>
             </React.Fragment>
           ));
           return (
@@ -155,38 +166,31 @@ function Example<T>() {
               className={styles["dataGridth"]}
               data-column-id={item.columnName}
             >
-              <span
-                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-                onClick={() => handleSort(item.columnName)}
-                style={{
-                  margin: "auto",
-                  display: "inline-block",
-                  cursor: "pointer",
-                }}
-              >
-                {!sortState ? "expand_more" : "expand_less"}
-              </span>
               {columnNamesWithLineBreaks}
               <div className={styles["columndivider"]}></div>
             </th>
           );
         }),
-        ...gridItems
+        ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <tr key={_row.row} className={styles["gridjs-tr"]}>
+            <tr key={rowIndex} className={styles["gridjs-tr"]}>
+              {Object.entries(_row).map(([key, value], index: number) => (
                 <td
-                  key={`${_row.columnName}_${_row.row}`}
+                  key={`${key}_${rowIndex}_${index}`}
                   className={styles["dataGridtd"]}
-                  data-column-id={_row.columnName}
+                  data-column-id={key}
                 >
-                  {parseValue(_row.value, _row.columnName)}
+                  {parseValue(value as string, key)}
                 </td>
+              ))}
             </tr>
           )),
       ];
 
+
       if (tableRows.length > 0) {
+        console.log(tableRows);
         return (
           <table id={"gridjs_0"} className={styles["dataGridtable"]}>
             <thead>
