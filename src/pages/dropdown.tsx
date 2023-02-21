@@ -1,6 +1,7 @@
 import React, { CSSProperties, useState, useEffect } from "react";
 import DynamicGrid from "./dynamicGrid";
 import styles from "../styles/Home.module.scss";
+import { cn } from "@/classNames";
 
 interface DropdownProps {
   jsonFileName: string;
@@ -24,18 +25,9 @@ interface Menu {
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
-    <button
-      style={{
-        width: "150px",
-        borderStyle: "solid",
-        borderColor: "white",
-        borderWidth: "1px",
-        cursor: "pointer",
-        margin: "10px",
-        marginBottom: "0px",
-        borderRadius: "10px",
-      }}
-    >
+    <button className={cn(
+      styles["button"]
+    )}>
       {children}
     </button>
   );
@@ -81,7 +73,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         </Button>
         {showDropdown &&
           items?.Items.map((value, index) => (
-            <a
+            <span
               key={index}
               onClick={() => handleItemClick(value.Value)}
               onMouseEnter={() => setHoveredItem(index)}
@@ -89,7 +81,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               className={styles["dropdown-item"]}
             >
               {value.Value}
-            </a>
+            </span>
           ))}
       </div>
       <div className={styles["table-container"]}>{DynamicGrid(selectedItem)}</div>

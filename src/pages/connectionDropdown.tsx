@@ -1,3 +1,4 @@
+import { cn } from "@/classNames";
 import React, { CSSProperties, useState, useEffect } from "react";
 import styles from "../styles/Home.module.scss";
 import { setListeners } from "./helpers";
@@ -25,19 +26,9 @@ interface Menu {
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
-    <button
-      style={{
-        borderStyle: "solid",
-        borderColor: "white",
-        borderWidth: "0.01rem",
-        cursor: "pointer",
-        margin: "10px",
-        marginBottom: "0px",
-        borderRadius: "10px",
-        justifyContent: "flex-start",
-        display: "flex",
-      }}
-    >
+    <button className={cn(
+      styles["button"]
+    )}>
       {children}
     </button>
   );
@@ -68,6 +59,11 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
     getItems();
   }, [id, jsonFileName, label, style]);
 
+  useEffect(() => {
+    document.addEventListener("onload", (e) => {
+      console.log("onload");
+    });
+  }, []);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
@@ -77,11 +73,12 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
     setHoveredItem(null);
   };
 
+
   return (
     <div
       id={id}
       className={styles["dropdown"]}
-      style={{ left: "70vw" }}
+      style={{ left: "79vw", width: "160px" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -90,20 +87,22 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
       </Button>
       {showDropdown &&
         Object.entries(myConnectionStrings).map(([key], index) => (
-          <a
+          <span
             key={key}
             onClick={() => handleItemClick(key)}
             onMouseEnter={() => setHoveredItem(index)}
             onMouseLeave={() => setHoveredItem(null)}
+            style={{ width: "160px" }}
             className={`${styles["dropdown-item"]} ${
               index === hoveredItem ? styles.hovered : ""
             }`}
           >
             {key}
-          </a>
+          </span>
         ))}
     </div>
   );
 };
 
 export default ConnectionDropdown;
+

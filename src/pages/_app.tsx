@@ -110,7 +110,7 @@ export default function App({ Component, pageProps }: AppProps) {
             {
               <span
                 className="material-symbols-outlined"
-                style={{ paddingLeft: "2px" }}
+                style={{ marginLeft: "10px" }}
               >
                 menu
               </span>
@@ -162,7 +162,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
         </nav>
       </>
-      <ConnectionDropdown jsonFileName="connections" label="Connections" />
       <div className={styles["topbar"]}>
         <a
           type="button"
@@ -186,6 +185,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </span>
         </a>
         <div className={styles["linksContainer"]}>
+        <ConnectionDropdown jsonFileName="connections" label="Connections" />
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}

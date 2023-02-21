@@ -543,19 +543,15 @@
   }
 }
 
-.pagination-container {
-  width: 100vw;
-}
 
 .pagination {
     position: fixed;
-    bottom: 10vh;
-    left: 50%;
-    // transform: calc(translateX(var(--sb-width)) + translateX(-50%));
     z-index: 1;
     user-select: none;
     transition: none;
     display: flex;
+    font-weight: bold;
+    left: calc(50vw - (var(--sb-width)));
   }
 .button {
   margin-left:10px;
@@ -566,17 +562,17 @@
   .pagination span {
     border-radius: 4px;
     padding: 4px 8px;
-    font-size: 16px;
     text-decoration: none;
+    font-weight: bold;
   }
 
-  .pagination .active {
-    font-weight: bold;
-    color: #fff;
+  .active {
     background-color: #f03a3a;
+    transition-duration: 0.2s;
     border-radius: 4px;
     padding: 4px 8px;
-    transition-duration: 0.5s;
+    text-decoration: none;
+    font-weight: bold;
   }
 
   .material-symbols-outlined {
@@ -696,13 +692,11 @@
 .dropdown {
   position: absolute;
   display: inline-block;
-  // padding-top: 10px;
-  border-width: 1px;
   z-index: 15;
   border-radius: 4px;
 }
 
-.dropdown button {
+.button {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -711,7 +705,16 @@
   font-size: 1rem;
   color: white;
   z-index: 5;
+  border-style: solid;
+  border-color: white;
+  cursor: pointer;
+  margin: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  justify-content: flex-start;
+  display: flex;
 }
+
 .dropdown a {
   margin-bottom: 5px;
 }
@@ -738,6 +741,7 @@
   padding: 10px;
   margin-left: 10px;
   border-radius: 4px;
+  width: 100%;
 }
 .hovered {
   display: block;

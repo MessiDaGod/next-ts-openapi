@@ -65,8 +65,9 @@ export function Pagination({
       <div className={styles["pagination"]}>
         {showChevrons && (
           <span
-            className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+            className={`material-symbols-outlined`}
             onClick={() => handlePageChange(currentPage - 1)}
+            style={{ marginLeft: "20px", display: "flex", marginTop: "20px", fontSize: "24px" }}
           >
             chevron_left
           </span>
@@ -82,8 +83,9 @@ export function Pagination({
         ))}
         {showChevrons && (
           <span
-            className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+          className={`material-symbols-outlined`}
             onClick={() => handlePageChange(currentPage + 1)}
+            style={{ display: "flex", marginTop: "20px", fontSize: "24px" }}
           >
             chevron_right
           </span>
