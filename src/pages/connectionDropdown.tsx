@@ -81,6 +81,7 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
     <div
       id={id}
       className={styles["dropdown"]}
+      style={{ left: "70vw" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

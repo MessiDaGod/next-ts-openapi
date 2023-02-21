@@ -162,6 +162,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
         </nav>
       </>
+      <ConnectionDropdown jsonFileName="connections" label="Connections" />
       <div className={styles["topbar"]}>
         <a
           type="button"
@@ -185,13 +186,12 @@ export default function App({ Component, pageProps }: AppProps) {
           </span>
         </a>
         <div className={styles["linksContainer"]}>
-          <a style={{ display: "flex", justifyContent: "flex-start", marginRight: "1rem" }}><ConnectionDropdown jsonFileName="connections" label="Connections" /></a>
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
               href={item.url}
-              style={{ display: "flex-end", marginRight: "1rem" }}
+              style={{ display: "flex", justifyContent: "flex-end", marginRight: "1rem" }}
               title={item.label}
             >
               {item.label}
