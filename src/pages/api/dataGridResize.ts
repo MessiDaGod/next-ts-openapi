@@ -5,65 +5,73 @@ function setListeners(div: HTMLElement): void {
     curColWidth: number | undefined,
     nxtColWidth: number | undefined;
 
-  if (div.parentElement) {
-    div.parentElement.addEventListener(
+  if (div) {
+    div.addEventListener(
       "mouseenter",
       function (e: MouseEvent): void {
         e.preventDefault();
-        if (!(e.target as HTMLElement).classList.contains("columndivider")) return;
-        let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-          const allCells = Array.from(
-            new Set([
-              ...(e.target as HTMLElement).querySelectorAll(
-                '[data-column-id="' + dataColumnId + '"]'
-              ),
-            ])
-          );
-          if (allCells)
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.borderRight = "solid #0000ff";
-              (cell as HTMLElement).style.cursor = "col-resize";
-            });
-        }
-    );
+        const regex = /coldivider/;
+        const target = e.target as HTMLElement;
+        if (!target.classList) return;
+        const isMatched = target.classList[0].match(regex);
+        if (!isMatched) return;
 
-    div.parentElement.addEventListener(
-      "mouseout",
-      function (e: MouseEvent): void {
-        e.preventDefault();
+        if (!(e.target as HTMLElement).classList.contains("coldivider")) return;
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-        let tbl = this.closest("table") as HTMLTableElement;
-        if (tbl) {
-          let allCells = Array.from(
-            new Set([
-              ...tbl.querySelectorAll(
-                '[data-column-id="' + dataColumnId + '"]'
-              ),
-            ])
-          );
-          if (allCells)
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.borderRight = "";
-              (cell as HTMLElement).style.cursor = "";
-            });
-        }
+        const allCells = Array.from(
+          new Set([
+            ...(e.target as HTMLElement).querySelectorAll(
+              '[data-column-id="' + dataColumnId + '"]'
+            ),
+          ])
+        );
       }
     );
 
-    div.parentElement.addEventListener(
+    // div.addEventListener(
+    //   "mouseup",
+    //   function (e: MouseEvent): void {
+    //     e.preventDefault();
+    //     const regex = /coldivider/;
+    //     const target = e.target as HTMLElement;
+    //     if (!target.classList) return;
+    //     const isMatched = target.classList[0].match(regex);
+    //     if (!isMatched) return;
+    //     let dataColumnId = (target as HTMLElement).dataset.columnId;
+    //     const tables = [
+    //       ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+    //     ];
+    //     if (tables[0]) {
+    //       let allCells = Array.from(
+    //         new Set([
+    //           ...tables[0].querySelectorAll(
+    //             '[data-column-id="' + dataColumnId + '"]'
+    //           ),
+    //         ])
+    //       );
+    //     }
+    //   }
+    // );
+
+    div.addEventListener(
       "mousedown",
       function (e: MouseEvent): void {
         e.preventDefault();
+        const regex = /coldivider/;
         const target = e.target as HTMLElement;
-        curCol = target ? target : null;
-        const nextCol = curCol
+        // if (!target.classList) return;
+        // const isMatched = target.classList[0].match(regex);
+        // if (!isMatched) return;
+
+        curCol = target ? target.parentElement : null;
+        nxtCol = curCol
           ? (curCol.nextElementSibling as HTMLElement)
           : null;
-        // nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
+        // nxtCol = nxtCol ? (nxtCol?.nextElementSibling as HTMLElement) : null;
         pageX = e.pageX;
 
         const padding = curCol ? paddingDiff(curCol) : 0;
-
+        console.log(padding);
         curColWidth =
           curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
             ? curCol.offsetWidth - padding
@@ -72,10 +80,11 @@ function setListeners(div: HTMLElement): void {
       }
     );
 
-    document.addEventListener("mousemove", function (e: MouseEvent): void {
+    div.addEventListener("mousemove", function (e: MouseEvent): void {
       e.preventDefault();
       const diffX = e.pageX - (pageX ?? 0);
       if (curCol) {
+        console.log(curCol.style.width);
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
       }
@@ -86,28 +95,15 @@ function setListeners(div: HTMLElement): void {
       }
     });
 
-  //   document.addEventListener('dblclick', function(e: MouseEvent): void {
-  //     e.preventDefault();
-  //     const tbl = document.getElementsByTagName('table')[0];
-  //     const columns = Array.from(new Set([...tbl.querySelectorAll('th')]));
-  //     columns.forEach((th) => {
-  //       const width = Math.round(th.getBoundingClientRect().width) + "px";
-  //       th.style.width = width;
-  //       const cells = Array.from(new Set([...tbl.querySelectorAll('td')]));
-  //       cells.forEach((td) => {
-  //         td.style.width = width;
-  //       });
-  //     });
-  // });
-
-    document.addEventListener("mouseup", function (e: MouseEvent): void {
+    div.addEventListener("mouseup", function (e: MouseEvent): void {
       e.preventDefault();
       curCol = null;
       nxtCol = null;
       pageX = undefined;
       nxtColWidth = undefined;
       curColWidth = undefined;
-    });
+    }
+    );
   }
 }
 
@@ -129,7 +125,7 @@ export function dataGridResize() {
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([
-      ...document.querySelectorAll('div[class*="' + "columndivider" + '"]'),
+      ...document.querySelectorAll('div[class*="' + "coldivider" + '"]'),
     ])
   );
   if (resizeDivs && resizeDivs.length > 0) {
@@ -141,8 +137,9 @@ export function dataGridResize() {
   function initResizeListeners() {
     if (!document) return;
     const tables = [
-      ...document.querySelectorAll('table[id^="' + "gridjs_" + '"]'),
+      ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
     ];
+    console.log(tables);
     for (let i = 0; i < tables.length; i++) {
       const columns = Array.from(
         new Set([...tables[i].querySelectorAll("th")])

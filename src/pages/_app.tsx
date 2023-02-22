@@ -9,6 +9,7 @@ import { cn } from "../classNames";
 import { useRouter } from "next/router";
 import classnames from "classnames";
 import { setListeners } from "./helpers";
+import '../styles/index.css'
 
 interface SidebarItem {
   Name: string;

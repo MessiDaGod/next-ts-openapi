@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import axios from "axios";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
-import styles from "../styles/Home.module.scss";
+import styles from "../styles/yardiInterface.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { parseValue } from "./utils";
 import { response } from "express";
@@ -65,6 +65,7 @@ function Example<T>() {
   const [size, setSize] = React.useState<Boolean>(null);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [mouseDown, setMouseDown] = React.useState<boolean>(null);
   const itemsPerPage = 25;
   const { isLoading, error, isFetching } = useQuery("repoData", () =>
     axios
@@ -77,8 +78,10 @@ function Example<T>() {
       // console.info(data);
       setData(data);
       setSize(false);
+      setMouseDown(false);
     }
     fetchData();
+    dataGridResize();
   }, [data]);
 
   // useEffect(() => {
@@ -118,6 +121,48 @@ function Example<T>() {
     }
   }
 
+  var pageX: number | undefined,
+  curCol: HTMLElement | null,
+  nxtCol: HTMLElement | null,
+  curColWidth: number | undefined,
+  nxtColWidth: number | undefined;
+
+  function handleMouseDown(e) {
+    setMouseDown(true);
+    if (mouseDown) {
+        e.preventDefault();
+        const regex = /coldivider/;
+        const target = e.target as HTMLElement;
+        // if (!target.classList) return;
+        // const isMatched = target.classList[0].match(regex);
+        // if (!isMatched) return;
+
+        curCol = target ? target.parentElement : null;
+        nxtCol = curCol
+          ? (curCol.nextElementSibling as HTMLElement)
+          : null;
+        // nxtCol = nxtCol ? (nxtCol?.nextElementSibling as HTMLElement) : null;
+        pageX = e.pageX;
+
+        const padding = curCol ? paddingDiff(curCol) : 0;
+        console.log(padding);
+        curColWidth =
+          curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+            ? curCol.offsetWidth - padding
+            : 0;
+        if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+      }
+    }
+
+    function handleMouseMove(e) {
+
+    }
+
+    function handleMouseUp(e) {
+
+    }
+
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
@@ -127,63 +172,59 @@ function Example<T>() {
       const tableRows = [
         gridItems.map((item, idx) => {
           if (idx > columns - 1) return;
-          const columnNames = item.columnName.replaceAll("_", " ").split(" ");
+          const columnNames = item.columnName.replaceAll("_", " ").split("_");
           const columnNamesWithLineBreaks = columnNames.map((name, index) => (
-            <React.Fragment key={name}>
-              {name}
-              <br />
-            </React.Fragment>
-          ));
-
-          return (
-            <><th
-              key={`${idx}`}
-              style={{ margin: "auto", cursor: "pointer" }}
-              className={styles["dataGridth"]}
+            <div
+              key={`${name}${index}`}
+              className={styles["th"]}
+              style={{ width: "100px" }}
               data-column-id={item.columnName}
             >
-              {columnNamesWithLineBreaks}
+              {name}{" "}
               <span
-              className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-              onClick={() => handleSort(item.columnName)}
-              style={{
-                display: "flex",
-                cursor: "pointer",
-                paddingLeft: "15px",
-                position: "absolute",
-                color: "black"
-              }}
-            >
+                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                onClick={() => handleSort(item.columnName)}
+                style={{
+                  color: "white",
+                  background: "transparent",
+                }}
+              >
                 {!sortState ? "expand_more" : "expand_less"}
               </span>
-            </th></>
-          );
+              <div className={styles["coldivider"]} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}></div>
+            </div>
+          ));
+
+          return <>{columnNamesWithLineBreaks}</>
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <tr key={rowIndex} className={styles["gridjs-tr"]}>
+            <div key={`${rowIndex}_${_row}`} className={styles["tr"]}>
               {Object.entries(_row).map(([key, value], index: number) => (
-                <td
+                <div
                   key={`${key}_${rowIndex}_${index}`}
-                  className={styles["dataGridtd"]}
+                  className={styles["td"]}
                   data-column-id={key}
+                  style={{ width: "100px" }}
                 >
                   {parseValue(value as string, key)}
-                </td>
+                </div>
               ))}
-            </tr>
+            </div>
           )),
       ];
 
       if (tableRows.length > 0) {
         return (
-          <table id={"gridjs_0"} className={styles["dataGridtable"]}>
-            <thead>
-              <tr>{tableRows[0]}</tr>
-            </thead>
-            <tbody>{tableRows.slice(1)}</tbody>
-          </table>
+          <div style={{ overflow: "auto" }}>
+            <div id="gridjs_0" className={styles["divTable"]}>
+              <div className={styles["thead"]}>
+                <div className={styles["tr"]}>{tableRows[0]}</div>
+              </div>
+              <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+            </div>
+          </div>
         );
       }
     }
@@ -206,4 +247,18 @@ function Example<T>() {
       </div>
     </>
   );
+}
+
+
+function paddingDiff(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
+  }
+  const padLeft = getStyleVal(col, "padding-left");
+  const padRight = getStyleVal(col, "padding-right");
+  return parseInt(padLeft) + parseInt(padRight);
+}
+
+function getStyleVal(elm: HTMLElement, css: string): string {
+  return window.getComputedStyle(elm, null).getPropertyValue(css);
 }

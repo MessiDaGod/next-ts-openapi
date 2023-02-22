@@ -92,3 +92,6 @@
   button, select {
     text-transform: none;
   }
+
+  table {table-layout: auto;}
+  table>tbody>td:nth-child(2){font-weight: bolder;}

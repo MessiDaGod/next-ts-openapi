@@ -45,6 +45,18 @@
       "Path": "/dimensions",
       "Icon": "code",
       "New": true
+    },
+    {
+      "Name": "Person Example",
+      "Path": "/personExample",
+      "Icon": "code",
+      "New": true
+    },
+    {
+      "Name": "Yardi Interface",
+      "Path": "/yardiInterface",
+      "Icon": "code",
+      "New": true
     }
   ]
 }
