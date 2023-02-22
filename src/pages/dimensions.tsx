@@ -203,7 +203,7 @@ function Example<T>() {
       <div>
         <h1>Dimensions</h1>
         <p>Count: {Array.from(new Set(data)).length}</p>
-        {table}
+        <>{table}</>
         <div>{isFetching ? "Updating..." : ""}</div>
         <ReactQueryDevtools initialIsOpen={true} />
       </div>

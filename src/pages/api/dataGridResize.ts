@@ -150,7 +150,7 @@ function setListeners(div: HTMLElement): void {
       e.preventDefault();
       console.log(curCol);
       const tables = [
-        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+        ...document.querySelectorAll('div[id*="' + "gridjs_" + '"]'),
       ];
       let allCells = Array.from(
         new Set([
