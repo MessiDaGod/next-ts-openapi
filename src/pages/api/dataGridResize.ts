@@ -83,15 +83,45 @@ function setListeners(div: HTMLElement): void {
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
       const diffX = e.pageX - (pageX ?? 0);
+      const tables = [
+        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+      ];
       if (curCol) {
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
+
+        let allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll(
+              '[data-column-id="' + curCol.dataset.columnId + '"]'
+            ),
+          ])
+        );
+        if (allCells)
+          allCells.forEach((cell) => {
+            (cell as HTMLElement).style.minWidth =  (curColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.width = (curColWidth ?? 0) + diffX + "px";
+          });
       }
 
       if (nxtCol) {
         nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
         nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
+
+        let allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll(
+              '[data-column-id="' + nxtCol.dataset.columnId + '"]'
+            ),
+          ])
+        );
+        if (allCells)
+          allCells.forEach((cell) => {
+            (cell as HTMLElement).style.minWidth =  (nxtColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.width = (nxtColWidth ?? 0) + diffX + "px";
+          });
       }
+
       // if (prevCol) {
       //   prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
       //   prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
