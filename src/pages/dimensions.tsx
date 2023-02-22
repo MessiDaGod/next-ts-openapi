@@ -65,7 +65,7 @@ function Example<T>() {
   const [size, setSize] = React.useState<Boolean>(null);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [mouseDown, setMouseDown] = React.useState<boolean>(null);
+  const [mouseDown, setMouseDown] = React.useState<boolean>(false);
   const itemsPerPage = 25;
   const { isLoading, error, isFetching } = useQuery("repoData", () =>
     axios
@@ -84,13 +84,14 @@ function Example<T>() {
     dataGridResize();
   }, [data]);
 
-  // useEffect(() => {
-  //   async function handleListeners() {
-  //     dataGridResize();
-  //     setSize(true);
-  //   }
-  //   handleListeners();
-  // }, [size]);
+
+  useEffect(() => {
+    async function fetchData() {
+      setMouseDown(false);
+    }
+    fetchData();
+    // dataGridResize();
+  }, []);
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -121,46 +122,51 @@ function Example<T>() {
     }
   }
 
-  var pageX: number | undefined,
-  curCol: HTMLElement | null,
-  nxtCol: HTMLElement | null,
-  curColWidth: number | undefined,
-  nxtColWidth: number | undefined;
-
   function handleMouseDown(e) {
+    e.preventDefault();
+    var pageX: number | undefined,
+    curCol: HTMLElement | null,
+    nxtCol: HTMLElement | null,
+    curColWidth: number | undefined,
+    nxtColWidth: number | undefined;
     setMouseDown(true);
-    if (mouseDown) {
-        e.preventDefault();
-        const regex = /coldivider/;
-        const target = e.target as HTMLElement;
-        // if (!target.classList) return;
-        // const isMatched = target.classList[0].match(regex);
-        // if (!isMatched) return;
+      const regex = /coldivider/;
+      const target = e.target as HTMLElement;
+      // if (!target.classList) return;
+      // const isMatched = target.classList[0].match(regex);
+      // if (!isMatched) return;
 
-        curCol = target ? target.parentElement : null;
-        nxtCol = curCol
-          ? (curCol.nextElementSibling as HTMLElement)
-          : null;
-        // nxtCol = nxtCol ? (nxtCol?.nextElementSibling as HTMLElement) : null;
-        pageX = e.pageX;
+      curCol = target ? target.parentElement : null;
+      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+      // nxtCol = nxtCol ? (nxtCol?.nextElementSibling as HTMLElement) : null;
+      pageX = e.pageX;
 
-        const padding = curCol ? paddingDiff(curCol) : 0;
-        console.log(padding);
-        curColWidth =
-          curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-            ? curCol.offsetWidth - padding
-            : 0;
-        if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+      const padding = curCol ? paddingDiff(curCol) : 0;
+      curColWidth =
+        curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+          ? curCol.offsetWidth - padding
+          : 0;
+      if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+
+      const diffX = e.pageX - (pageX ?? 0);
+      if (curCol) {
+        console.log(curCol.style.width);
+        curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+        curCol.style.width = (curColWidth ?? 0) + diffX + "px";
       }
-    }
 
-    function handleMouseMove(e) {
+      if (nxtCol) {
+        nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
+        nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
+      }
 
-    }
+      curCol = null;
+      nxtCol = null;
+      pageX = undefined;
+      nxtColWidth = undefined;
+      curColWidth = undefined;
+  }
 
-    function handleMouseUp(e) {
-
-    }
 
 
   function GenerateTableHtml() {
@@ -173,9 +179,9 @@ function Example<T>() {
         gridItems.map((item, idx) => {
           if (idx > columns - 1) return;
           const columnNames = item.columnName.replaceAll("_", " ").split("_");
-          const columnNamesWithLineBreaks = columnNames.map((name, index) => (
+          const columnNamesWithLineBreaks = columnNames.map((name) => (
             <div
-              key={`${name}${index}`}
+              key={`${name}${idx}`}
               className={styles["th"]}
               style={{ width: "100px" }}
               data-column-id={item.columnName}
@@ -191,16 +197,19 @@ function Example<T>() {
               >
                 {!sortState ? "expand_more" : "expand_less"}
               </span>
-              <div className={styles["coldivider"]} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}></div>
+              <div key={`${name}${idx}`}
+                className={styles["coldivider"]}
+                // onMouseDown={handleMouseDown}
+              ></div>
             </div>
           ));
 
-          return <>{columnNamesWithLineBreaks}</>
+          return <>{columnNamesWithLineBreaks}</>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <div key={`${rowIndex}_${_row}`} className={styles["tr"]}>
+            <div key={`${rowIndex}`} className={styles["tr"]}>
               {Object.entries(_row).map(([key, value], index: number) => (
                 <div
                   key={`${key}_${rowIndex}_${index}`}
@@ -248,7 +257,6 @@ function Example<T>() {
     </>
   );
 }
-
 
 function paddingDiff(col: HTMLElement): number {
   if (getStyleVal(col, "box-sizing") === "border-box") {
