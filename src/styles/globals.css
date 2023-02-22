@@ -41,7 +41,7 @@
     width: 100vw; */
     overflow: auto;
   }
-
+/*
   .tr {
     display: flex;
   }
@@ -72,45 +72,7 @@
   td,
   .td {
     height: 30px;
-  }
-
-  .resizer {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 5px;
-    background: rgba(0, 0, 0, 0.5);
-    cursor: col-resize;
-    user-select: none;
-    touch-action: none;
-  }
-
-  .resizer.isResizing {
-    background: blue;
-    opacity: 1;
-  }
-
-  @media (hover: hover) {
-    .resizer {
-      opacity: 0;
-    }
-
-    *:hover > .resizer {
-      opacity: 1;
-    }
-  }
-
-  button {
-    background: #1e1e1e;
-    border: 1px solid #1e1e1e;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-  }
+  } */
 
   th>span.material-symbol-outlined {
     display: inline-block;

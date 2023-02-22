@@ -7,9 +7,9 @@ import { DataTable, GetDataDictionary } from "./api/DataObject";
 import styles from "../styles/Home.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { parseValue } from "./utils";
+import { response } from "express";
 
 const queryClient = new QueryClient();
-
 
 interface DataSet {
   [key: number]: number | undefined;
@@ -17,32 +17,36 @@ interface DataSet {
   columnName: string | undefined;
   columnIndex: number | undefined;
   value: string | undefined;
+  columnCount: number | undefined;
+  rowCount: number | undefined;
 }
 
-// async function getGoodColumns(): Promise<string[]> {
-//   const response = await fetch("/GoodColumns.json");
-//   const data = await response.json();
-//   return data.map((item: any) => item.Name);
-// }
+function getGoodColumns(): Promise<string[]> {
+  return fetch("/GoodColumns.json")
+    .then((response) => response.json())
+    .then((data) => data.map((item: any) => item.Name));
+}
 
-function GenerateDynamicData<T>(
-  data: T[] | undefined
-) : DataSet[] {
+function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
   if (!data) return;
   if (data.length === 0) return;
   const myDataSet: DataSet[] = [];
 
-  // const goodColumns = await getGoodColumns();
+  const goodColumns = getGoodColumns();
+
   for (let i = 0; i < data.length; i++) {
     const values = Object.entries(data[i]);
     values.map((value, idx: number) => {
-      myDataSet.push({ row: i, columnName: value[0], columnIndex: idx, value: value[1] as string });
+      myDataSet.push({
+        row: i,
+        columnName: value[0],
+        columnIndex: idx,
+        value: value[1] as string,
+        columnCount: values.length,
+        rowCount: data.length,
+      });
     });
   }
-
-  // const newColumns = goodColumns.filter((col) => {
-  //   return Object.keys(myDataSet).includes(col);
-  // });
 
   return myDataSet;
 }
@@ -68,24 +72,22 @@ function Example<T>() {
       .then((res) => setData(res.data))
   );
 
-
   useEffect(() => {
-
     async function fetchData() {
       // console.info(data);
       setData(data);
+      setSize(false);
     }
     fetchData();
-
   }, [data]);
 
-  useEffect(() => {
-    async function handleListeners() {
-      dataGridResize();
-      setSize(true);
-    }
-    handleListeners();
-  }, [size]);
+  // useEffect(() => {
+  //   async function handleListeners() {
+  //     dataGridResize();
+  //     setSize(true);
+  //   }
+  //   handleListeners();
+  // }, [size]);
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -116,58 +118,45 @@ function Example<T>() {
     }
   }
 
-  // const memoizedData = React.useMemo(() => GenerateDynamicData(), [GenerateDynamicData]);
-
-  // function GenerateDynamicData<T>(): DataTable<T> | undefined {
-
-  //   if (!data) return;
-  //   const json = JSON.stringify(data);
-  //   const dataSet: T[] = JSON.parse(json).map((vendor: T) => ({
-  //     ...vendor,
-  //   }));
-  //   if (dataSet.length > 0) {
-  //     const newItems = GetDataDictionary(dataSet);
-  //     console.log("generating dynamic data...");
-  //     return newItems;
-  //   }
-  // }
-
-
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
-      // Pagination logic
-
+      const columns = gridItems[0].columnCount;
       const tableRows = [
         gridItems.map((item, idx) => {
+          if (idx > columns - 1) return;
           const columnNames = item.columnName.replaceAll("_", " ").split(" ");
           const columnNamesWithLineBreaks = columnNames.map((name, index) => (
             <React.Fragment key={name}>
               {name}
-              <span
-                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-                onClick={() => handleSort(item.columnName)}
-                style={{
-                  margin: "auto",
-                  display: "inline-block",
-                  cursor: "pointer",
-                }}
-              >{!sortState ? "expand_more" : "expand_less"}
-              </span>
+              <br />
             </React.Fragment>
           ));
+
           return (
-            <th
+            <><th
               key={`${idx}`}
               style={{ margin: "auto", cursor: "pointer" }}
               className={styles["dataGridth"]}
               data-column-id={item.columnName}
             >
               {columnNamesWithLineBreaks}
-              <div className={styles["columndivider"]}></div>
-            </th>
+              <span
+              className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+              onClick={() => handleSort(item.columnName)}
+              style={{
+                display: "flex",
+                cursor: "pointer",
+                paddingLeft: "15px",
+                position: "absolute",
+                color: "black"
+              }}
+            >
+                {!sortState ? "expand_more" : "expand_less"}
+              </span>
+            </th></>
           );
         }),
         ...data
@@ -186,7 +175,6 @@ function Example<T>() {
             </tr>
           )),
       ];
-
 
       if (tableRows.length > 0) {
         return (
@@ -214,7 +202,7 @@ function Example<T>() {
         <p>Count: {Array.from(new Set(data)).length}</p>
         {table}
         <div>{isFetching ? "Updating..." : ""}</div>
-        <ReactQueryDevtools initialIsOpen />
+        <ReactQueryDevtools initialIsOpen={true} />
       </div>
     </>
   );

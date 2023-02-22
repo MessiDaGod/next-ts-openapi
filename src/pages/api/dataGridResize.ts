@@ -10,12 +10,11 @@ function setListeners(div: HTMLElement): void {
       "mouseenter",
       function (e: MouseEvent): void {
         e.preventDefault();
+        if (!(e.target as HTMLElement).classList.contains("columndivider")) return;
         let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-        let tbl = this.closest("table") as HTMLTableElement;
-        if (tbl) {
-          let allCells = Array.from(
+          const allCells = Array.from(
             new Set([
-              ...tbl.querySelectorAll(
+              ...(e.target as HTMLElement).querySelectorAll(
                 '[data-column-id="' + dataColumnId + '"]'
               ),
             ])
@@ -26,7 +25,6 @@ function setListeners(div: HTMLElement): void {
               (cell as HTMLElement).style.cursor = "col-resize";
             });
         }
-      }
     );
 
     div.parentElement.addEventListener(
@@ -55,12 +53,13 @@ function setListeners(div: HTMLElement): void {
     div.parentElement.addEventListener(
       "mousedown",
       function (e: MouseEvent): void {
-        var target = e.target as HTMLElement;
+        e.preventDefault();
+        const target = e.target as HTMLElement;
         curCol = target ? target : null;
-        var nextCol = curCol
+        const nextCol = curCol
           ? (curCol.nextElementSibling as HTMLElement)
           : null;
-        nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
+        // nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
         pageX = e.pageX;
 
         const padding = curCol ? paddingDiff(curCol) : 0;
@@ -74,6 +73,7 @@ function setListeners(div: HTMLElement): void {
     );
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
+      e.preventDefault();
       const diffX = e.pageX - (pageX ?? 0);
       if (curCol) {
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
@@ -100,7 +100,8 @@ function setListeners(div: HTMLElement): void {
   //     });
   // });
 
-    document.addEventListener("mouseup", function (_e: MouseEvent): void {
+    document.addEventListener("mouseup", function (e: MouseEvent): void {
+      e.preventDefault();
       curCol = null;
       nxtCol = null;
       pageX = undefined;
@@ -148,7 +149,7 @@ export function dataGridResize() {
       );
       columns.forEach((th) => {
         th.style.width = th.getBoundingClientRect().width + "px";
-        th.style.minWidth = th.getBoundingClientRect().width + "px";
+        // th.style.minWidth = th.getBoundingClientRect().width + "px";
       });
       resizableGrid(tables[i] as HTMLTableElement);
     }

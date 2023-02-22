@@ -230,13 +230,6 @@
   border-bottom: 1px solid lightgray;
 }
 
-.dataGridth {
-  border-bottom: 1px solid lightgray;
-  border-right: 1px solid lightgray;
-  white-space: nowrap;
-  margin: auto; box-sizing: content-box; position: relative;
-}
-
 .dataGridtd {
   border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
@@ -815,4 +808,24 @@
   position: absolute;
   top: 0;
   right: 0;
+}
+.dataGridth {
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  white-space: nowrap;
+  margin: auto;
+  box-sizing: content-box;
+  position: relative;
+  text-align: left;
+  padding-right: 15px;
+  background-color: white;
+  color: black;
+}
+
+.dataGridth:hover:before {
+  content: "";
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: blue;
 }
