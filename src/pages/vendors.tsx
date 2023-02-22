@@ -7,9 +7,6 @@ import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
 import { parseValue } from "./utils";
 
-function handleSetData() {
-  dataGridResize();
-}
 
 function getGoodColumns(): Promise<string[]> {
   return fetch("/GoodColumns.json")
@@ -44,13 +41,13 @@ function Vendors() {
       try {
         const response = await getVendors(1000);
         setData(response);
-        handleSetData();
         console.log("useEffect");
       } catch (error) {
         return emptyVendor;
       }
     }
     fetchData();
+    dataGridResize();
   }, []);
 
   function GenerateVendorData(
