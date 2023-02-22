@@ -8,28 +8,23 @@ function setListeners(div: HTMLElement): void {
     prevColWidth: number | undefined;
 
   if (div.parentElement) {
-    div.addEventListener(
-      "mouseenter",
-      function (e: MouseEvent): void {
-        e.preventDefault();
-        let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-        let tbl = this.closest("table") as HTMLTableElement;
-        if (tbl) {
-          let allCells = Array.from(
-            new Set([
-              ...tbl.querySelectorAll(
-                '[data-column-id="' + dataColumnId + '"]'
-              ),
-            ])
-          );
-          // if (allCells)
-          //   allCells.forEach((cell) => {
-          //     (cell as HTMLElement).style.borderRight = "solid #0000ff";
-          //     (cell as HTMLElement).style.cursor = "col-resize";
-          //   });
-        }
+    div.addEventListener("mouseenter", function (e: MouseEvent): void {
+      e.preventDefault();
+      let dataColumnId = (e.target as HTMLElement).dataset.columnId;
+      let tbl = this.closest("table") as HTMLTableElement;
+      if (tbl) {
+        let allCells = Array.from(
+          new Set([
+            ...tbl.querySelectorAll('[data-column-id="' + dataColumnId + '"]'),
+          ])
+        );
+        // if (allCells)
+        //   allCells.forEach((cell) => {
+        //     (cell as HTMLElement).style.borderRight = "solid #0000ff";
+        //     (cell as HTMLElement).style.cursor = "col-resize";
+        //   });
       }
-    );
+    });
 
     div.parentElement.addEventListener(
       "mouseout",
@@ -54,32 +49,42 @@ function setListeners(div: HTMLElement): void {
       }
     );
 
-    div.addEventListener(
-      "mousedown",
-      function (e: MouseEvent): void {
-        var target = e.target as HTMLElement;
-        curCol = target ? target.parentElement : null;
-        var nextCol = curCol
-          ? (curCol.nextElementSibling as HTMLElement)
+    div.addEventListener("mousedown", function (e: MouseEvent): void {
+      var target = e.target as HTMLElement;
+      curCol = target ? target.parentElement : null;
+
+      const tables = [
+        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+      ];
+      let allCells = Array.from(
+        new Set([
+          ...tables[0].querySelectorAll(
+            '[data-column-id="' + curCol.dataset.columnId + '"]'
+          ),
+        ])
+      );
+      if (allCells)
+        allCells.forEach((cell) => {
+          (cell as HTMLElement).style.borderRight = "solid #0000ff";
+        });
+      var nextCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+      nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
+      if (curCol)
+        prevCol = curCol
+          ? (curCol.previousElementSibling as HTMLElement)
           : null;
-        nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
-        if (curCol)
-          prevCol = curCol
-            ? (curCol.previousElementSibling as HTMLElement)
-            : null;
-        pageX = e.pageX;
+      pageX = e.pageX;
 
-        const padding = curCol ? paddingDiff(curCol) : 0;
+      const padding = curCol ? paddingDiff(curCol) : 0;
 
-        curColWidth =
-          curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-            ? curCol.offsetWidth - padding
-            : 0;
-        if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+      curColWidth =
+        curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+          ? curCol.offsetWidth - padding
+          : 0;
+      if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
 
-        if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
-      }
-    );
+      if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
+    });
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
       const diffX = e.pageX - (pageX ?? 0);
@@ -99,8 +104,10 @@ function setListeners(div: HTMLElement): void {
         );
         if (allCells)
           allCells.forEach((cell) => {
-            (cell as HTMLElement).style.minWidth =  (curColWidth ?? 0) + diffX + "px";
-            (cell as HTMLElement).style.width = (curColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.minWidth =
+              (curColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.width =
+              (curColWidth ?? 0) + diffX + "px";
           });
       }
 
@@ -117,8 +124,10 @@ function setListeners(div: HTMLElement): void {
         );
         if (allCells)
           allCells.forEach((cell) => {
-            (cell as HTMLElement).style.minWidth =  (nxtColWidth ?? 0) + diffX + "px";
-            (cell as HTMLElement).style.width = (nxtColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.minWidth =
+              (nxtColWidth ?? 0) + diffX + "px";
+            (cell as HTMLElement).style.width =
+              (nxtColWidth ?? 0) + diffX + "px";
           });
       }
 
@@ -128,12 +137,33 @@ function setListeners(div: HTMLElement): void {
       // }
     });
 
-    document.addEventListener("mouseup", function (_e: MouseEvent): void {
+    document.addEventListener("mouseup", function (e: MouseEvent): void {
+      e.preventDefault();
       curCol = null;
       nxtCol = null;
       pageX = undefined;
       nxtColWidth = undefined;
       curColWidth = undefined;
+    });
+
+    div.addEventListener("mouseup", function (e: MouseEvent): void {
+      e.preventDefault();
+      console.log(curCol);
+      const tables = [
+        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+      ];
+      let allCells = Array.from(
+        new Set([
+          ...tables[0].querySelectorAll(
+            '[data-column-id="' + curCol.dataset.columnId + '"]'
+          ),
+        ])
+      );
+      if (allCells) {
+        allCells.forEach((cell) => {
+          (cell as HTMLElement).style.borderRight = "";
+        });
+      }
     });
   }
 }
@@ -166,9 +196,7 @@ export function dataGridResize() {
 
   function initResizeListeners() {
     if (!document) return;
-    const tables = [
-      ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
-    ];
+    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
     for (let i = 0; i < tables.length; i++) {
       const columns = Array.from(
         new Set([...tables[i].querySelectorAll("th")])
@@ -181,8 +209,12 @@ export function dataGridResize() {
     }
 
     function resizableGrid(table: HTMLTableElement) {
-      const rows = Array.from(table.getElementsByTagName('div[class*="' + "tr" + '"]'));
-      const cells = Array.from(table.getElementsByTagName('div[class*="' + "td" + '"]'));
+      const rows = Array.from(
+        table.getElementsByTagName('div[class*="' + "tr" + '"]')
+      );
+      const cells = Array.from(
+        table.getElementsByTagName('div[class*="' + "td" + '"]')
+      );
 
       cells.forEach((cell) => {
         setCellListeners(cell as HTMLElement);
