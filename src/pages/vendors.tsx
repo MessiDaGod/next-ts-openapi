@@ -1,13 +1,30 @@
 import React from "react";
-import styles from "../styles/Home.module.scss";
+import styles from "../styles/yardiInterface.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
+import { parseValue } from "./utils";
 
 function handleSetData() {
   dataGridResize();
+}
+
+function getGoodColumns(): Promise<string[]> {
+  return fetch("/GoodColumns.json")
+    .then((response) => response.json())
+    .then((data) => data.map((item: any) => item.Name));
+}
+
+interface DataSet {
+  [key: number]: number | undefined;
+  row: number | undefined;
+  columnName: string | undefined;
+  columnIndex: number | undefined;
+  value: string | undefined;
+  columnCount: number | undefined;
+  rowCount: number | undefined;
 }
 
 function Vendors() {
@@ -85,76 +102,96 @@ function Vendors() {
     }
   }
 
+
+function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
+  if (!data) return;
+  if (data.length === 0) return;
+  const myDataSet: DataSet[] = [];
+
+  const goodColumns = getGoodColumns();
+
+  for (let i = 0; i < data.length; i++) {
+    const values = Object.entries(data[i]);
+    values.map((value, idx: number) => {
+      myDataSet.push({
+        row: i,
+        columnName: value[0],
+        columnIndex: idx,
+        value: value[1] as string,
+        columnCount: values.length,
+        rowCount: data.length,
+      });
+    });
+  }
+
+  return myDataSet;
+}
+
   function GenerateTableHtml() {
-    if (Array.isArray(data)) {
-      const newVendors = GenerateVendorData(data);
-      if (!newVendors) return;
+    if (Array.isArray(data) && data.length > 0) {
+      const gridItems = GenerateDynamicData(data);
+      if (!gridItems) return;
 
-      // Pagination logic
-
+      const columns = gridItems[0].columnCount;
       const tableRows = [
-        newVendors.columns.map((columnName, idx) => {
-          const columnNames = columnName.displayName.split(" ");
+        gridItems.map((item, idx) => {
+          if (idx > columns - 1) return;
+          const columnNames = item.columnName.replaceAll("_", " ").split("_");
           const columnNamesWithLineBreaks = columnNames.map((name) => (
-            <React.Fragment key={name}>
-              {name}
-              <br />
-            </React.Fragment>
-          ));
-          return (
-            <th
-              key={`${columnName.name}${idx}`}
-              style={{ margin: "auto", cursor: "pointer" }}
-              className={styles["dataGridth"]}
-              data-column-id={columnName.name}
-              hidden={isColumnHidden(columnName.keyName)}
+            <div
+              key={`${name}${idx}`}
+              className={styles["th"]}
+              style={{ width: "100px" }}
+              data-column-id={item.columnName}
             >
-              <div
-                key={`div${columnName}${idx}`}
-                className={`${styles["columndivider"]}`}
-              ></div>
+              {name}{" "}
               <span
                 className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-                onClick={() => handleSort(columnName.keyName)}
+                onClick={() => handleSort(item.columnName)}
                 style={{
-                  margin: "auto",
-                  display: "inline-block",
-                  cursor: "pointer",
+                  color: "white",
+                  background: "transparent",
                 }}
               >
                 {!sortState ? "expand_more" : "expand_less"}
               </span>
-              {columnNamesWithLineBreaks}
-            </th>
-          );
+              <div key={`${name}${idx}`}
+                className={styles["coldivider"]}
+                // onMouseDown={handleMouseDown}
+              ></div>
+            </div>
+          ));
+
+          return <>{columnNamesWithLineBreaks}</>;
         }),
         ...data
-          .filter((row) => !isRowEmpty(row))
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((row, rowIndex: number) => (
-            <tr key={row.Id} className={styles["gridjs-tr"]}>
-              {Object.entries(row).map(([key, value], index: number) => (
-                <td
-                  key={`${key}_${row.Id.toString()}_${rowIndex}_${index}`}
-                  className={styles["dataGridtd"]}
+          .map((_row, rowIndex: number) => (
+            <div key={`${rowIndex}`} className={styles["tr"]}>
+              {Object.entries(_row).map(([key, value], index: number) => (
+                <div
+                  key={`${key}_${rowIndex}_${index}`}
+                  className={styles["td"]}
                   data-column-id={key}
-                  hidden={isColumnHidden(key)}
+                  style={{ width: "100px" }}
                 >
-                  {value}
-                </td>
+                  {parseValue(value as string, key)}
+                </div>
               ))}
-            </tr>
+            </div>
           )),
       ];
 
       if (tableRows.length > 0) {
         return (
-          <table id={"gridjs_0"} className={styles["dataGridtable"]}>
-            <thead>
-              <tr>{tableRows[0]}</tr>
-            </thead>
-            <tbody>{tableRows.slice(1)}</tbody>
-          </table>
+          <div style={{ overflow: "auto" }}>
+            <div id="gridjs_0" className={styles["divTable"]}>
+              <div className={styles["thead"]}>
+                <div className={styles["tr"]}>{tableRows[0]}</div>
+              </div>
+              <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+            </div>
+          </div>
         );
       }
     }

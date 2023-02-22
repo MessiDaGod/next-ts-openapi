@@ -122,53 +122,6 @@ function Example<T>() {
     }
   }
 
-  // function handleMouseDown(e) {
-  //   e.preventDefault();
-  //   var pageX: number | undefined,
-  //   curCol: HTMLElement | null,
-  //   nxtCol: HTMLElement | null,
-  //   curColWidth: number | undefined,
-  //   nxtColWidth: number | undefined;
-  //   setMouseDown(true);
-  //     const regex = /coldivider/;
-  //     const target = e.target as HTMLElement;
-  //     // if (!target.classList) return;
-  //     // const isMatched = target.classList[0].match(regex);
-  //     // if (!isMatched) return;
-
-  //     curCol = target ? target.parentElement : null;
-  //     nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-  //     // nxtCol = nxtCol ? (nxtCol?.nextElementSibling as HTMLElement) : null;
-  //     pageX = e.pageX;
-
-  //     const padding = curCol ? paddingDiff(curCol) : 0;
-  //     curColWidth =
-  //       curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-  //         ? curCol.offsetWidth - padding
-  //         : 0;
-  //     if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-  //     const diffX = e.pageX - (pageX ?? 0);
-  //     if (curCol) {
-  //       console.log(curCol.style.width);
-  //       curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-  //       curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-  //     }
-
-  //     if (nxtCol) {
-  //       nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
-  //       nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-  //     }
-
-  //     curCol = null;
-  //     nxtCol = null;
-  //     pageX = undefined;
-  //     nxtColWidth = undefined;
-  //     curColWidth = undefined;
-  // }
-
-
-
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
