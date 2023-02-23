@@ -124,7 +124,7 @@ function Vendors() {
                 className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
                 onClick={() => handleSort(item.columnName)}
                 style={{
-                  color: "white",
+                  color: "black",
                   background: "transparent",
                 }}
               >

@@ -42,21 +42,21 @@ function PropOptionsPage() {
         data: PropOptions | PropOptions[]
     ): DataTable<PropOptions> | undefined {
         const json = JSON.stringify(data);
-        const PropOptionss: PropOptions[] = JSON.parse(json).map(
+        const PropOptions: PropOptions[] = JSON.parse(json).map(
             (PropOptions: PropOptions) => ({
                 ...PropOptions,
             })
         );
 
-        if (PropOptionss.length > 0) {
-            const newPropOptionss = GetDataDictionary(PropOptionss);
-            PropOptionss.forEach((PropOptions) => {
+        if (PropOptions.length > 0) {
+            const newPropOptions = GetDataDictionary(PropOptions);
+            PropOptions.forEach((PropOptions) => {
                 Object.entries(PropOptions).forEach(([key, value]) => {
-                    newPropOptionss.values[key].Values.push(value);
+                    newPropOptions.values[key].Values.push(value);
                 });
             });
 
-            return newPropOptionss;
+            return newPropOptions;
         }
     }
 

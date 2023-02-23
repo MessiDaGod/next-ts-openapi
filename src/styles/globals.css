@@ -14,6 +14,84 @@
   --transform: transform 0.3s ease-in-out;
   --dgpadding: 2px 4px;
   --logopadding: 5px;
+  --rz-input-font-size: var(--rz-body-font-size);
+  --rz-input-height: 2.5rem;
+  --rz-input-line-height: 1.5;
+  --rz-input-padding: 0.4375rem 0.9375rem;
+  --rz-input-value-color: var(--rz-text-color);
+  --rz-input-placeholder-color: var(--rz-text-tertiary-color);
+  --rz-input-background-color: var(--rz-base-background-color);
+  --rz-input-border: var(--rz-border-normal);
+  --rz-input-border-radius: var(--rz-border-radius);
+  --rz-input-shadow: none;
+  --rz-input-hover-shadow: none;
+  --rz-input-hover-border: var(--rz-border-hover);
+  --rz-input-focus-shadow: inset 0 0 0 1px var(--rz-primary);
+  --rz-input-focus-border: var(--rz-border-focus);
+  --rz-input-disabled-border: var(--rz-border-disabled);
+  --rz-input-disabled-shadow: none;
+  --rz-input-disabled-background-color: var(--rz-base-background-color);
+  --rz-input-disabled-color: var(--rz-text-disabled-color);
+  --rz-input-disabled-placeholder-color: var(--rz-text-disabled-color);
+  --rz-input-disabled-opacity: 1;
+  --rz-input-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  --rz-border-width: 1px;
+  --rz-root-font-size: 16px;
+  --rz-body-font-size: 1rem;
+  --rz-body-line-height: 1.5;
+  --rz-body-background-color: var(--rz-base-900);
+  --rz-icon-size: 1.5rem;
+  --rz-text-font-family: Roboto, sans-serif;
+  --rz-white: #ffffff;
+  --rz-black: #000000;
+  --rz-base-50: #e0e0e0;
+  --rz-base-100: #a0a0a0;
+  --rz-base-200: #6c6c6c;
+  --rz-base-300: #545454;
+  --rz-base-400: #383838;
+  --rz-base-500: #333333;
+  --rz-base-600: #2e2e2e;
+  --rz-base-700: #252525;
+  --rz-base-800: #1e1e1e;
+  --rz-base-900: #121212;
+  --rz-primary: #bb86fc;
+  --rz-primary-light: #c99efd;
+  --rz-primary-lighter: rgba(187, 134, 252, 0.12);
+  --rz-primary-dark: #966bca;
+  --rz-primary-darker: #7f5bab;
+  --rz-secondary: #01a299;
+  --rz-secondary-light: #34b5ad;
+  --rz-secondary-lighter: rgba(1, 162, 153, 0.12);
+  --rz-secondary-dark: #01827a;
+  --rz-secondary-darker: #016e68;
+  --rz-info: #2196f3;
+  --rz-info-light: #4dabf5;
+  --rz-info-lighter: rgba(33, 150, 243, 0.2);
+  --rz-info-dark: #1a78c2;
+  --rz-info-darker: #1666a5;
+  --rz-success: #4caf50;
+  --rz-success-light: #70bf73;
+  --rz-success-lighter: rgba(76, 175, 80, 0.16);
+  --rz-success-dark: #3d8c40;
+  --rz-success-darker: #347736;
+  --rz-warning: #ff9800;
+  --rz-warning-light: #ffad33;
+  --rz-warning-lighter: rgba(255, 152, 0, 0.2);
+  --rz-warning-dark: #cc7a00;
+  --rz-warning-darker: #ad6700;
+  --rz-danger: #f44336;
+  --rz-danger-light: #f6695e;
+  --rz-danger-lighter: rgba(244, 67, 54, 0.2);
+  --rz-danger-dark: #c3362b;
+  --rz-danger-darker: #a62e25;
+  --rz-series-1: #3700b3;
+  --rz-series-2: #ba68c8;
+  --rz-series-3: #f06292;
+  --rz-series-4: #ff8a65;
+  --rz-series-5: #ffee58;
+  --rz-series-6: #9ccc65;
+  --rz-series-7: #26a69a;
+  --rz-series-8: #4fc3f7;
 }
 
 * {
@@ -95,3 +173,82 @@
 
   table {table-layout: auto;}
   table>tbody>td:nth-child(2){font-weight: bolder;}
+
+  .rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
+    box-shadow: var(--rz-input-hover-shadow);
+    border: var(--rz-input-hover-border);
+  }
+
+  .rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
+    box-shadow: var(--rz-input-hover-shadow);
+    border: var(--rz-input-hover-border);
+}
+
+.rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
+    box-shadow: var(--rz-input-hover-shadow);
+    border: var(--rz-input-hover-border);
+}
+.rz-dropdown, .rz-multiselect {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    position: sticky;
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+    /* height: var(--rz-input-height); */
+    line-height: var(--rz-input-line-height);
+    color: var(--rz-input-value-color);
+    font-size: var(--rz-input-font-size);
+    transition: var(--rz-input-transition);
+    outline: none;
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+    border: var(--rz-input-border);
+    border-radius: var(--rz-input-border-radius);
+    box-shadow: var(--rz-input-shadow);
+    background-color: var(--rz-input-background-color);
+}
+
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  /* height: var(--rz-input-height); */
+  line-height: var(--rz-input-line-height);
+  color: var(--rz-input-value-color);
+  font-size: var(--rz-input-font-size);
+  transition: var(--rz-input-transition);
+  outline: none;
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  border: var(--rz-input-border);
+  border-radius: var(--rz-input-border-radius);
+  box-shadow: var(--rz-input-shadow);
+  background-color: var(--rz-input-background-color);
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  padding: var(--rz-input-padding);
+}
+.rz-dropdown, .rz-multiselect {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  position: sticky;
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  /* height: var(--rz-input-height); */
+  line-height: var(--rz-input-line-height);
+  color: var(--rz-input-value-color);
+  font-size: var(--rz-input-font-size);
+  transition: var(--rz-input-transition);
+  outline: none;
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  border: var(--rz-input-border);
+  border-radius: var(--rz-input-border-radius);
+  box-shadow: var(--rz-input-shadow);
+  background-color: var(--rz-input-background-color);
+}
+.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
+  padding: var(--rz-input-padding);
+}
+.dropdown {
+  margin-right: 10px;
+}

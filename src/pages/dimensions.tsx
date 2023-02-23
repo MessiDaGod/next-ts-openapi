@@ -8,6 +8,8 @@ import styles from "../styles/yardiInterface.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { parseValue } from "./utils";
 import { response } from "express";
+import { Pagination } from "@/pagination";
+import PropertyDropdown from "./propertyDropdown";
 
 const queryClient = new QueryClient();
 
@@ -55,18 +57,23 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* @ts-ignore */}
-      <Example />
+      <Dimensions />
     </QueryClientProvider>
   );
 }
 
-function Example<T>() {
+function Dimensions<T>() {
   const [data, setData] = React.useState<T[]>([]);
   const [size, setSize] = React.useState<Boolean>(null);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [mouseDown, setMouseDown] = React.useState<boolean>(false);
   const itemsPerPage = 25;
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+  }
+
   const { isLoading, error, isFetching } = useQuery("repoData", () =>
     axios
       .get("https://localhost:5006/api/data/GetDimensions")
@@ -180,15 +187,19 @@ function Example<T>() {
       ];
 
       if (tableRows.length > 0) {
+        const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
-          <div style={{ overflow: "auto" }}>
+          <><PropertyDropdown /><><div style={{ overflow: "auto" }}>
             <div id="gridjs_0" className={styles["divTable"]}>
               <div className={styles["thead"]}>
                 <div className={styles["tr"]}>{tableRows[0]}</div>
               </div>
               <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
             </div>
-          </div>
+          </div><Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange} /></></>
         );
       }
     }
