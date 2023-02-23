@@ -30,6 +30,23 @@ export function isColumnHidden<T>(data: T[], columnName: string): boolean {
   }
 }
 
+// function isColumnHidden(columnName: string): boolean {
+//   if (Array.isArray(data)) {
+//       const columnData = data.map((row) => row[columnName]);
+//       return columnData.every(
+//           (value) => value === null ||
+//               value === "" ||
+//               value === "0" ||
+//               value === "-1" ||
+//               value === "0.000000" ||
+//               value === "NULL" ||
+//               value === 0
+//       );
+//   } else {
+//       return true;
+//   }
+// }
+
 export function parseValue(value: string, columnName: string): string {
     if (!columnName.toLowerCase().includes("date") && !columnName.toLowerCase().includes("post")) return value;
   if (isNaN(Date.parse(value))) return value;

@@ -117,7 +117,7 @@ function PropOptionsPage() {
                         >
                             <div
                                 key={`div${columnName}${idx}`}
-                                className={`${styles["columndivider"]}`}
+                                className={`${styles["coldivider"]}`}
                             ></div>
                             <span
                               className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}

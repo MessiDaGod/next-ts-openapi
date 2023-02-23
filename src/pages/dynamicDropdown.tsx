@@ -6,7 +6,7 @@ import axios from "axios";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import styles from "../styles/yardiInterface.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
-import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
+import { parseValue } from "./utils";
 import { response } from "express";
 import { Pagination } from "@/pagination";
 import PropertyDropdown from "./propertyDropdown";
@@ -146,7 +146,7 @@ function Dimensions<T>() {
               className={styles["th"]}
               style={{ width: "100px" }}
               data-column-id={item.columnName}
-              hidden={isColumnHidden(data, item.columnName)}
+              hidden={isColumnHidden(item.columnName)}
             >
               {name}{" "}
               <span
@@ -177,7 +177,7 @@ function Dimensions<T>() {
                   className={styles["td"]}
                   data-column-id={key}
                   style={{ width: "100px" }}
-                  hidden={isColumnHidden(data, key)}
+                  hidden={isColumnHidden(key)}
                 >
                   {parseValue(value as string, key)}
                 </div>
