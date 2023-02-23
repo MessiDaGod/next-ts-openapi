@@ -32,7 +32,7 @@ function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
   if (data.length === 0) return;
   const myDataSet: DataSet[] = [];
 
-  const goodColumns = getGoodColumns();
+  // const goodColumns = getGoodColumns();
 
   for (let i = 0; i < data.length; i++) {
     const values = Object.entries(data[i]);
@@ -132,19 +132,21 @@ function Example<T>() {
         gridItems.map((item, idx) => {
           if (idx > columns - 1) return;
           const columnNames = item.columnName.replaceAll("_", " ").split("_");
-          const columnNamesWithLineBreaks = columnNames.map((name) => (
+          const columnNamesWithLineBreaks = columnNames.map((name, index: number) => (
             <div
-              key={`${name}${idx}`}
+            id={`${name}${idx}${index}`}
+            key={`${name}${idx}${index}`}
               className={styles["th"]}
               style={{ width: "100px" }}
               data-column-id={item.columnName}
+              hidden={isColumnHidden(item.columnName)}
             >
               {name}{" "}
               <span
                 className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
                 onClick={() => handleSort(item.columnName)}
                 style={{
-                  color: "white",
+                  color: "black",
                   background: "transparent",
                 }}
               >
@@ -152,12 +154,11 @@ function Example<T>() {
               </span>
               <div key={`${name}${idx}`}
                 className={styles["coldivider"]}
-                // onMouseDown={handleMouseDown}
               ></div>
             </div>
           ));
 
-          return <>{columnNamesWithLineBreaks}</>;
+          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -169,6 +170,7 @@ function Example<T>() {
                   className={styles["td"]}
                   data-column-id={key}
                   style={{ width: "100px" }}
+                  hidden={isColumnHidden(key)}
                 >
                   {parseValue(value as string, key)}
                 </div>
@@ -209,17 +211,22 @@ function Example<T>() {
       </div>
     </>
   );
-}
 
-function paddingDiff(col: HTMLElement): number {
-  if (getStyleVal(col, "box-sizing") === "border-box") {
-    return 0;
+  function isColumnHidden(columnName: string): boolean {
+    if (Array.isArray(data)) {
+        const columnData = data.map((row) => row[columnName]);
+        return columnData.every(
+            (value) => value === null ||
+                value === "" ||
+                value === "0" ||
+                value === "-1" ||
+                value === "0.000000" ||
+                value === "NULL" ||
+                value === 0
+        );
+    } else {
+        return true;
+    }
   }
-  const padLeft = getStyleVal(col, "padding-left");
-  const padRight = getStyleVal(col, "padding-right");
-  return parseInt(padLeft) + parseInt(padRight);
 }
 
-function getStyleVal(elm: HTMLElement, css: string): string {
-  return window.getComputedStyle(elm, null).getPropertyValue(css);
-}

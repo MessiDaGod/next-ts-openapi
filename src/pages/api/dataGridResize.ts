@@ -138,7 +138,7 @@ function setListeners(div: HTMLElement): void {
     });
 
     document.addEventListener("mouseup", function (e: MouseEvent): void {
-      e.preventDefault();
+
       curCol = null;
       nxtCol = null;
       pageX = undefined;
@@ -147,8 +147,8 @@ function setListeners(div: HTMLElement): void {
     });
 
     div.addEventListener("mouseup", function (e: MouseEvent): void {
-      e.preventDefault();
-      console.log(curCol);
+
+      // console.log(curCol);
       const tables = [
         ...document.querySelectorAll('div[id*="' + "gridjs_" + '"]'),
       ];
@@ -181,7 +181,7 @@ function getStyleVal(elm: HTMLElement, css: string): string {
   return window.getComputedStyle(elm, null).getPropertyValue(css);
 }
 
-export function dataGridResize() {
+export function dataGridResize(itemsPerPage?: number) {
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([

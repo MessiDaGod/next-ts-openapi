@@ -7,7 +7,6 @@ import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
 import { parseValue } from "./utils";
 
-
 function getGoodColumns(): Promise<string[]> {
   return fetch("/GoodColumns.json")
     .then((response) => response.json())
@@ -39,36 +38,15 @@ function Vendors() {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getVendors(1000);
+        const response = await getVendors(50);
         setData(response);
-        console.log("useEffect");
       } catch (error) {
         return emptyVendor;
       }
     }
     fetchData();
-    dataGridResize();
+    dataGridResize(itemsPerPage);
   }, []);
-
-  function GenerateVendorData(
-    data: Vendor | Vendor[]
-  ): DataTable<Vendor> | undefined {
-    const json = JSON.stringify(data);
-    const vendors: Vendor[] = JSON.parse(json).map((vendor: Vendor) => ({
-      ...vendor,
-    }));
-
-    if (vendors.length > 0) {
-      const newVendors = GetDataDictionary(vendors);
-      vendors.forEach((vendor) => {
-        Object.entries(vendor).forEach(([key, value]) => {
-          newVendors.values[key].Values.push(value);
-        });
-      });
-
-      return newVendors;
-    }
-  }
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -99,30 +77,29 @@ function Vendors() {
     }
   }
 
+  function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
+    if (!data) return;
+    if (data.length === 0) return;
+    const myDataSet: DataSet[] = [];
 
-function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
-  if (!data) return;
-  if (data.length === 0) return;
-  const myDataSet: DataSet[] = [];
+    // const goodColumns = getGoodColumns();
 
-  const goodColumns = getGoodColumns();
-
-  for (let i = 0; i < data.length; i++) {
-    const values = Object.entries(data[i]);
-    values.map((value, idx: number) => {
-      myDataSet.push({
-        row: i,
-        columnName: value[0],
-        columnIndex: idx,
-        value: value[1] as string,
-        columnCount: values.length,
-        rowCount: data.length,
+    for (let i = 0; i < data.length; i++) {
+      const values = Object.entries(data[i]);
+      values.map((value, idx: number) => {
+        myDataSet.push({
+          row: i,
+          columnName: value[0],
+          columnIndex: idx,
+          value: value[1] as string,
+          columnCount: values.length,
+          rowCount: data.length,
+        });
       });
-    });
-  }
+    }
 
-  return myDataSet;
-}
+    return myDataSet;
+  }
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
@@ -140,6 +117,7 @@ function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
               className={styles["th"]}
               style={{ width: "100px" }}
               data-column-id={item.columnName}
+              hidden={isColumnHidden(item.columnName)}
             >
               {name}{" "}
               <span
@@ -152,14 +130,15 @@ function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
               >
                 {!sortState ? "expand_more" : "expand_less"}
               </span>
-              <div key={`${name}${idx}`}
+              <div
+                key={`${name}${idx}`}
                 className={styles["coldivider"]}
                 // onMouseDown={handleMouseDown}
               ></div>
             </div>
           ));
 
-          return <>{columnNamesWithLineBreaks}</>;
+          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -171,6 +150,7 @@ function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
                   className={styles["td"]}
                   data-column-id={key}
                   style={{ width: "100px" }}
+                  hidden={isColumnHidden(key)}
                 >
                   {parseValue(value as string, key)}
                 </div>
@@ -201,17 +181,13 @@ function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
 
     return (
       <React.Fragment>
-        <>
-          <div className={styles["datagriddiv"]}>
-            <i id="ruler" hidden></i>
-            {table}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        </>
+        {table}
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </React.Fragment>
     );
   }
