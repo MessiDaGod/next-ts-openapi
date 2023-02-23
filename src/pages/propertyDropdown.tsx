@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getPropOptions } from "./api/getPropOptions";
+import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "../styles/propertyDropdown.module.scss";
 import PropOptionsPage from "./propOptions";
@@ -53,7 +53,7 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getPropOptions(1000);
+        const response = await getPropOptionsAsync(1000);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
       } catch (error) {

@@ -2,7 +2,7 @@ import React from "react";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "../pagination";
-import { getPropOptions } from "./api/getPropOptions";
+import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";
 import { parseValue } from "./utils";
@@ -42,7 +42,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
             setData(response);
             break;
           case "GetPropOptions":
-            response = await getPropOptions(100);
+            response = await getPropOptionsAsync(100);
             setData(response);
             break;
           case "GetAccounts":
