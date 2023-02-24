@@ -1,8 +1,6 @@
-export function setListeners(div: HTMLDivElement): void {
+function setListeners(div: HTMLDivElement): void {
   if (div.parentElement.getAttribute("hidden") === null)
-    console.log("setListeners called...");
-
-  if (div.parentElement.getAttribute("hidden") !== null) return;
+    if (div.parentElement.getAttribute("hidden") !== null) return;
   let pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
@@ -10,35 +8,15 @@ export function setListeners(div: HTMLDivElement): void {
     curColWidth: number | undefined,
     nxtColWidth: number | undefined,
     prevColWidth: number | undefined;
-
-  const target = div.parentElement as HTMLElement;
   div.addEventListener(
     "mousedown",
     function (e: MouseEvent): void {
-      curCol = target ? (target.parentElement as HTMLElement) : null;
-      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-
-      const tables = [
-        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
-      ];
-      const curColAllCells = Array.from(
-        new Set([
-          ...tables[0].querySelectorAll(
-            '[data-column-id="' + curCol.dataset.columnId + '"]'
-          ),
-        ])
-      );
-
-      const nextColAllCells = nxtCol
-        ? Array.from(
-            new Set([
-              ...tables[0].querySelectorAll(
-                '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-              ),
-            ])
-          )
-        : null;
-
+      e.preventDefault();
+      console.log("mousedown listener called...");
+      const target = e.target as HTMLElement;
+      curCol = target ? target.parentElement : null;
+      var nextCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+      nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
       if (curCol)
         prevCol = curCol
           ? (curCol.previousElementSibling as HTMLElement)
@@ -55,49 +33,31 @@ export function setListeners(div: HTMLDivElement): void {
 
       if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
     },
-    { passive: true }
+    { once: false, passive: false }
   );
-
-  document.addEventListener(
+  div.addEventListener(
     "mousemove",
     function (e: MouseEvent): void {
+      e.preventDefault();
+      console.log("mousemove listener called...");
       const diffX = e.pageX - (pageX ?? 0);
-      curCol = target ? (target.parentElement as HTMLElement) : null;
-      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-
       const tables = [
         ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
       ];
-      const curColAllCells = Array.from(
-        new Set([
-          ...tables[0].querySelectorAll(
-            '[data-column-id="' + curCol.dataset.columnId + '"]'
-          ),
-        ])
-      );
 
-      const nextColAllCells = nxtCol
-        ? Array.from(
-            new Set([
-              ...tables[0].querySelectorAll(
-                '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-              ),
-            ])
-          )
-        : null;
       if (curCol) {
+        const allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll(
+              '[data-column-id="' + curCol.dataset.columnId + '"]'
+            ),
+          ])
+        );
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
 
-        // let allCells = Array.from(
-        //   new Set([
-        //     ...tables[0].querySelectorAll(
-        //       '[data-column-id="' + curCol.dataset.columnId + '"]'
-        //     ),
-        //   ])
-        // );
-        if (curColAllCells)
-          curColAllCells.forEach((cell) => {
+        if (allCells)
+          allCells.forEach((cell) => {
             (cell as HTMLElement).style.minWidth =
               (curColWidth ?? 0) + diffX + "px";
             (cell as HTMLElement).style.width =
@@ -109,8 +69,15 @@ export function setListeners(div: HTMLDivElement): void {
         nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
         nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
 
-        if (nextColAllCells)
-          nextColAllCells.forEach((cell) => {
+        let allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll(
+              '[data-column-id="' + nxtCol.dataset.columnId + '"]'
+            ),
+          ])
+        );
+        if (allCells)
+          allCells.forEach((cell) => {
             (cell as HTMLElement).style.minWidth =
               (nxtColWidth ?? 0) + diffX + "px";
             (cell as HTMLElement).style.width =
@@ -118,16 +85,23 @@ export function setListeners(div: HTMLDivElement): void {
           });
       }
     },
-    { passive: true }
+    { once: false, passive: false }
   );
 
-  document.addEventListener("mouseup", function (e: MouseEvent): void {
-    curCol = null;
-    nxtCol = null;
-    pageX = undefined;
-    nxtColWidth = undefined;
-    curColWidth = undefined;
-  });
+  document.addEventListener(
+    "mouseup",
+    function (e: MouseEvent): void {
+      e.preventDefault();
+
+      console.log("mouseup listener called...");
+      curCol = null;
+      nxtCol = null;
+      pageX = undefined;
+      nxtColWidth = undefined;
+      curColWidth = undefined;
+    },
+    { once: false, passive: false }
+  );
 }
 
 function paddingDiff(col: HTMLElement): number {
@@ -155,57 +129,54 @@ export function dataGridResize(itemsPerPage?: number) {
       setListeners(resizeDivs[i] as HTMLDivElement);
     }
   }
+}
+function initResizeListeners() {
+  if (!document) return;
+  const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
+  for (let i = 0; i < tables.length; i++) {
+    const columns = Array.from(new Set([...tables[i].querySelectorAll("th")]));
+    columns.forEach((th) => {
+      th.style.width = th.getBoundingClientRect().width + "px";
+      th.style.minWidth = th.getBoundingClientRect().width + "px";
+    });
+    resizableGrid(tables[i] as HTMLTableElement);
+  }
 
-  function initResizeListeners() {
-    if (!document) return;
-    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
-    for (let i = 0; i < tables.length; i++) {
-      const columns = Array.from(
-        new Set([...tables[i].querySelectorAll("th")])
-      );
-      columns.forEach((th) => {
-        th.style.width = th.getBoundingClientRect().width + "px";
-        th.style.minWidth = th.getBoundingClientRect().width + "px";
+  function resizableGrid(table: HTMLTableElement) {
+    const rows = Array.from(
+      table.getElementsByTagName('div[class*="' + "tr" + '"]')
+    );
+    const cells = Array.from(
+      table.getElementsByTagName('div[class*="' + "td" + '"]')
+    );
+
+    cells.forEach((cell) => {
+      setCellListeners(cell as HTMLElement);
+    });
+
+    rows.forEach((tr) => {
+      setRowListeners(tr as HTMLElement);
+    });
+
+    function setCellListeners(cell: HTMLElement) {
+      if (cell.dataset.columnId === "Row")
+        cell.addEventListener("mouseover", function (_e) {
+          this.classList.add("cellhoverover");
+        });
+
+      cell.addEventListener("mouseout", function (_e) {
+        this.classList.remove("cellhoverover");
       });
-      resizableGrid(tables[i] as HTMLTableElement);
     }
 
-    function resizableGrid(table: HTMLTableElement) {
-      const rows = Array.from(
-        table.getElementsByTagName('div[class*="' + "tr" + '"]')
-      );
-      const cells = Array.from(
-        table.getElementsByTagName('div[class*="' + "td" + '"]')
-      );
-
-      cells.forEach((cell) => {
-        setCellListeners(cell as HTMLElement);
+    function setRowListeners(row: HTMLElement) {
+      row.addEventListener("mouseover", function (_e) {
+        this.classList.add("hoverover");
       });
 
-      rows.forEach((tr) => {
-        setRowListeners(tr as HTMLElement);
+      row.addEventListener("mouseout", function (_e) {
+        this.classList.remove("hoverover");
       });
-
-      function setCellListeners(cell: HTMLElement) {
-        if (cell.dataset.columnId === "Row")
-          cell.addEventListener("mouseover", function (_e) {
-            this.classList.add("cellhoverover");
-          });
-
-        cell.addEventListener("mouseout", function (_e) {
-          this.classList.remove("cellhoverover");
-        });
-      }
-
-      function setRowListeners(row: HTMLElement) {
-        row.addEventListener("mouseover", function (_e) {
-          this.classList.add("hoverover");
-        });
-
-        row.addEventListener("mouseout", function (_e) {
-          this.classList.remove("hoverover");
-        });
-      }
     }
   }
 }
