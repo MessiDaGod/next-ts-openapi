@@ -52,7 +52,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getPropOptionsAsync(1000);
+        const response = await getPropOptionsAsync(20);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
         setIsChecked(false);

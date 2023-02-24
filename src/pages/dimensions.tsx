@@ -87,7 +87,6 @@ export function Dimensions<T>() {
       setMouseDown(false);
     }
     fetchData();
-    dataGridResize();
   }, [data]);
 
   useEffect(() => {
@@ -95,8 +94,12 @@ export function Dimensions<T>() {
       setMouseDown(false);
     }
     fetchData();
-    // dataGridResize();
   }, []);
+
+
+  function handleMouseEnter(e) {
+    dataGridResize(itemsPerPage);
+  }
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -134,11 +137,9 @@ export function Dimensions<T>() {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
-      const columns = gridItems[0].columnCount;
-      if (columns === undefined) return;
       const tableRows = [
-        gridItems.map((item, idx) => {
-          const columnNames = item.columnName.replaceAll('_', ' ').split('_');
+        Object.keys(gridItems[0].value).map((item, idx) => {
+          const columnNames = item.replaceAll('_', ' ').split('_');
           const columnNamesWithLineBreaks = columnNames.map(
             (name, index: number) => (
               <div
@@ -146,12 +147,12 @@ export function Dimensions<T>() {
                 key={`${name}${idx}${index}`}
                 className={styles['th']}
                 style={{width: '100px'}}
-                data-column-id={item.columnName}
-                hidden={isColumnHidden(data, item.columnName)}>
+                data-column-id={item}
+                hidden={isColumnHidden(data, item)}>
                 {name}{' '}
                 <span
                   className={`${styles['material-symbols-outlined']} material-symbols-outlined`}
-                  onClick={() => handleSort(item.columnName)}
+                  onClick={() => handleSort(item)}
                   style={{
                     color: 'black',
                     background: 'transparent',
@@ -160,7 +161,8 @@ export function Dimensions<T>() {
                 </span>
                 <div
                   key={`${name}${idx}`}
-                  className={styles['coldivider']}></div>
+                  className={styles['coldivider']}
+                  onMouseEnter={handleMouseEnter}></div>
               </div>
             )
           );

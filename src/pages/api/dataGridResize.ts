@@ -1,8 +1,5 @@
 function setListeners(div: HTMLDivElement): void {
 
-  if (div.parentElement?.getAttribute("hidden") === null)
-    console.log("setListeners called...");
-
   if (div.parentElement?.getAttribute("hidden") !== null) return;
   var pageX: number | undefined,
     curCol: HTMLElement | null,
@@ -48,6 +45,9 @@ function setListeners(div: HTMLDivElement): void {
     }, { passive: true } );
 
     document.addEventListener("mousemove", function (e: MouseEvent): void {
+      // console.log(e.target);
+      // if (e.target !== curCol || e.target !== nxtCol) return;
+      // console.log("adding mousemove listener...");
       const diffX = e.pageX - (pageX ?? 0);
       const tables = [
         ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
@@ -91,9 +91,19 @@ function setListeners(div: HTMLDivElement): void {
               (nxtColWidth ?? 0) + diffX + "px";
           });
       }
-    }, { passive: true } );
+    }, { passive: true, once: false } );
 
-    document.addEventListener("mouseup", function (e: MouseEvent): void {
+    div.addEventListener("mouseup", function (e: MouseEvent): void {
+      console.info("resetting values 1...");
+      curCol = null;
+      nxtCol = null;
+      pageX = undefined;
+      nxtColWidth = undefined;
+      curColWidth = undefined;
+    });
+
+    div.parentElement.addEventListener("mouseup", function (e: MouseEvent): void {
+      console.info("resetting values 2...");
       curCol = null;
       nxtCol = null;
       pageX = undefined;
