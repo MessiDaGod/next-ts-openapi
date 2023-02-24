@@ -257,3 +257,34 @@
   color: white;
   cursor: pointer;
 }
+
+input:-webkit-autofill:not(.rz-textbox),
+input:-webkit-autofill:hover:not(.rz-textbox),
+input:-webkit-autofill:focus:not(.rz-textbox),
+input:-webkit-autofill:active:not(.rz-textbox) {
+    -webkit-box-shadow: 0 0 0 30px black inset;
+    -webkit-text-fill-color: white;
+}
+
+#activeDropdown {
+  cursor: pointer;
+}
+input  {
+  cursor: pointer;
+}
+
+#dd {
+  box-sizing: border-box;
+  flex-direction: row;
+  -webkit-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+  align-items: center;
+  background-color: #202124;
+  border: 1px solid #3c4043;
+  border-radius: 20px;
+  display: inline-flex;
+  min-width: 48px;
+  outline: none;
+  padding: 0 14px;
+  text-align: center;
+}

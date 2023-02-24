@@ -88,6 +88,16 @@ export function GetDataDictionary<T>(data: T[]): DataTable<T> {
     return defaultObject;
   }
 
+  export interface DataSet {
+    [key: number]: number | undefined;
+    row: number | undefined;
+    columnName: string | undefined;
+    columnIndex: number | undefined;
+    value: string | undefined;
+    columnCount: number | undefined;
+    rowCount: number | undefined;
+  }
+
 /////////// Example /////////////
 
 // create a function that exports a Vendor[] object using getVendors();

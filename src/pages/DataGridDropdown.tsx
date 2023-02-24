@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
-import styles from "../styles/propertyDropdown.module.scss";
+import styles from "../styles/DataGridDropdown.module.scss";
 import PropOptionsPage from "./propOptions";
 import { dataGridResize } from "./api/dataGridResize";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "@/pages/pagination";
+import { Checkbox } from "./Checkbox";
 
 type DropdownProps = {
   data?: {
@@ -37,12 +38,17 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
+const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
 
   const itemsPerPage = 25;
 
@@ -64,39 +70,47 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
     fetchData();
   }, [searchText]);
 
-  const filteredData = Array.isArray(data)
-    ? data.filter(
-        (item) =>
-          item.Property_Code.toString()
-            .toLowerCase()
-            .includes(searchText.toLowerCase()) ||
-          item.Property_Name.toString()
-            .toLowerCase()
-            .includes(searchText.toLowerCase())
-      )
-    : data;
+  React.useEffect(() => {
+    dataGridResize();
+  }, [data]);
 
-  function GeneratePropOptionsData(
-    data: PropOptions | PropOptions[]
-  ): DataTable<PropOptions> | undefined {
-    const json = JSON.stringify(data);
-    const PropOptions: PropOptions[] = JSON.parse(json).map(
-      (PropOptions: PropOptions) => ({
-        ...PropOptions,
-      })
-    );
+  React.useEffect(() => {
+    dataGridResize();
+  }, [data]);
 
-    if (PropOptions.length > 0) {
-      const newPropOptions = GetDataDictionary(PropOptions);
-      PropOptions.forEach((PropOptions) => {
-        Object.entries(PropOptions).forEach(([key, value]) => {
-          newPropOptions.values[key].Values.push(value);
-        });
-      });
+//   const filteredData = Array.isArray(data)
+//     ? data.filter(
+//         (item) =>
+//           item.Property_Code.toString()
+//             .toLowerCase()
+//             .includes(searchText.toLowerCase()) ||
+//           item.Property_Name.toString()
+//             .toLowerCase()
+//             .includes(searchText.toLowerCase())
+//       )
+//     : data;
 
-      return newPropOptions;
-    }
-  }
+//   function GeneratePropOptionsData(
+//     data: PropOptions | PropOptions[]
+//   ): DataTable<PropOptions> | undefined {
+//     const json = JSON.stringify(data);
+//     const PropOptions: PropOptions[] = JSON.parse(json).map(
+//       (PropOptions: PropOptions) => ({
+//         ...PropOptions,
+//       })
+//     );
+
+//     if (PropOptions.length > 0) {
+//       const newPropOption = GetDataDictionary(PropOptions);
+//       PropOptions.forEach((PropOptions) => {
+//         Object.entries(PropOptions).forEach(([key, value]) => {
+//           newPropOption.values[key].Values.push(value);
+//         });
+//       });
+
+//       return newPropOption;
+//     }
+//   }
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -236,25 +250,58 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
 
   const table = GenerateTableHtml();
   const totalPages = Math.ceil(data.length / itemsPerPage);
+
   return (
-    <div
-      className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
-      onMouseEnter={() => setShowSearchBox(true)}
-      onMouseLeave={() => setShowSearchBox(false)}
-    >
-      <div className={styles["rz-helper-hidden-accessible"]}></div>
-      <label
-        className={`${styles["rz-placeholder"]} ${styles["rz-inputtext"]} ${styles["rz-dropdown-label"]}`}
-        style={{ width: "100%" }}
+    <>
+    <Checkbox handleCheckboxChange={handleCheckboxChange} />
+      <div
+        className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
+        onMouseEnter={() => setShowSearchBox(true)}
+        onMouseLeave={() => setShowSearchBox(false)}
       >
-        Property
-      </label>
-      <div className={styles["dropdown-content"]}>
-        {/* {showSearchBox && <div>{table}</div>} */}
-        {<div>{table}</div>}
+        <div className={styles["rz-helper-hidden-accessible"]}></div>
+        <label
+          className={`${styles["rz-placeholder"]} ${styles["rz-inputtext"]} ${styles["rz-dropdown-label"]}`}
+          style={{ width: "100%", cursor: "pointer" }}
+        >
+          Property
+        </label>
+        {showSearchBox && (
+          <input
+            id="search-input"
+            type="search"
+            className={styles["rz-textbox findcomponent"]}
+            placeholder="Search ..."
+            autoComplete="on"
+            style={{
+              color: "white",
+              backgroundColor: "inherit",
+              fontSize: "16px",
+              borderBottom: "1px solid #2f333d",
+              borderTop: "1px solid #2f333d",
+              cursor: "pointer",
+              display: "block",
+              width: "100%",
+            }}
+          ></input>
+        )}
+        <span
+          className={"material-symbols-outlined"}
+          style={{
+            color: "white",
+            background: "transparent",
+            position: "absolute",
+          }}
+        >
+          {showSearchBox ? "expand_more" : "expand_less"}
+        </span>
+        <div className={styles["dropdown-content"]}>
+          {showSearchBox && isChecked && <div>{table}</div>}
+          {/* {<div>{table}</div>} */}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default PropertyDropdown;
+export default DataGridDropdown;

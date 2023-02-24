@@ -4,10 +4,9 @@ import styles from "@/styles/Home.module.scss";
 import Dropdown from "./dropdown";
 import React from "react";
 
-//@ts-ignore
 const inter = Inter({ subsets: ["latin"] });
 
-const Home: React.FC = ({ }) => (
+const Home: React.FC = ({}) => (
   <>
     <Head>
       <title>Shakely API</title>
@@ -16,9 +15,9 @@ const Home: React.FC = ({ }) => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <main className={styles["main"]}>
-      <Dropdown
-        jsonFileName="GetOptions"
-        label="Get" />
+      <div style={{ position: "relative", zIndex: 0 }}>
+        <Dropdown jsonFileName="GetOptions" label="Get" />
+      </div>
     </main>
   </>
 );

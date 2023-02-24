@@ -27,7 +27,8 @@ const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
     <button className={cn(
       styles["button"]
-    )}>
+    )}
+      style={{ background: "white", color: "black", fontWeight: "bold" }} >
       {children}
     </button>
   );

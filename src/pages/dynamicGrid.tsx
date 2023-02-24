@@ -1,11 +1,12 @@
 import React from "react";
 import { getVendors } from "./api/getVendors";
-import { GetDataDictionary, DataTable } from "./api/DataObject";
+import { GetDataDictionary, DataTable, DataSet } from "./api/DataObject";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
-import styles from "../styles/Home.module.scss";
-import { parseValue } from "./utils";
+import styles from "../styles/yardiInterface.module.scss";
+import { isColumnHidden, parseValue } from "./utils";
+import { dataGridResize } from "./api/dataGridResize";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -20,7 +21,6 @@ async function GetDimensions(take: number | null = null) {
     return error;
   }
 }
-
 
 function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
   const [data, setData] = React.useState<T[]>([]);
@@ -49,12 +49,12 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
             response = await getAccounts(100);
             setData(response);
             break;
-            case "GetDimensions":
-              response = await GetDimensions(2);
-              setData(response);
-              break;
+          case "GetDimensions":
+            response = await GetDimensions(2);
+            setData(response);
+            break;
           case undefined:
-              break;
+            break;
         }
       } catch (error) {
         console.error(error);
@@ -63,23 +63,41 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
     fetchData();
   }, [selectItem, myData]);
 
+  React.useEffect(() => {
+    dataGridResize();
+  }, [data]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedData = React.useMemo(() => GenerateDynamicData(data), [data]);
 
-  function GenerateDynamicData(data: T | T[]): DataTable<T> | undefined {
+  function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
     if (!data) return;
-    const json = JSON.stringify(data);
-    const dataSet: T[] = JSON.parse(json).map((vendor: T) => ({
-      ...vendor,
-    }));
+    if (data.length === 0) return;
+    const myDataSet: DataSet[] = [];
 
-    if (dataSet.length > 0) {
-      const newItems = GetDataDictionary(dataSet);
-      console.log("generating dynamic data...");
-      return newItems;
+    // const goodColumns = getGoodColumns();
+
+    for (let i = 0; i < data.length; i++) {
+      const values = Object.entries(data[i]);
+      values.map((value, idx: number) => {
+        myDataSet.push({
+          row: i,
+          columnName: value[0],
+          columnIndex: idx,
+          value: value[1] as string,
+          columnCount: values.length,
+          rowCount: data.length,
+        });
+      });
     }
+
+    return myDataSet;
   }
 
+  function handleResize(e?: MouseEvent) {
+    e.preventDefault();
+
+  }
   function handleSort(columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
@@ -110,72 +128,83 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
   }
 
   function GenerateTableHtml() {
-    if (Array.isArray(data)) {
-      const gridItems = memoizedData;
+    if (Array.isArray(data) && data.length > 0) {
+      const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
-      // Pagination logic
-
+      const columns = gridItems[0].columnCount;
       const tableRows = [
-        gridItems.columns.map((columnName, idx) => {
-          const columnNames = columnName.displayName.split(" ");
-          const columnNamesWithLineBreaks = columnNames.map((name) => (
-            <React.Fragment key={name}>
-              {name}
-              <br />
-            </React.Fragment>
-          ));
-          return (
-            <th
-              key={`${idx}`}
-              style={{ margin: "auto", cursor: "pointer" }}
-              className={styles["dataGridth"]}
-              data-column-id={columnName.name}
-            >
+        gridItems.map((item, idx) => {
+          if (idx > columns - 1) return;
+          const columnNames = item.columnName.replaceAll("_", " ").split("_");
+          const columnNamesWithLineBreaks = columnNames.map(
+            (name, index: number) => (
               <div
-                key={`div${columnName}${idx}`}
-                className={`${styles["columndivider"]}`}
-              ></div>
-              <span
-                className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-                onClick={() => handleSort(columnName.keyName)}
-                style={{
-                  margin: "auto",
-                  display: "inline-block",
-                  cursor: "pointer",
-                }}
+                id={`${name}${idx}${index}`}
+                key={`${name}${idx}${index}`}
+                className={styles["th"]}
+                style={{ width: "100px" }}
+                data-column-id={item.columnName}
+                hidden={isColumnHidden(data, item.columnName)}
               >
-                {!sortState ? "expand_more" : "expand_less"}
-              </span>
-              {columnNamesWithLineBreaks}
-            </th>
+                {name}{" "}
+                <span
+                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  onClick={() => handleSort(item.columnName)}
+                  style={{
+                    color: "black",
+                    background: "transparent",
+                  }}
+                >
+                  {!sortState ? "expand_more" : "expand_less"}
+                </span>
+                <div
+                  key={`${name}${idx}`}
+                  className={styles["coldivider"]}
+                ></div>
+              </div>
+            )
           );
+
+          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <tr key={rowIndex} className={styles["gridjs-tr"]}>
+            <div key={`${rowIndex}`} className={styles["tr"]}>
               {Object.entries(_row).map(([key, value], index: number) => (
-                <td
+                <div
                   key={`${key}_${rowIndex}_${index}`}
-                  className={styles["dataGridtd"]}
+                  className={styles["td"]}
                   data-column-id={key}
+                  style={{ width: "100px" }}
+                  hidden={isColumnHidden(data, key)}
                 >
-                  {parseValue(value, key)}
-                </td>
+                  {parseValue(value as string, key)}
+                </div>
               ))}
-            </tr>
+            </div>
           )),
       ];
 
       if (tableRows.length > 0) {
+        const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
-          <table id={"gridjs_0"} className={styles["dataGridtable"]}>
-            <thead>
-              <tr>{tableRows[0]}</tr>
-            </thead>
-            <tbody>{tableRows.slice(1)}</tbody>
-          </table>
+          <>
+            <div style={{ overflow: "auto" }}>
+              <div id="gridjs_0" className={styles["divTable"]}>
+                <div className={styles["thead"]}>
+                  <div className={styles["tr"]}>{tableRows[0]}</div>
+                </div>
+                <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+              </div>
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </>
         );
       }
     }
@@ -183,23 +212,23 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
 
   const table = GenerateTableHtml();
 
-
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
     return (
       <React.Fragment>
-        <>
-          <div className={styles["datagriddiv"]}>
-            <i id="ruler" hidden></i>
-            {table}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        </>
+        <span
+          className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+          onClick={((e) => handleResize())}
+          style={{
+            color: "red",
+            background: "transparent",
+            position: "relative",
+          }}
+        >
+          {"aspect_ratio"}
+        </span>
+        <div className={styles["datagriddiv"]}>{table}</div>
       </React.Fragment>
     );
   }

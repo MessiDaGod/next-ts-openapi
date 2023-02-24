@@ -1,4 +1,8 @@
 function setListeners(div: HTMLElement): void {
+  if (div.parentElement.getAttribute("hidden") === null)
+    console.log("setListeners called...");
+
+  if (div.parentElement.getAttribute("hidden") !== null) return;
   var pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
@@ -8,47 +12,6 @@ function setListeners(div: HTMLElement): void {
     prevColWidth: number | undefined;
 
   if (div.parentElement) {
-    // div.addEventListener("mouseenter", function (e: MouseEvent): void {
-    //   e.preventDefault();
-    //   let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-    //   let tbl = this.closest("table") as HTMLTableElement;
-    //   if (tbl) {
-    //     let allCells = Array.from(
-    //       new Set([
-    //         ...tbl.querySelectorAll('[data-column-id="' + dataColumnId + '"]'),
-    //       ])
-    //     );
-    //     // if (allCells)
-    //     //   allCells.forEach((cell) => {
-    //     //     (cell as HTMLElement).style.borderRight = "solid #0000ff";
-    //     //     (cell as HTMLElement).style.cursor = "col-resize";
-    //     //   });
-    //   }
-    // });
-
-    // div.parentElement.addEventListener(
-    //   "mouseout",
-    //   function (e: MouseEvent): void {
-    //     e.preventDefault();
-    //     let dataColumnId = (e.target as HTMLElement).dataset.columnId;
-    //     let tbl = this.closest("table") as HTMLTableElement;
-    //     if (tbl) {
-    //       let allCells = Array.from(
-    //         new Set([
-    //           ...tbl.querySelectorAll(
-    //             '[data-column-id="' + dataColumnId + '"]'
-    //           ),
-    //         ])
-    //       );
-    //       if (allCells)
-    //         allCells.forEach((cell) => {
-    //           (cell as HTMLElement).style.borderRight = "";
-    //           (cell as HTMLElement).style.cursor = "";
-    //         });
-    //     }
-    //   }
-    // );
-
     div.addEventListener("mousedown", function (e: MouseEvent): void {
       var target = e.target as HTMLElement;
       curCol = target ? target.parentElement : null;
@@ -127,41 +90,15 @@ function setListeners(div: HTMLElement): void {
               (nxtColWidth ?? 0) + diffX + "px";
           });
       }
-
-      // if (prevCol) {
-      //   prevCol.style.minWidth = (prevColWidth ?? 0) - diffX + "px";
-      //   prevCol.style.width = (prevColWidth ?? 0) - diffX + "px";
-      // }
     });
 
     document.addEventListener("mouseup", function (e: MouseEvent): void {
-
       curCol = null;
       nxtCol = null;
       pageX = undefined;
       nxtColWidth = undefined;
       curColWidth = undefined;
     });
-
-    // div.addEventListener("mouseup", function (e: MouseEvent): void {
-
-    //   // console.log(curCol);
-    //   const tables = [
-    //     ...document.querySelectorAll('div[id*="' + "gridjs_" + '"]'),
-    //   ];
-    //   let allCells = Array.from(
-    //     new Set([
-    //       ...tables[0].querySelectorAll(
-    //         '[data-column-id="' + curCol.dataset.columnId + '"]'
-    //       ),
-    //     ])
-    //   );
-    //   if (allCells) {
-    //     allCells.forEach((cell) => {
-    //       (cell as HTMLElement).style.borderRight = "";
-    //     });
-    //   }
-    // });
   }
 }
 
