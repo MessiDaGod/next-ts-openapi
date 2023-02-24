@@ -1,9 +1,9 @@
-function setListeners(div: HTMLDivElement): void {
+export function setListeners(div: HTMLDivElement): void {
   if (div.parentElement.getAttribute("hidden") === null)
     console.log("setListeners called...");
 
   if (div.parentElement.getAttribute("hidden") !== null) return;
-  var pageX: number | undefined,
+  let pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
     prevCol: HTMLElement | null,
@@ -11,15 +11,17 @@ function setListeners(div: HTMLDivElement): void {
     nxtColWidth: number | undefined,
     prevColWidth: number | undefined;
 
-  if (div.parentElement) {
-    div.addEventListener("mousedown", function (e: MouseEvent): void {
-      var target = e.target as HTMLElement;
-      curCol = target ? target.parentElement : null;
+  const target = div.parentElement as HTMLElement;
+  div.addEventListener(
+    "mousedown",
+    function (e: MouseEvent): void {
+      curCol = target ? (target.parentElement as HTMLElement) : null;
+      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
 
       const tables = [
         ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
       ];
-      let allCells = Array.from(
+      const curColAllCells = Array.from(
         new Set([
           ...tables[0].querySelectorAll(
             '[data-column-id="' + curCol.dataset.columnId + '"]'
@@ -27,8 +29,16 @@ function setListeners(div: HTMLDivElement): void {
         ])
       );
 
-      var nextCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-      nextCol = nextCol ? (nextCol?.nextElementSibling as HTMLElement) : null;
+      const nextColAllCells = nxtCol
+        ? Array.from(
+            new Set([
+              ...tables[0].querySelectorAll(
+                '[data-column-id="' + nxtCol.dataset.columnId + '"]'
+              ),
+            ])
+          )
+        : null;
+
       if (curCol)
         prevCol = curCol
           ? (curCol.previousElementSibling as HTMLElement)
@@ -44,26 +54,50 @@ function setListeners(div: HTMLDivElement): void {
       if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
 
       if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
-    }, { passive: true } );
+    },
+    { passive: true }
+  );
 
-    document.addEventListener("mousemove", function (e: MouseEvent): void {
+  document.addEventListener(
+    "mousemove",
+    function (e: MouseEvent): void {
       const diffX = e.pageX - (pageX ?? 0);
+      curCol = target ? (target.parentElement as HTMLElement) : null;
+      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+
       const tables = [
         ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
       ];
+      const curColAllCells = Array.from(
+        new Set([
+          ...tables[0].querySelectorAll(
+            '[data-column-id="' + curCol.dataset.columnId + '"]'
+          ),
+        ])
+      );
+
+      const nextColAllCells = nxtCol
+        ? Array.from(
+            new Set([
+              ...tables[0].querySelectorAll(
+                '[data-column-id="' + nxtCol.dataset.columnId + '"]'
+              ),
+            ])
+          )
+        : null;
       if (curCol) {
         curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         curCol.style.width = (curColWidth ?? 0) + diffX + "px";
 
-        let allCells = Array.from(
-          new Set([
-            ...tables[0].querySelectorAll(
-              '[data-column-id="' + curCol.dataset.columnId + '"]'
-            ),
-          ])
-        );
-        if (allCells)
-          allCells.forEach((cell) => {
+        // let allCells = Array.from(
+        //   new Set([
+        //     ...tables[0].querySelectorAll(
+        //       '[data-column-id="' + curCol.dataset.columnId + '"]'
+        //     ),
+        //   ])
+        // );
+        if (curColAllCells)
+          curColAllCells.forEach((cell) => {
             (cell as HTMLElement).style.minWidth =
               (curColWidth ?? 0) + diffX + "px";
             (cell as HTMLElement).style.width =
@@ -75,31 +109,25 @@ function setListeners(div: HTMLDivElement): void {
         nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
         nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
 
-        let allCells = Array.from(
-          new Set([
-            ...tables[0].querySelectorAll(
-              '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-            ),
-          ])
-        );
-        if (allCells)
-          allCells.forEach((cell) => {
+        if (nextColAllCells)
+          nextColAllCells.forEach((cell) => {
             (cell as HTMLElement).style.minWidth =
               (nxtColWidth ?? 0) + diffX + "px";
             (cell as HTMLElement).style.width =
               (nxtColWidth ?? 0) + diffX + "px";
           });
       }
-    }, { passive: true } );
+    },
+    { passive: true }
+  );
 
-    document.addEventListener("mouseup", function (e: MouseEvent): void {
-      curCol = null;
-      nxtCol = null;
-      pageX = undefined;
-      nxtColWidth = undefined;
-      curColWidth = undefined;
-    });
-  }
+  document.addEventListener("mouseup", function (e: MouseEvent): void {
+    curCol = null;
+    nxtCol = null;
+    pageX = undefined;
+    nxtColWidth = undefined;
+    curColWidth = undefined;
+  });
 }
 
 function paddingDiff(col: HTMLElement): number {

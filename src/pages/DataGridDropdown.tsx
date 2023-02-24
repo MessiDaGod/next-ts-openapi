@@ -3,11 +3,11 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "../styles/DataGridDropdown.module.scss";
 import PropOptionsPage from "./propOptions";
-import { dataGridResize } from "./api/dataGridResize";
+import { dataGridResize, setListeners } from "./api/resize";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "@/pages/pagination";
-import { Checkbox } from "./Checkbox";
+
 
 type DropdownProps = {
   data?: {
@@ -42,19 +42,12 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
+//   const [isResized, setIsResized] = useState<Boolean>(false);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
-
-  const itemsPerPage = 25;
-
-  function handlePageChange(page: number) {
-    setCurrentPage(page);
-  }
+  const [isChecked, setIsChecked] = useState(true);
+  const itemsPerPage = 10;
+  const cache = new Map<string, any>();
 
   React.useEffect(() => {
     async function fetchData() {
@@ -62,55 +55,30 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         const response = await getPropOptionsAsync(1000);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
-        dataGridResize();
+        setIsChecked(false);
       } catch (error) {
         return emptyPropOptions;
       }
     }
     fetchData();
-  }, [searchText]);
+  }, []);
 
-  React.useEffect(() => {
-    dataGridResize();
-  }, [data]);
 
-  React.useEffect(() => {
-    dataGridResize();
-  }, [data]);
 
-//   const filteredData = Array.isArray(data)
-//     ? data.filter(
-//         (item) =>
-//           item.Property_Code.toString()
-//             .toLowerCase()
-//             .includes(searchText.toLowerCase()) ||
-//           item.Property_Name.toString()
-//             .toLowerCase()
-//             .includes(searchText.toLowerCase())
-//       )
-//     : data;
+function getCachedValue(key: string, getValueFunction: () => any): any {
+    let value = cache.get(key);
 
-//   function GeneratePropOptionsData(
-//     data: PropOptions | PropOptions[]
-//   ): DataTable<PropOptions> | undefined {
-//     const json = JSON.stringify(data);
-//     const PropOptions: PropOptions[] = JSON.parse(json).map(
-//       (PropOptions: PropOptions) => ({
-//         ...PropOptions,
-//       })
-//     );
+    if (value === undefined) {
+      value = getValueFunction();
+      cache.set(key, value);
+    }
 
-//     if (PropOptions.length > 0) {
-//       const newPropOption = GetDataDictionary(PropOptions);
-//       PropOptions.forEach((PropOptions) => {
-//         Object.entries(PropOptions).forEach(([key, value]) => {
-//           newPropOption.values[key].Values.push(value);
-//         });
-//       });
+    return value;
+  }
 
-//       return newPropOption;
-//     }
-//   }
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+  }
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -165,6 +133,18 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     return myDataSet;
   }
 
+  function handleMouseEnter(e) {
+    const target = e.target;
+    setListeners(target as HTMLDivElement);
+  }
+
+  function handleMouseMove(e) {
+
+  }
+  function handleMouseUp(e) {
+
+  }
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
@@ -199,6 +179,9 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
                 <div
                   key={`${name}${idx}`}
                   className={styles["coldivider"]}
+                  onMouseEnter={handleMouseEnter}
+                //   onMouseMove={handleMouseMove}
+                //   onMouseUp={handleMouseUp}
                 ></div>
               </div>
             )
@@ -231,6 +214,26 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
           <>
             <div id="gridjs_0" className={styles["divTable"]}>
               <div className={styles["thead"]}>
+                {showSearchBox && (
+                  <input
+                    id="search-input"
+                    type="search"
+                    className={styles["rz-textbox findcomponent"]}
+                    placeholder="Search ..."
+                    autoComplete="on"
+                    style={{
+                      color: "white",
+                      backgroundColor: "inherit",
+                      fontSize: "14px",
+                      borderBottom: "1px solid #2f333d",
+                      borderTop: "1px solid #2f333d",
+                      cursor: "text",
+                      display: "block",
+                      width: "100%",
+                      padding: "10px",
+                    }}
+                  ></input>
+                )}
                 <div className={styles["tr"]}>{tableRows[0]}</div>
               </div>
               <div className={styles["tbody"]}>
@@ -251,53 +254,61 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   const table = GenerateTableHtml();
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
+
+  function Checkbox({ isChecked: boolean }) {
+    return (
+        <label>
+        <input
+          id="checkbox"
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => handleCheckboxChange(e)} />Dropdown with MouseEnter
+      </label>
+    );
+  }
+
   return (
     <>
-    <Checkbox handleCheckboxChange={handleCheckboxChange} />
+      <Checkbox
+        isChecked={isChecked}
+      />
+      {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
         onMouseEnter={() => setShowSearchBox(true)}
         onMouseLeave={() => setShowSearchBox(false)}
       >
-        <div className={styles["rz-helper-hidden-accessible"]}></div>
         <label
-          className={`${styles["rz-placeholder"]} ${styles["rz-inputtext"]} ${styles["rz-dropdown-label"]}`}
-          style={{ width: "100%", cursor: "pointer" }}
-        >
-          Property
-        </label>
-        {showSearchBox && (
-          <input
-            id="search-input"
-            type="search"
-            className={styles["rz-textbox findcomponent"]}
-            placeholder="Search ..."
-            autoComplete="on"
-            style={{
-              color: "white",
-              backgroundColor: "inherit",
-              fontSize: "16px",
-              borderBottom: "1px solid #2f333d",
-              borderTop: "1px solid #2f333d",
-              cursor: "pointer",
-              display: "block",
-              width: "100%",
-            }}
-          ></input>
-        )}
-        <span
-          className={"material-symbols-outlined"}
+          className={`${styles["rz-placeholder"]}`}
           style={{
-            color: "white",
-            background: "transparent",
-            position: "absolute",
+            width: "100%",
+            cursor: "pointer",
+            color: "var(--rz-input-value-color)",
+            backgroundColor: "#1e1e1e",
+            padding: "10px",
+            border: "1px solid #c9c3c3",
+            borderRadius: "6px",
           }}
         >
-          {showSearchBox ? "expand_more" : "expand_less"}
-        </span>
+          &nbsp;Property&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span
+            className={"material-symbols-outlined"}
+            style={{
+              color: "white",
+              background: "transparent",
+              display: "inline-block",
+              transform: "translateY(25%)",
+            }}
+          >
+            {showSearchBox ? "expand_more" : "expand_less"}
+          </span>
+        </label>
         <div className={styles["dropdown-content"]}>
           {showSearchBox && isChecked && <div>{table}</div>}
-          {/* {<div>{table}</div>} */}
+          {!isChecked && <div>{table}</div>}
         </div>
       </div>
     </>

@@ -113,45 +113,11 @@
     display: block;
   }
   body {
-    /* max-width: 100vw;
-    max-height: 100vh;
-    height: 100vh;
-    width: 100vw; */
+    font-family: Roboto, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
     overflow: auto;
   }
-/*
-  .tr {
-    display: flex;
-  }
-
-  tr,
-  .tr {
-    width: fit-content;
-    height: 30px;
-  }
-
-  th,
-  .th,
-  td,
-  .td {
-    box-shadow: inset 0 0 0 1px lightgray;
-    padding: 0.25rem;
-  }
-
-  th,
-  .th {
-    padding: 2px 4px;
-    position: relative;
-    font-weight: bold;
-    text-align: left;
-    height: 30px;
-  }
-
-  td,
-  .td {
-    height: 30px;
-  } */
-
   th>span.material-symbol-outlined {
     display: inline-block;
     width: 1em;

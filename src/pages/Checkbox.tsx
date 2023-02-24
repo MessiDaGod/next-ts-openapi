@@ -4,23 +4,22 @@ export function Checkbox(props) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (e) => {
-    setIsChecked(e.target.checked);
+    setIsChecked(e);
   };
 
-  React.useEffect(() => {
+  // React.useEffect(() => {
 
-  }, [isChecked]);
+  // }, [isChecked]);
 
   return (
     <div>
       <label>
         <input
+          id="checkbox"
           type="checkbox"
           checked={isChecked}
-          onChange={handleCheckboxChange}
-        />Activate MouseOver
+          onChange={(e) => handleCheckboxChange(e.target.checked)} />Dropdown with MouseEnter
       </label>
-      <div>{isChecked ? 1 : 0}</div>
     </div>
   );
 }

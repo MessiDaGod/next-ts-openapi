@@ -7,6 +7,7 @@ import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
 import { dataGridResize } from "./api/dataGridResize";
+import { MouseEventHandler } from "react";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -94,10 +95,12 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
     return myDataSet;
   }
 
-  function handleResize(e?: MouseEvent) {
+  function handleResize(e) {
     e.preventDefault();
 
   }
+
+
   function handleSort(columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
@@ -219,7 +222,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
       <React.Fragment>
         <span
           className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-          onClick={((e) => handleResize())}
+          onClick={handleResize}
           style={{
             color: "red",
             background: "transparent",
