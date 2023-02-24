@@ -1,18 +1,31 @@
 import React, { useState } from "react";
-import { getPropOptions, getPropOptionsAsync } from "./api/getPropOptions";
+import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "../styles/DataGridDropdown.module.scss";
-import { isColumnHidden, parseValue } from "./utils";
+import PropOptionsPage from "./propOptions";
+import { dataGridResize } from "./api/dataGridResize";
+import { DataTable, GetDataDictionary } from "./api/DataObject";
+import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 
+
 type DropdownProps = {
-  sourceData?: PropOptions | PropOptions[];
+  data?: {
+    Id: number;
+    Property_Code: string;
+    Property_Name: string;
+    Type: string;
+    StringValue: string;
+    HandleValue: string;
+    HandleValueInt: number | null;
+    Date: string | null;
+  }[];
 };
 
 interface DataSet {
   [key: number]: number | undefined;
   row: number | undefined;
-  columnName: string;
+  columnName: string | undefined;
   columnIndex: number | undefined;
   value: string | undefined;
   columnCount: number | undefined;
@@ -25,57 +38,34 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-function fetchData(): PropOptions[] | PropOptions {
-  try {
-    const response = getPropOptions(10);
-    const items = JSON.parse(JSON.stringify(response));
-    return items;
-  } catch (error) {
-    return emptyPropOptions;
-  }
-}
-
-const data = fetchData();
-
-export default function Page() {
-  return (
-    <DataGridDropdown sourceData={data} />
-  )
-}
-
-function DataGridDropdown({ sourceData }: DropdownProps) {
-  // const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
-  // const [data, setData] = React.useState<PropOptions[]>([]);
+const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
+  const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
-  //   const [isResized, setIsResized] = useState<Boolean>(false);
+//   const [isResized, setIsResized] = useState<Boolean>(false);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = useState(true);
   const itemsPerPage = 10;
   const cache = new Map<string, any>();
-  const data = sourceData;
 
-  // React.useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (Array.isArray(sourceData) && sourceData.length > 0) {
-  //         setData(sourceData);
-  //         setIsChecked(false);
-  //         return;
-  //       }
-  //       const response = await getPropOptionsAsync(1000);
-  //       const items = JSON.parse(JSON.stringify(response));
-  //       setData(items);
-  //       setIsChecked(false);
-  //     } catch (error) {
-  //       return emptyPropOptions;
-  //     }
-  //   }
-  //   fetchData();
-  // }, [sourceData]);
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getPropOptionsAsync(1000);
+        const items = JSON.parse(JSON.stringify(response));
+        setData(items);
+        setIsChecked(false);
+      } catch (error) {
+        return emptyPropOptions;
+      }
+    }
+    fetchData();
+  }, []);
 
-  function getCachedValue(key: string, getValueFunction: () => any): any {
+
+
+function getCachedValue(key: string, getValueFunction: () => any): any {
     let value = cache.get(key);
 
     if (value === undefined) {
@@ -113,19 +103,21 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
           return 0;
         }
       });
-      // setData(sortedData);
+      setData(sortedData);
       setSortState(!state);
       setCurrentPage(1);
     }
   }
 
-  function GenerateDynamicData<T>(data: T[] = []): DataSet[] {
+  function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
+    if (!data) return;
+    if (data.length === 0) return;
     const myDataSet: DataSet[] = [];
 
     // const goodColumns = getGoodColumns();
 
     for (let i = 0; i < data.length; i++) {
-      const values = Object.entries(data);
+      const values = Object.entries(data[i]);
       values.map((value, idx: number) => {
         myDataSet.push({
           row: i,
@@ -141,139 +133,8 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
     return myDataSet;
   }
 
-  function paddingDiff(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padLeft = getStyleVal(col, "padding-left");
-    const padRight = getStyleVal(col, "padding-right");
-    return parseInt(padLeft) + parseInt(padRight);
-  }
-
-  function getStyleVal(elm: HTMLElement, css: string): string {
-    return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
-
-  let pageX: number | undefined,
-    curCol: HTMLElement | null,
-    nxtCol: HTMLElement | null,
-    prevCol: HTMLElement | null,
-    curColWidth: number | undefined,
-    nxtColWidth: number | undefined;
-
   function handleMouseEnter(e) {
-    e.preventDefault();
-    const colDividerDiv = e.target;
-    const divTh = colDividerDiv.parentElement;
-    let headers = [...document.querySelectorAll('div[class*="' + "th" + '"]')];
-    headers.forEach((header) => {
-      if (header.getAttribute("hidden") === null) {
-        header.addEventListener("mousedown", handleMouseDown);
-        header.addEventListener("mouseup", handleMouseUp);
-      }
-    });
-    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
-
-    curCol = divTh;
-    nxtCol = curCol ? curCol.nextElementSibling as HTMLElement : null;
-
-    pageX = e.pageX;
-    let padding = curCol ? paddingDiff(curCol) : 0;
-
-    curColWidth =
-      curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-        ? curCol.offsetWidth - padding
-        : 0;
-
-    if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-    console.log(nxtCol?.firstChild);
-  }
-
-  function handleMouseDown(e) {
-    e.preventDefault();
-    const colDividerDiv = e.target;
-    const divTh = colDividerDiv.parentElement;
-
-    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
-
-    curCol = divTh;
-    nxtCol = curCol ? curCol.nextElementSibling as HTMLElement : null;
-    pageX = e.pageX;
-    let padding = curCol ? paddingDiff(curCol) : 0;
-
-    curColWidth =
-      curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-        ? curCol.offsetWidth - padding
-        : 0;
-
-    if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-    let diffX = e.pageX - (pageX ?? 0) ?? 0;
-    divTh.addEventListener(
-      "mousemove",
-      function (e: MouseEvent): void {
-        e.preventDefault();
-        const diffX = e.pageX - (pageX ?? 0);
-        const tables = [
-          ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
-        ];
-
-        if (curCol) {
-          const allCells = Array.from(
-            new Set([
-              ...tables[0].querySelectorAll(
-                '[data-column-id="' + curCol.dataset.columnId + '"]'
-              ),
-            ])
-          );
-          curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-          curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-
-          if (allCells)
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.minWidth =
-                (curColWidth ?? 0) + diffX + "px";
-              (cell as HTMLElement).style.width =
-                (curColWidth ?? 0) + diffX + "px";
-            });
-        }
-
-        if (nxtCol) {
-          nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
-          nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-
-          let allCells = Array.from(
-            new Set([
-              ...tables[0].querySelectorAll(
-                '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-              ),
-            ])
-          );
-          if (allCells)
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.minWidth =
-                (nxtColWidth ?? 0) + diffX + "px";
-              (cell as HTMLElement).style.width =
-                (nxtColWidth ?? 0) + diffX + "px";
-            });
-        }
-      },
-      { once: false, passive: false }
-    );
-  }
-
-  function handleMouseUp(e) {
-    e.target.addEventListener("mouseup", function (e: MouseEvent): void {
-      let headers = [
-        ...document.querySelectorAll('div[class*="' + "th" + '"]'),
-      ];
-      headers.forEach((header) => {
-        if (header.getAttribute("hidden") === null) {
-          header.removeEventListener("mousedown", handleMouseDown);
-          header.removeEventListener("mouseup", handleMouseUp);
-        }
-      });
-    });
+    dataGridResize(itemsPerPage);
   }
 
   function GenerateTableHtml() {
@@ -284,17 +145,17 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
       const columns = gridItems[0].columnCount;
       const tableRows = [
         gridItems.map((item, idx) => {
-          if (!item) return;
+          if (idx > columns - 1) return;
           const columnNames = item.columnName.replaceAll("_", " ").split("_");
           const columnNamesWithLineBreaks = columnNames.map(
             (name, index: number) => (
               <div
+                id={`${name}${idx}${index}`}
                 key={`${name}${idx}${index}`}
                 className={styles["th"]}
                 style={{ width: "100px" }}
                 data-column-id={item.columnName}
                 hidden={isColumnHidden(data, item.columnName)}
-                onMouseEnter={handleMouseEnter}
               >
                 {name}{" "}
                 <span
@@ -310,11 +171,15 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
                 <div
                   key={`${name}${idx}`}
                   className={styles["coldivider"]}
+                  onMouseEnter={handleMouseEnter}
+                //   onMouseMove={handleMouseMove}
+                //   onMouseUp={handleMouseUp}
                 ></div>
               </div>
             )
           );
-          return <div key={idx}>{columnNamesWithLineBreaks}</div>;
+
+          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -335,17 +200,13 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
           )),
       ];
 
-      {
+      if (tableRows.length > 0) {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div
-              id="gridjs_0"
-              className={styles["divTable"]}
-              style={{ overflow: "auto" }}
-            >
+            <div id="gridjs_0" className={styles["divTable"]}>
               <div className={styles["thead"]}>
-                {
+                {(
                   <input
                     id="search-input"
                     type="search"
@@ -364,7 +225,7 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
                       padding: "10px",
                     }}
                   ></input>
-                }
+                )}
                 <div className={styles["tr"]}>{tableRows[0]}</div>
               </div>
               <div className={styles["tbody"]}>
@@ -383,9 +244,7 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
   }
 
   const table = GenerateTableHtml();
-  const totalPages = Math.ceil(
-    Array.isArray(data) ? data.length : 1 / itemsPerPage
-  );
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -393,21 +252,22 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
 
   function Checkbox({ isChecked: boolean }) {
     return (
-      <label>
+        <label>
         <input
           id="checkbox"
           type="checkbox"
           checked={isChecked}
-          onChange={(e) => handleCheckboxChange(e)}
-        />
-        Dropdown with MouseEnter
+          onChange={(e) => handleCheckboxChange(e)} />Dropdown with MouseEnter
       </label>
     );
   }
 
   return (
-    <div>
-      <Checkbox isChecked={isChecked} />
+    <>
+      <Checkbox
+        isChecked={isChecked}
+      />
+      {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
         onMouseEnter={() => setShowSearchBox(true)}
@@ -439,16 +299,12 @@ function DataGridDropdown({ sourceData }: DropdownProps) {
           </span>
         </label>
         <div className={styles["dropdown-content"]}>
-          {!isChecked && (() => setShowSearchBox(true)) && <div>{table}</div>}
           {showSearchBox && isChecked && <div>{table}</div>}
+          {!isChecked && <div>{table}</div>}
         </div>
       </div>
-    </div>
+    </>
   );
-}
+};
 
-// export default DataGridDropdown;
-
-// export default function App() {
-//   return <>{DataGridDropdown}</>;
-// }
+export default DataGridDropdown;
