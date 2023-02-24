@@ -71,61 +71,52 @@
     }
 }
 
-.rz-dropdown {
-    position: absolute;
-    background-color: #2e2e2e;
-    border-radius: var(--rz-input-border-radius);
-    border: var(--rz-dropdown-panel-border);
-    box-shadow: var(--rz-dropdown-panel-shadow);
-    position: relative;
+
+  .button {
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
     cursor: pointer;
-    position: sticky;
-    font-size: 18px;
-    border: 1px solid #c9c3c3;
+    font-size: 14px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
     margin: 10px;
-    padding: 10px;
-    color: #c9c3c3;
-    transform: var(--transition);
-    margin-top: 8px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    box-sizing: content-box;
-    padding: var(--rz-dropdown-panel-padding);
-    z-index: 9999;
-    width: 100px;
-  }
-
-  .rz-dropdown:hover {
-    color: #fff;
-    border: 1px solid #fff;
+    margin-bottom: 0px;
+    border-radius: 10px;
     display: block;
   }
 
-
-  .dropdown-content {
-    // background-color: black;
-    min-width: 160px;
-    // border: 2px solid red;
+  .pagination-container {
+    width: 100%;
     display: flex;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   }
 
-  .label.rz-dropdown-label.rz-inputtext {
-    color: white;
-}
-.rz-dropdown .rz-placeholder, .rz-multiselect .rz-placeholder {
-    color: var(--rz-input-placeholder-color);
-}
-.rz-dropdown .rz-placeholder, .rz-multiselect .rz-placeholder {
-    color: var(--rz-input-placeholder-color);
-}
-.rz-multiselect-label-container, .rz-dropdown-label {
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-right: calc(var(--rz-dropdown-trigger-icon-width) / 2);
-    cursor: pointer;
-}
 
-// `${styles["rz-placeholder"]} ${styles["rz-inputtext"]} ${styles["rz-dropdown-label"]}`}
+  .active {
+    background-color: #f03a3a;
+    transition-duration: 0.2s;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 10px;
+    margin-bottom: 0px;
+    border-radius: 10px;
+    display: block;
+    color: white;
+  }
+
+  .page-button {
+    transform: translateY(50%);
+    border: none;
+  }
+

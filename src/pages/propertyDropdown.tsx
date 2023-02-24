@@ -6,7 +6,7 @@ import PropOptionsPage from "./propOptions";
 import { dataGridResize } from "./api/dataGridResize";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
-import { Pagination } from "@/pagination";
+import { Pagination } from "@/pages/pagination";
 
 type DropdownProps = {
   data?: {
@@ -62,7 +62,7 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
     }
     fetchData();
     dataGridResize();
-  }, [showSearchBox]);
+  }, []);
 
   const filteredData = Array.isArray(data)
     ? data.filter(
@@ -173,7 +173,7 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
               >
                 {name}{" "}
                 <span
-                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  className={"material-symbols-outlined"}
                   onClick={() => handleSort(item.columnName)}
                   style={{
                     color: "black",
@@ -215,19 +215,19 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div style={{ overflow: "auto" }}>
-              <div id="gridjs_0" className={styles["divTable"]}>
-                <div className={styles["thead"]}>
-                  <div className={styles["tr"]}>{tableRows[0]}</div>
-                </div>
-                <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+            <div id="gridjs_0" className={styles["divTable"]}>
+              <div className={styles["thead"]}>
+                <div className={styles["tr"]}>{tableRows[0]}</div>
+              </div>
+              <div className={styles["tbody"]}>
+                {tableRows.slice(1)}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
           </>
         );
       }
@@ -242,8 +242,7 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
       onMouseEnter={() => setShowSearchBox(true)}
       onMouseLeave={() => setShowSearchBox(false)}
     >
-      <div className={styles["rz-helper-hidden-accessible"]}>
-      </div>
+      <div className={styles["rz-helper-hidden-accessible"]}></div>
       <label
         className={`${styles["rz-placeholder"]} ${styles["rz-inputtext"]} ${styles["rz-dropdown-label"]}`}
         style={{ width: "100%" }}
@@ -251,7 +250,8 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
         Property
       </label>
       <div className={styles["dropdown-content"]}>
-        {showSearchBox && <div>{table}</div>}
+        {/* {showSearchBox && <div>{table}</div>} */}
+        {<div>{table}</div>}
       </div>
     </div>
   );

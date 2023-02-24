@@ -4,14 +4,9 @@ import { dataGridResize } from "./api/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
-import { Pagination } from "../pagination";
+import { Pagination } from "./pagination";
 import { parseValue } from "./utils";
 
-function getGoodColumns(): Promise<string[]> {
-  return fetch("/GoodColumns.json")
-    .then((response) => response.json())
-    .then((data) => data.map((item: any) => item.Name));
-}
 
 interface DataSet {
   [key: number]: number | undefined;

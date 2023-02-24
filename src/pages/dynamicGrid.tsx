@@ -1,7 +1,7 @@
 import React from "react";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
-import { Pagination } from "../pagination";
+import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/Home.module.scss";

@@ -8,7 +8,7 @@ import styles from "../styles/yardiInterface.module.scss";
 import { dataGridResize } from "./api/dataGridResize";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { response } from "express";
-import { Pagination } from "@/pagination";
+import { Pagination } from "@/pages/pagination";
 import PropertyDropdown from "./propertyDropdown";
 
 const queryClient = new QueryClient();
@@ -189,7 +189,7 @@ function Dimensions<T>() {
       if (tableRows.length > 0) {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
-          <><PropertyDropdown /><><div style={{ overflow: "auto" }}>
+          <><div style={{ overflow: "auto" }}>
             <div id="gridjs_0" className={styles["divTable"]}>
               <div className={styles["thead"]}>
                 <div className={styles["tr"]}>{tableRows[0]}</div>
@@ -199,7 +199,7 @@ function Dimensions<T>() {
           </div><Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={handlePageChange} /></></>
+              onPageChange={handlePageChange} /></>
         );
       }
     }

@@ -47,8 +47,14 @@
       "New": true
     },
     {
-      "Name": "Dimensions 2",
-      "Path": "/dimensions2",
+      "Name": "Property Dropdown",
+      "Path": "/propertyDropdown",
+      "Icon": "code",
+      "New": true
+    },
+    {
+      "Name": "Dynamic Grid",
+      "Path": "/dynamicGrid",
       "Icon": "code",
       "New": true
     }

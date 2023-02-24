@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./styles/Home.module.scss";
+import styles from "../styles/propertyDropdown.module.scss";
 
 interface PaginationProps {
   currentPage: number;
@@ -61,36 +61,51 @@ export function Pagination({
   }
 
   return (
-    <div className={styles["pagination-container"]}>
-      <div className={styles["pagination"]}>
+    totalPages > 1 && (
+      <div className={styles["tr"]} style={{ height: "50px" }}>
         {showChevrons && (
-          <span
-            className={`material-symbols-outlined`}
-            onClick={() => handlePageChange(currentPage - 1)}
-            style={{ marginLeft: "20px", display: "flex", marginTop: "20px", fontSize: "24px" }}
-          >
-            chevron_left
-          </span>
+          <div className={styles["td"]} style={{ height: "100%" }}>
+            <span
+              className={`material-symbols-outlined ${styles["page-button"]}`}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              chevron_left
+            </span>
+          </div>
         )}
         {pageNumbers.map((pageNumber) => (
-          <button
+          <div
             key={pageNumber}
-            onClick={() => handlePageChange(pageNumber)}
-            className={pageNumber === currentPage ? styles.active : styles.button}
+            className={styles["td"]}
+            style={{ height: "100%" }}
           >
-            {pageNumber}
-          </button>
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={
+                pageNumber === currentPage ? styles.active : styles.button
+              }
+            >
+              {pageNumber}
+            </button>
+          </div>
         ))}
+
         {showChevrons && (
-          <span
-          className={`material-symbols-outlined`}
-            onClick={() => handlePageChange(currentPage + 1)}
-            style={{ display: "flex", marginTop: "20px", fontSize: "24px" }}
+          <div
+            className={styles["td"]}
+            style={{ height: "100%", verticalAlign: "middle", border: "none" }}
           >
-            chevron_right
-          </span>
+            <span
+              // className={"material-symbols-outlined"}
+              className={`material-symbols-outlined ${styles["page-button"]}`}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              chevron_right
+            </span>
+          </div>
         )}
       </div>
-    </div>
+    )
   );
 }

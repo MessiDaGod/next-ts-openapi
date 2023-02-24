@@ -513,30 +513,6 @@
   }
 }
 
-
-.pagination {
-    position: fixed;
-    z-index: 1;
-    user-select: none;
-    transition: none;
-    display: flex;
-    font-weight: bold;
-    left: calc(50vw - (var(--sb-width)));
-  }
-.button {
-  margin-left:10px;
-  margin-right:10px;
-  color: black;
-}
-
-  .pagination a,
-  .pagination span {
-    border-radius: 4px;
-    padding: 4px 8px;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
   .active {
     background-color: #f03a3a;
     transition-duration: 0.2s;
@@ -561,6 +537,7 @@
   -moz-appearance: none;
   width: 40%;
 }
+
 
 .register-form label,
 .register-form input[type="text"],

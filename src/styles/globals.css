@@ -252,3 +252,8 @@
 .dropdown {
   margin-right: 10px;
 }
+
+.material-symbols-outlined {
+  color: white;
+  cursor: pointer;
+}
