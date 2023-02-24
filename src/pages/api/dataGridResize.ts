@@ -1,8 +1,9 @@
 function setListeners(div: HTMLDivElement): void {
-  if (div.parentElement.getAttribute("hidden") === null)
+
+  if (div.parentElement?.getAttribute("hidden") === null)
     console.log("setListeners called...");
 
-  if (div.parentElement.getAttribute("hidden") !== null) return;
+  if (div.parentElement?.getAttribute("hidden") !== null) return;
   var pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
@@ -22,7 +23,7 @@ function setListeners(div: HTMLDivElement): void {
       let allCells = Array.from(
         new Set([
           ...tables[0].querySelectorAll(
-            '[data-column-id="' + curCol.dataset.columnId + '"]'
+            '[data-column-id="' + curCol?.dataset.columnId + '"]'
           ),
         ])
       );

@@ -1,7 +1,7 @@
-import { cn } from "@/classNames";
+import cn from "classNames";
 import React, { CSSProperties, useState, useEffect } from "react";
 import styles from "../styles/Home.module.scss";
-import { setListeners } from "./helpers";
+// import { setListeners } from "./helpers";
 
 interface DropdownProps {
   jsonFileName: string;
@@ -17,12 +17,12 @@ interface ButtonProps {
   style?: CSSProperties;
 }
 
-interface Item {
-  Value: string;
-}
-interface Menu {
-  Items: Item[];
-}
+// interface Item {
+//   Value: string;
+// }
+// interface Menu {
+//   Items: Item[];
+// }
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
@@ -61,6 +61,7 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
 
   useEffect(() => {
     document.addEventListener("onload", (e) => {
+      e.preventDefault();
       console.log("onload");
     });
   }, []);

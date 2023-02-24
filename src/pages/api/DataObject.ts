@@ -89,13 +89,13 @@ export function GetDataDictionary<T>(data: T[]): DataTable<T> {
   }
 
   export interface DataSet {
-    [key: number]: number | undefined;
+    [key: number]: number;
     row: number | undefined;
-    columnName: string | undefined;
-    columnIndex: number | undefined;
-    value: string | undefined;
-    columnCount: number | undefined;
-    rowCount: number | undefined;
+    columnName: string;
+    columnIndex: number;
+    value: string;
+    columnCount: number;
+    rowCount: number;
   }
 
 /////////// Example /////////////

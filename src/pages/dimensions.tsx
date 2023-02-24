@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
-import axios from "axios";
-import { DataSet, DataTable, GetDataDictionary } from "./api/DataObject";
-import styles from "../styles/yardiInterface.module.scss";
-import { dataGridResize } from "./api/dataGridResize";
-import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
-import { response } from "express";
-import { Pagination } from "@/pages/pagination";
-import PropertyDropdown from "./propertyDropdown";
+import React, {useEffect} from 'react';
+// import ReactDOM from "react-dom";
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query';
+import {ReactQueryDevtools} from 'react-query/devtools';
+import axios from 'axios';
+import {DataSet} from './api/DataObject';
+import styles from '../styles/yardiInterface.module.scss';
+import {dataGridResize} from './api/dataGridResize';
+import {isColumnHidden, parseValue} from './utils';
+import {Pagination} from 'pages/pagination';
+// import PropertyDropdown from "./propertyDropdown";
 
 const queryClient = new QueryClient();
 
-type DropdownProps = {
-  data?: {
-    Id: number;
-    Property_Code: string;
-    Property_Name: string;
-    Type: string;
-    StringValue: string;
-    HandleValue: string;
-    HandleValueInt: number | null;
-    Date: string | null;
-  }[];
-};
+// type DropdownProps = {
+//   data?: {
+//     Id: number;
+//     Property_Code: string;
+//     Property_Name: string;
+//     Type: string;
+//     StringValue: string;
+//     HandleValue: string;
+//     HandleValueInt: number | null;
+//     Date: string | null;
+//   }[];
+// };
 
 function getGoodColumns(): Promise<string[]> {
-  return fetch("/GoodColumns.json")
+  return fetch('/GoodColumns.json')
     .then((response) => response.json())
     .then((data) => data.map((item: any) => item.Name));
 }
 
-function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
-  if (!data) return;
-  if (data.length === 0) return;
+function GenerateDynamicData<T>(data: T[] = []): DataSet[] {
   const myDataSet: DataSet[] = [];
 
   // const goodColumns = getGoodColumns();
 
   for (let i = 0; i < data.length; i++) {
-    const values = Object.entries(data[i]);
+    const values = Object.entries(data);
     values.map((value, idx: number) => {
       myDataSet.push({
         row: i,
@@ -64,9 +61,9 @@ export default function App() {
   );
 }
 
-export function Dimensions<T>(){
+export function Dimensions<T>() {
   const [data, setData] = React.useState<T[]>([]);
-  const [size, setSize] = React.useState<Boolean>(null);
+  const [size, setSize] = React.useState<Boolean>(false);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [mouseDown, setMouseDown] = React.useState<boolean>(false);
@@ -76,9 +73,9 @@ export function Dimensions<T>(){
     setCurrentPage(page);
   }
 
-  const { isLoading, error, isFetching } = useQuery("repoData", () =>
+  const {isLoading, error, isFetching} = useQuery('repoData', () =>
     axios
-      .get("https://localhost:5006/api/data/GetDimensions")
+      .get('https://localhost:5006/api/data/GetDimensions')
       .then((res) => setData(res.data))
   );
 
@@ -138,35 +135,32 @@ export function Dimensions<T>(){
       if (!gridItems) return;
 
       const columns = gridItems[0].columnCount;
+      if (columns === undefined) return;
       const tableRows = [
         gridItems.map((item, idx) => {
-          if (idx > columns - 1) return;
-          const columnNames = item.columnName.replaceAll("_", " ").split("_");
+          const columnNames = item.columnName.replaceAll('_', ' ').split('_');
           const columnNamesWithLineBreaks = columnNames.map(
             (name, index: number) => (
               <div
                 id={`${name}${idx}${index}`}
                 key={`${name}${idx}${index}`}
-                className={styles["th"]}
-                style={{ width: "100px" }}
+                className={styles['th']}
+                style={{width: '100px'}}
                 data-column-id={item.columnName}
-                hidden={isColumnHidden(data, item.columnName)}
-              >
-                {name}{" "}
+                hidden={isColumnHidden(data, item.columnName)}>
+                {name}{' '}
                 <span
-                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  className={`${styles['material-symbols-outlined']} material-symbols-outlined`}
                   onClick={() => handleSort(item.columnName)}
                   style={{
-                    color: "black",
-                    background: "transparent",
-                  }}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
+                    color: 'black',
+                    background: 'transparent',
+                  }}>
+                  {!sortState ? 'expand_more' : 'expand_less'}
                 </span>
                 <div
                   key={`${name}${idx}`}
-                  className={styles["coldivider"]}
-                ></div>
+                  className={styles['coldivider']}></div>
               </div>
             )
           );
@@ -176,42 +170,40 @@ export function Dimensions<T>(){
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <div key={`${rowIndex}`} className={styles["tr"]}>
-              {Object.entries(_row).map(([key, value], index: number) => (
-                <div
-                  key={`${key}_${rowIndex}_${index}`}
-                  className={styles["td"]}
-                  data-column-id={key}
-                  style={{ width: "100px" }}
-                  hidden={isColumnHidden(data, key)}
-                >
-                  {parseValue(value as string, key)}
-                </div>
-              ))}
+            <div key={`${rowIndex}`} className={styles['tr']}>
+              {_row &&
+                Object.entries(_row).map(([key, value], index: number) => (
+                  <div
+                    key={`${key}_${rowIndex}_${index}`}
+                    className={styles['td']}
+                    data-column-id={key}
+                    style={{width: '100px'}}
+                    hidden={isColumnHidden(data, key)}>
+                    {parseValue(value as string, key)}
+                  </div>
+                ))}
             </div>
           )),
       ];
 
-      if (tableRows.length > 0) {
-        const totalPages = Math.ceil(data.length / itemsPerPage);
-        return (
-          <>
-            <div style={{ overflow: "auto" }}>
-              <div id="gridjs_0" className={styles["divTable"]}>
-                <div className={styles["thead"]}>
-                  <div className={styles["tr"]}>{tableRows[0]}</div>
-                </div>
-                <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+      const totalPages = Math.ceil(data.length / itemsPerPage);
+      return (
+        <>
+          <div style={{overflow: 'auto'}}>
+            <div id="gridjs_0" className={styles['divTable']}>
+              <div className={styles['thead']}>
+                <div className={styles['tr']}>{tableRows[0]}</div>
               </div>
+              <div className={styles['tbody']}>{tableRows.slice(1)}</div>
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </>
-        );
-      }
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
+      );
     }
   }
 
@@ -222,8 +214,8 @@ export function Dimensions<T>(){
       <h1>Dimensions</h1>
       <p>Count: {Array.from(new Set(data)).length}</p>
       <>{table}</>
-      <div>{isFetching ? "Updating..." : ""}</div>
+      <div>{isFetching ? 'Updating...' : ''}</div>
       <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
-};
+}

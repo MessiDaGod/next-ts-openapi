@@ -1,15 +1,12 @@
-import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Link from "next/link";
-import styles from "@/styles/Home.module.scss";
+import styles from "styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
-import { cn } from "../classNames";
+import { cn } from "./classNames";
 import { useRouter } from "next/router";
-import classnames from "classnames";
-import { setListeners } from "./helpers";
-import '../styles/index.css'
+import 'styles/globals.css';
 
 interface SidebarItem {
   Name: string;
@@ -55,11 +52,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   function search(): void {
     const searchInput = document.querySelector("#search-input");
-    searchInput.addEventListener("input", handleSearchInput);
+    searchInput?.addEventListener("input", handleSearchInput);
 
     function handleSearchInput() {
       const sidebarItems = document.querySelectorAll(
-        `.${classnames(styles["sidebar__item"])}`
+        `.${cn(styles["sidebar__item"])}`
       ) as NodeListOf<HTMLElement>;
       let input = searchInput as HTMLInputElement;
       const query = input.value.toLowerCase();
@@ -67,9 +64,8 @@ export default function App({ Component, pageProps }: AppProps) {
       for (const item of sidebarItems) {
         if (item) {
           let newItem = item as HTMLElement;
-          if (newItem) {
-            const title = newItem
-              .dataset.columnId.toLowerCase();
+          if (newItem && newItem.dataset.columnId) {
+            const title = newItem.dataset.columnId.toString().toLowerCase();
             if (title.includes(query)) {
               item.style.display = "block";
             } else {

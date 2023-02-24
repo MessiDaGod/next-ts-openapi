@@ -1,27 +1,18 @@
 import React, { useState } from "react";
-import { getPropOptionsAsync } from "./api/getPropOptions";
+import { getPropOptions, getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "../styles/DataGridDropdown.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
-import { Pagination } from "@/pages/pagination";
+import { Pagination } from "pages/pagination";
 
 type DropdownProps = {
-  data?: {
-    Id: number;
-    Property_Code: string;
-    Property_Name: string;
-    Type: string;
-    StringValue: string;
-    HandleValue: string;
-    HandleValueInt: number | null;
-    Date: string | null;
-  }[];
+  sourceData?: PropOptions | PropOptions[];
 };
 
 interface DataSet {
   [key: number]: number | undefined;
   row: number | undefined;
-  columnName: string | undefined;
+  columnName: string;
   columnIndex: number | undefined;
   value: string | undefined;
   columnCount: number | undefined;
@@ -34,8 +25,27 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
-  const [data, setData] = React.useState<PropOptions[]>([]);
+function fetchData(): PropOptions[] | PropOptions {
+  try {
+    const response = getPropOptions(10);
+    const items = JSON.parse(JSON.stringify(response));
+    return items;
+  } catch (error) {
+    return emptyPropOptions;
+  }
+}
+
+const data = fetchData();
+
+export default function Page() {
+  return (
+    <DataGridDropdown sourceData={data} />
+  )
+}
+
+function DataGridDropdown({ sourceData }: DropdownProps) {
+  // const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
+  // const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
   //   const [isResized, setIsResized] = useState<Boolean>(false);
@@ -44,20 +54,26 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   const [isChecked, setIsChecked] = useState(true);
   const itemsPerPage = 10;
   const cache = new Map<string, any>();
+  const data = sourceData;
 
-  React.useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getPropOptionsAsync(1000);
-        const items = JSON.parse(JSON.stringify(response));
-        setData(items);
-        setIsChecked(false);
-      } catch (error) {
-        return emptyPropOptions;
-      }
-    }
-    fetchData();
-  }, []);
+  // React.useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (Array.isArray(sourceData) && sourceData.length > 0) {
+  //         setData(sourceData);
+  //         setIsChecked(false);
+  //         return;
+  //       }
+  //       const response = await getPropOptionsAsync(1000);
+  //       const items = JSON.parse(JSON.stringify(response));
+  //       setData(items);
+  //       setIsChecked(false);
+  //     } catch (error) {
+  //       return emptyPropOptions;
+  //     }
+  //   }
+  //   fetchData();
+  // }, [sourceData]);
 
   function getCachedValue(key: string, getValueFunction: () => any): any {
     let value = cache.get(key);
@@ -97,21 +113,19 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
           return 0;
         }
       });
-      setData(sortedData);
+      // setData(sortedData);
       setSortState(!state);
       setCurrentPage(1);
     }
   }
 
-  function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
-    if (!data) return;
-    if (data.length === 0) return;
+  function GenerateDynamicData<T>(data: T[] = []): DataSet[] {
     const myDataSet: DataSet[] = [];
 
     // const goodColumns = getGoodColumns();
 
     for (let i = 0; i < data.length; i++) {
-      const values = Object.entries(data[i]);
+      const values = Object.entries(data);
       values.map((value, idx: number) => {
         myDataSet.push({
           row: i,
@@ -145,8 +159,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     nxtCol: HTMLElement | null,
     prevCol: HTMLElement | null,
     curColWidth: number | undefined,
-    nxtColWidth: number | undefined,
-    prevColWidth: number | undefined;
+    nxtColWidth: number | undefined;
 
   function handleMouseEnter(e) {
     e.preventDefault();
@@ -162,8 +175,8 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
 
     curCol = divTh;
-    nxtCol = curCol.nextElementSibling as HTMLElement;
-    if (divTh) prevCol = curCol.previousElementSibling as HTMLElement;
+    nxtCol = curCol ? curCol.nextElementSibling as HTMLElement : null;
+
     pageX = e.pageX;
     let padding = curCol ? paddingDiff(curCol) : 0;
 
@@ -173,8 +186,6 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         : 0;
 
     if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-    if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
     console.log(nxtCol?.firstChild);
   }
 
@@ -186,8 +197,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
 
     curCol = divTh;
-    nxtCol = curCol.nextElementSibling as HTMLElement;
-    if (divTh) prevCol = curCol.previousElementSibling as HTMLElement;
+    nxtCol = curCol ? curCol.nextElementSibling as HTMLElement : null;
     pageX = e.pageX;
     let padding = curCol ? paddingDiff(curCol) : 0;
 
@@ -197,8 +207,6 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         : 0;
 
     if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-    if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
 
     let diffX = e.pageX - (pageX ?? 0) ?? 0;
     divTh.addEventListener(
@@ -276,7 +284,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
       const columns = gridItems[0].columnCount;
       const tableRows = [
         gridItems.map((item, idx) => {
-          if (idx > columns - 1) return;
+          if (!item) return;
           const columnNames = item.columnName.replaceAll("_", " ").split("_");
           const columnNamesWithLineBreaks = columnNames.map(
             (name, index: number) => (
@@ -327,7 +335,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
           )),
       ];
 
-      if (tableRows.length > 0) {
+      {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
@@ -337,7 +345,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
               style={{ overflow: "auto" }}
             >
               <div className={styles["thead"]}>
-                {(
+                {
                   <input
                     id="search-input"
                     type="search"
@@ -356,7 +364,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
                       padding: "10px",
                     }}
                   ></input>
-                )}
+                }
                 <div className={styles["tr"]}>{tableRows[0]}</div>
               </div>
               <div className={styles["tbody"]}>
@@ -375,7 +383,9 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   }
 
   const table = GenerateTableHtml();
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(
+    Array.isArray(data) ? data.length : 1 / itemsPerPage
+  );
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -435,6 +445,10 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
       </div>
     </div>
   );
-};
+}
 
-export default DataGridDropdown;
+// export default DataGridDropdown;
+
+// export default function App() {
+//   return <>{DataGridDropdown}</>;
+// }

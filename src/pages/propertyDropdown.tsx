@@ -6,7 +6,7 @@ import PropOptionsPage from "./propOptions";
 import { dataGridResize } from "./api/dataGridResize";
 import { DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
-import { Pagination } from "@/pages/pagination";
+import { Pagination } from "pages/pagination";
 
 type DropdownProps = {
   data?: {

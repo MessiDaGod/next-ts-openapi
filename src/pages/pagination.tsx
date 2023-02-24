@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "../styles/propertyDropdown.module.scss";
+import React from 'react';
+import styles from '../styles/propertyDropdown.module.scss';
 
 interface PaginationProps {
   currentPage: number;
@@ -12,7 +12,7 @@ export function Pagination({
   totalPages,
   onPageChange,
 }: PaginationProps) {
-  const [showChevrons, setShowChevrons] = React.useState<boolean>(false);
+  const [showChevrons, setShowChevrons] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     setShowChevrons(totalPages > 10);
@@ -50,7 +50,7 @@ export function Pagination({
       ];
     }
   } else {
-    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    pageNumbers = Array.from({length: totalPages}, (_, i) => i + 1);
   }
 
   function handlePageChange(page: number) {
@@ -60,52 +60,42 @@ export function Pagination({
     onPageChange(page);
   }
 
-  return (
-    totalPages > 1 && (
-      <div className={styles["tr"]} style={{ height: "50px" }}>
-        {showChevrons && (
-          <div className={styles["td"]} style={{ height: "100%" }}>
-            <span
-              className={`material-symbols-outlined ${styles["page-button"]}`}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              chevron_left
-            </span>
-          </div>
-        )}
-        {pageNumbers.map((pageNumber) => (
-          <div
+  return totalPages > 1 ? (
+    <div className={styles['tr']} style={{height: '50px'}}>
+      {showChevrons && (
+        <div className={styles['td']} style={{height: '100%'}}>
+          <span
+            className={`material-symbols-outlined ${styles['page-button']}`}
+            onClick={() => handlePageChange(currentPage - 1)}>
+            chevron_left
+          </span>
+        </div>
+      )}
+      {pageNumbers.map((pageNumber) => (
+        <div key={pageNumber} className={styles['td']} style={{height: '100%'}}>
+          <button
             key={pageNumber}
-            className={styles["td"]}
-            style={{ height: "100%" }}
-          >
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={
-                pageNumber === currentPage ? styles.active : styles.button
-              }
-            >
-              {pageNumber}
-            </button>
-          </div>
-        ))}
+            onClick={() => handlePageChange(pageNumber)}
+            className={
+              pageNumber === currentPage ? styles.active : styles.button
+            }>
+            {pageNumber}
+          </button>
+        </div>
+      ))}
 
-        {showChevrons && (
-          <div
-            className={styles["td"]}
-            style={{ height: "100%", verticalAlign: "middle", border: "none" }}
-          >
-            <span
-              // className={"material-symbols-outlined"}
-              className={`material-symbols-outlined ${styles["page-button"]}`}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              chevron_right
-            </span>
-          </div>
-        )}
-      </div>
-    )
-  );
+      {showChevrons && (
+        <div
+          className={styles['td']}
+          style={{height: '100%', verticalAlign: 'middle', border: 'none'}}>
+          <span
+            // className={"material-symbols-outlined"}
+            className={`material-symbols-outlined ${styles['page-button']}`}
+            onClick={() => handlePageChange(currentPage + 1)}>
+            chevron_right
+          </span>
+        </div>
+      )}
+    </div>
+  ) : null;
 }
