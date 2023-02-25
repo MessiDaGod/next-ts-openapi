@@ -1,5 +1,5 @@
 import React, { CSSProperties, useState, useEffect } from "react";
-import DynamicGrid from "./dynamicGrid";
+import DynamicGrid from "./DynamicGrid";
 import styles from "../styles/Home.module.scss";
 import { cn } from "./classNames";
 

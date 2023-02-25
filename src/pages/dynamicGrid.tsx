@@ -6,8 +6,9 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
-import { dataGridResize } from "../hooks/dataGridResize";
+import { dataGridResize, getColumnWidths } from "../hooks/dataGridResize";
 import { MouseEventHandler } from "react";
+import PropertyDropdown from "./PropertyDropdown";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -65,7 +66,9 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
   }, [selectItem, myData]);
 
   React.useEffect(() => {
+    console.info("resizing due to useEffect in dynamicGrid.tsx");
     dataGridResize();
+    getColumnWidths("gridjs_");
   }, [data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,9 +100,8 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
 
   function handleResize(e) {
     e.preventDefault();
-
+    getColumnWidths("gridjs_");
   }
-
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -152,7 +154,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
               >
                 {name}{" "}
                 <span
-                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  className={"material-symbols-outlined"}
                   onClick={() => handleSort(item.columnName)}
                   style={{
                     color: "black",
@@ -175,9 +177,10 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
             <div key={`${rowIndex}`} className={styles["tr"]}>
+              <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
               {Object.entries(_row).map(([key, value], index: number) => (
                 <div
-                  key={`${key}_${rowIndex}_${index}`}
+                  key={`${key}_${index}`}
                   className={styles["td"]}
                   data-column-id={key}
                   style={{ width: "100px" }}

@@ -1,15 +1,85 @@
-interface MaxWidhts {
-  [key: string]: string
-  columnId: string;
-  Width: Width;
+interface ColumnWidths {
+  [columnId: string]: number;
 }
 
-interface Width {
-  [key: number]: number
-  length: number;
+function paddingDiff(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
+  }
+  const padLeft = getStyleVal(col, "padding-left");
+  const padRight = getStyleVal(col, "padding-right");
+  return parseInt(padLeft) + parseInt(padRight);
 }
+
+function getStyleVal(elm: HTMLElement, css: string): string {
+  return window.getComputedStyle(elm, null).getPropertyValue(css);
+}
+
+export function getColumnWidths(tableId: string): ColumnWidths {
+  const tables = [...document.querySelectorAll('[id*="' + tableId + '"]')];
+  const table = tables[0];
+  if (!table) {
+    return {};
+  }
+
+  const columnWidths: ColumnWidths = {};
+
+  const allRows = [...tables[0].querySelectorAll('[class*="' + "tr" + '"]')];
+
+  function visualLength(s: string) {
+    const ruler = document.createElement("div");
+    (ruler as HTMLElement).style.boxSizing = `content-box`;
+    ruler.style.display = "inline-block";
+    ruler.style.visibility = "hidden";
+    ruler.style.position = "absolute";
+    ruler.style.whiteSpace = "nowrap";
+    ruler.style.padding = "0.25rem";
+    ruler.innerText = s;
+    document.body.appendChild(ruler);
+    const padding = paddingDiff(ruler as HTMLElement);
+    const width = Math.round(ruler.getBoundingClientRect().width + padding);
+    document.body.removeChild(ruler);
+    return width;
+  }
+
+  // Loop through each cell in the table to find the longest cell in each column
+  allRows.forEach((row) => {
+    const ths = row.querySelectorAll('[class*="' + "th" + '"]');
+    const tds = row.querySelectorAll('[class*="' + "td" + '"]');
+    // const cells = [...headers, ...tds];
+    const cells = [...ths, ...tds];
+    cells.forEach((cell, columnIndex) => {
+      const columnId = cell.getAttribute("data-column-id");
+      if (columnId && cell.getAttribute("hidden") === null) {
+        const cellText = cell.textContent || "";
+        const cellWidth = visualLength(cellText.replace(" expand_less", "").replace(" expand_more", ""));
+        const existingWidth = columnWidths[columnId];
+        if (cellWidth > (existingWidth || 0)) {
+          columnWidths[columnId] = cellWidth;
+        }
+      }
+    });
+  });
+  Object.entries(columnWidths).map((width) => {
+    const [key, value] = width;
+    const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
+    cols.forEach((col) => {
+      if (col) {
+        const padding = paddingDiff(col as HTMLElement);
+        (col as HTMLElement).style.width = `auto`;
+        (col as HTMLElement).style.display = "inline-block";
+        (col as HTMLElement).style.whiteSpace = "nowrap";
+        (col as HTMLElement).style.textAlign = "left";
+        (col as HTMLElement).style.minWidth = `${value}px`;
+        (col as HTMLElement).style.width = `${value}px`;
+      }
+    });
+  });
+  return columnWidths;
+}
+
 function setListeners(div: HTMLDivElement): void {
-  if (div.parentElement?.getAttribute('hidden') !== null) return;
+  if (div.parentElement?.getAttribute("hidden") !== null) return;
   var pageX: number | undefined,
     curCol: HTMLElement | null,
     nxtCol: HTMLElement | null,
@@ -18,25 +88,16 @@ function setListeners(div: HTMLDivElement): void {
     nxtColWidth: number | undefined,
     prevColWidth: number | undefined;
 
-
   if (div.parentElement) {
+    div.addEventListener("dblclick", function (e: MouseEvent): void {
+      const colWidths = getColumnWidths("gridjs_");
+    });
+
     div.addEventListener(
-      'mousedown',
+      "mousedown",
       function (e: MouseEvent): void {
         var target = e.target as HTMLElement;
         curCol = target ? target.parentElement : null;
-
-        const tables = [
-          ...document.querySelectorAll('[id^="' + 'gridjs_' + '"]'),
-        ];
-        let allCells = Array.from(
-          new Set([
-            ...tables[0].querySelectorAll(
-              '[data-column-id="' + curCol?.dataset.columnId + '"]'
-            ),
-          ])
-        );
-
         var nextCol = curCol
           ? (curCol.nextElementSibling as HTMLElement)
           : null;
@@ -57,57 +118,19 @@ function setListeners(div: HTMLDivElement): void {
 
         if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
       },
-      {passive: true}
-    );
-
-
-    document.addEventListener(
-      'dblclick',
-      function (e: MouseEvent): void {
-        const tables = [
-          ...document.querySelectorAll('[id*="' + 'gridjs_' + '"]'),
-        ];
-        let allCells = Array.from(
-          new Set([
-            ...tables[0].querySelectorAll('[class*="' + 'td' + '"]'),
-          ])
-        );
-
-
-        allCells.forEach((cell) => {
-          if (cell.getAttribute('hidden') === null) {
-            // const maxWidths:  MaxWidhts = [];
-            (cell as HTMLElement).style.width = "auto";
-            console.log(`${(cell as HTMLElement).getAttribute("data-column-id")}: ${(cell as HTMLElement).getBoundingClientRect().width}`);
-          }
-        });
-
-        allCells = Array.from(
-          new Set([
-            ...tables[0].querySelectorAll('[class*="' + 'th' + '"]'),
-          ])
-        );
-
-        allCells.forEach((cell) => {
-          if (cell.getAttribute('hidden') === null) {
-            (cell as HTMLElement).style.width = "auto";
-          }
-        });
-
-      },
-      {passive: true, once: false}
+      { passive: true }
     );
 
     document.addEventListener(
-      'mousemove',
+      "mousemove",
       function (e: MouseEvent): void {
         const diffX = e.pageX - (pageX ?? 0);
         const tables = [
-          ...document.querySelectorAll('[id^="' + 'gridjs_' + '"]'),
+          ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
         ];
         if (curCol) {
-          curCol.style.minWidth = (curColWidth ?? 0) + diffX + 'px';
-          curCol.style.width = (curColWidth ?? 0) + diffX + 'px';
+          curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+          curCol.style.width = (curColWidth ?? 0) + diffX + "px";
 
           if (tables[0]) {
             let allCells = Array.from(
@@ -120,16 +143,16 @@ function setListeners(div: HTMLDivElement): void {
             if (allCells)
               allCells.forEach((cell) => {
                 (cell as HTMLElement).style.minWidth =
-                  (curColWidth ?? 0) + diffX + 'px';
+                  (curColWidth ?? 0) + diffX + "px";
                 (cell as HTMLElement).style.width =
-                  (curColWidth ?? 0) + diffX + 'px';
+                  (curColWidth ?? 0) + diffX + "px";
               });
           }
         }
 
         if (nxtCol) {
-          nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + 'px';
-          nxtCol.style.width = (nxtColWidth ?? 0) - diffX + 'px';
+          nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
+          nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
 
           if (tables[0]) {
             let allCells = Array.from(
@@ -142,17 +165,17 @@ function setListeners(div: HTMLDivElement): void {
             if (allCells)
               allCells.forEach((cell) => {
                 (cell as HTMLElement).style.minWidth =
-                  (nxtColWidth ?? 0) + diffX + 'px';
+                  (nxtColWidth ?? 0) + diffX + "px";
                 (cell as HTMLElement).style.width =
-                  (nxtColWidth ?? 0) + diffX + 'px';
+                  (nxtColWidth ?? 0) + diffX + "px";
               });
           }
         }
       },
-      {passive: true, once: false}
+      { passive: true, once: false }
     );
 
-    document.addEventListener('mouseup', function (e: MouseEvent): void {
+    document.addEventListener("mouseup", function (e: MouseEvent): void {
       curCol = null;
       nxtCol = null;
       pageX = undefined;
@@ -162,24 +185,12 @@ function setListeners(div: HTMLDivElement): void {
   }
 }
 
-function paddingDiff(col: HTMLElement): number {
-  if (getStyleVal(col, 'box-sizing') === 'border-box') {
-    return 0;
-  }
-  const padLeft = getStyleVal(col, 'padding-left');
-  const padRight = getStyleVal(col, 'padding-right');
-  return parseInt(padLeft) + parseInt(padRight);
-}
-
-function getStyleVal(elm: HTMLElement, css: string): string {
-  return window.getComputedStyle(elm, null).getPropertyValue(css);
-}
 
 export function dataGridResize(itemsPerPage?: number) {
   initResizeListeners();
   let resizeDivs = Array.from(
     new Set([
-      ...document.querySelectorAll('div[class*="' + 'coldivider' + '"]'),
+      ...document.querySelectorAll('div[class*="' + "coldivider" + '"]'),
     ])
   );
   if (resizeDivs && resizeDivs.length > 0) {
@@ -190,24 +201,24 @@ export function dataGridResize(itemsPerPage?: number) {
 
   function initResizeListeners() {
     if (!document) return;
-    const tables = [...document.querySelectorAll('[id^="' + 'gridjs_' + '"]')];
+    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
     for (let i = 0; i < tables.length; i++) {
       const columns = Array.from(
-        new Set([...tables[i].querySelectorAll('th')])
+        new Set([...tables[i].querySelectorAll("th")])
       );
       columns.forEach((th) => {
-        th.style.width = th.getBoundingClientRect().width + 'px';
-        th.style.minWidth = th.getBoundingClientRect().width + 'px';
+        th.style.width = th.getBoundingClientRect().width + "px";
+        th.style.minWidth = th.getBoundingClientRect().width + "px";
       });
       resizableGrid(tables[i] as HTMLTableElement);
     }
 
     function resizableGrid(table: HTMLTableElement) {
       const rows = Array.from(
-        table.getElementsByTagName('div[class*="' + 'tr' + '"]')
+        table.getElementsByTagName('div[class*="' + "tr" + '"]')
       );
       const cells = Array.from(
-        table.getElementsByTagName('div[class*="' + 'td' + '"]')
+        table.getElementsByTagName('div[class*="' + "td" + '"]')
       );
 
       cells.forEach((cell) => {
@@ -219,23 +230,23 @@ export function dataGridResize(itemsPerPage?: number) {
       });
 
       function setCellListeners(cell: HTMLElement) {
-        if (cell.dataset.columnId === 'Row')
-          cell.addEventListener('mouseover', function (_e) {
-            this.classList.add('cellhoverover');
+        if (cell.dataset.columnId === "Row")
+          cell.addEventListener("mouseover", function (_e) {
+            this.classList.add("cellhoverover");
           });
 
-        cell.addEventListener('mouseout', function (_e) {
-          this.classList.remove('cellhoverover');
+        cell.addEventListener("mouseout", function (_e) {
+          this.classList.remove("cellhoverover");
         });
       }
 
       function setRowListeners(row: HTMLElement) {
-        row.addEventListener('mouseover', function (_e) {
-          this.classList.add('hoverover');
+        row.addEventListener("mouseover", function (_e) {
+          this.classList.add("hoverover");
         });
 
-        row.addEventListener('mouseout', function (_e) {
-          this.classList.remove('hoverover');
+        row.addEventListener("mouseout", function (_e) {
+          this.classList.remove("hoverover");
         });
       }
     }

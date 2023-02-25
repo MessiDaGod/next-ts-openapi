@@ -51,6 +51,7 @@
     touch-action: none;
     background: black;
 }
+
 .coldivider:hover {
     background: blue;
     opacity: 1;
@@ -94,10 +95,44 @@
     box-sizing: content-box;
     padding: var(--rz-dropdown-panel-padding);
 
-  }
+}
 
-  .rz-dropdown:hover {
+.rz-dropdown:hover {
     color: #fff;
     border: 1px solid #fff;
     display: block;
-  }
+}
+
+
+
+.rowdivider {
+    border: 2px blue solid;
+    position: relative;
+    width: 100%;
+    cursor: row-resize;
+    user-select: none;
+    touch-action: none;
+    display: flex;
+    width: fit-content;
+    height: 30px;
+}
+
+.rowdivider:hover {
+    opacity: 1;
+    border: 2px blue solid;
+}
+
+.rowdivider.isResizing {
+    border: 2px blue solid;
+    opacity: 1;
+}
+
+@media (hover: hover) {
+    .rowdivider {
+        opacity: 0;
+    }
+
+    *:hover>.rowdivider {
+        opacity: 1;
+    }
+}

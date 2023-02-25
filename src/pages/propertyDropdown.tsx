@@ -8,18 +8,18 @@ import { DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 
-type DropdownProps = {
-  data?: {
-    Id: number;
-    Property_Code: string;
-    Property_Name: string;
-    Type: string;
-    StringValue: string;
-    HandleValue: string;
-    HandleValueInt: number | null;
-    Date: string | null;
-  }[];
-};
+// type DropdownProps = {
+//   data?: {
+//     Id: number;
+//     Property_Code: string;
+//     Property_Name: string;
+//     Type: string;
+//     StringValue: string;
+//     HandleValue: string;
+//     HandleValueInt: number | null;
+//     Date: string | null;
+//   }[];
+// };
 
 interface DataSet {
   [key: number]: number | undefined;
@@ -37,7 +37,7 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
+export function PropertyDropdown({}) {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
@@ -53,7 +53,7 @@ const PropertyDropdown: React.FC<DropdownProps> = ({}) => {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getPropOptionsAsync(1000);
+        const response = await getPropOptionsAsync(100);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
         dataGridResize();
