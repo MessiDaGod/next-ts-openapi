@@ -1,12 +1,23 @@
-import type { AppProps } from "next/app";
 import Link from "next/link";
 import styles from "styles/Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import {AppProps} from 'next/app';
+import {useRouter} from 'next/router';
+import {ga} from '../utils/analytics';
 import { cn } from "./classNames";
-import { useRouter } from "next/router";
 import 'styles/globals.css';
+
+if (typeof window !== 'undefined') {
+  if (process.env.NODE_ENV === 'production') {
+    ga('create', process.env.NEXT_PUBLIC_GA_TRACKING_ID, 'auto');
+  }
+  const terminationEvent = 'onpagehide' in window ? 'pagehide' : 'unload';
+  window.addEventListener(terminationEvent, function () {
+    ga('send', 'timing', 'JS Dependencies', 'unload');
+  });
+}
 
 interface SidebarItem {
   Name: string;
@@ -182,8 +193,8 @@ export default function App({ Component, pageProps }: AppProps) {
           </span>
         </a>
         <div className={styles["linksContainer"]}>
-        <ConnectionDropdown jsonFileName="connections" label="Connections" />
-          {menu?.topBar.map((item, index: number) => (
+        {/* <ConnectionDropdown jsonFileName="connections" label="Connections" /> */}
+          {/* {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
@@ -193,7 +204,7 @@ export default function App({ Component, pageProps }: AppProps) {
             >
               {item.label}
             </Link>
-          ))}
+          ))} */}
         </div>
       </div>
       <div

@@ -13,18 +13,6 @@
   ],
   "sidebarItems": [
     {
-      "Name": "Code Editor",
-      "Path": "/codeEditor",
-      "Icon": "code",
-      "New": true
-    },
-    {
-      "Name": "Property Dropdown",
-      "Path": "/propertyDropdown",
-      "Icon": "code",
-      "New": true
-    },
-    {
       "Name": "Data Grid Dropdown",
       "Path": "/DataGridDropdown",
       "Icon": "code",

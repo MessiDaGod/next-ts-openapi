@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../styles/Home.module.scss";
-import { dataGridResize } from "./api/dataGridResize";
+import { dataGridResize } from "../hooks/dataGridResize";
 import { PropOptions, emptyPropOptions } from "./api//Objects/PropOptions";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { GetDataDictionary, DataTable } from "./api/DataObject";

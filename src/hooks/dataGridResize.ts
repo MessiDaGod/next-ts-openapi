@@ -1,3 +1,13 @@
+interface MaxWidhts {
+  [key: string]: string
+  columnId: string;
+  Width: Width;
+}
+
+interface Width {
+  [key: number]: number
+  length: number;
+}
 function setListeners(div: HTMLDivElement): void {
   if (div.parentElement?.getAttribute('hidden') !== null) return;
   var pageX: number | undefined,
@@ -7,6 +17,7 @@ function setListeners(div: HTMLDivElement): void {
     curColWidth: number | undefined,
     nxtColWidth: number | undefined,
     prevColWidth: number | undefined;
+
 
   if (div.parentElement) {
     div.addEventListener(
@@ -49,10 +60,47 @@ function setListeners(div: HTMLDivElement): void {
       {passive: true}
     );
 
+
+    document.addEventListener(
+      'dblclick',
+      function (e: MouseEvent): void {
+        const tables = [
+          ...document.querySelectorAll('[id*="' + 'gridjs_' + '"]'),
+        ];
+        let allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll('[class*="' + 'td' + '"]'),
+          ])
+        );
+
+
+        allCells.forEach((cell) => {
+          if (cell.getAttribute('hidden') === null) {
+            // const maxWidths:  MaxWidhts = [];
+            (cell as HTMLElement).style.width = "auto";
+            console.log(`${(cell as HTMLElement).getAttribute("data-column-id")}: ${(cell as HTMLElement).getBoundingClientRect().width}`);
+          }
+        });
+
+        allCells = Array.from(
+          new Set([
+            ...tables[0].querySelectorAll('[class*="' + 'th' + '"]'),
+          ])
+        );
+
+        allCells.forEach((cell) => {
+          if (cell.getAttribute('hidden') === null) {
+            (cell as HTMLElement).style.width = "auto";
+          }
+        });
+
+      },
+      {passive: true, once: false}
+    );
+
     document.addEventListener(
       'mousemove',
       function (e: MouseEvent): void {
-
         const diffX = e.pageX - (pageX ?? 0);
         const tables = [
           ...document.querySelectorAll('[id^="' + 'gridjs_' + '"]'),
@@ -128,9 +176,7 @@ function getStyleVal(elm: HTMLElement, css: string): string {
 }
 
 export function dataGridResize(itemsPerPage?: number) {
-
   initResizeListeners();
-
   let resizeDivs = Array.from(
     new Set([
       ...document.querySelectorAll('div[class*="' + 'coldivider' + '"]'),

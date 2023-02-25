@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../styles/yardiInterface.module.scss";
-import { dataGridResize } from "./api/dataGridResize";
+import { dataGridResize } from "../hooks/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";

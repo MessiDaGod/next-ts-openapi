@@ -6,7 +6,7 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
-import { dataGridResize } from "./api/dataGridResize";
+import { dataGridResize } from "../hooks/dataGridResize";
 import { MouseEventHandler } from "react";
 
 async function GetDimensions(take: number | null = null) {
@@ -51,7 +51,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
             setData(response);
             break;
           case "GetDimensions":
-            response = await GetDimensions(2);
+            response = await GetDimensions(10);
             setData(response);
             break;
           case undefined:
