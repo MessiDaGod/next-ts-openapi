@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {getPropOptionsAsync} from './api/getPropOptions';
 import {emptyPropOptions, PropOptions} from './api/Objects/PropOptions';
-import styles from '../styles/DataGridDropdown.module.scss';
+import styles from './DataGridDropdown.module.scss';
 import PropOptionsPage from './propOptions';
 import {dataGridResize} from './api/dataGridResize';
 import {DataSet, DataTable, GetDataDictionary} from './api/DataObject';
@@ -274,10 +274,6 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
           style={{
             width: '100%',
             cursor: 'pointer',
-            color: 'var(--rz-input-value-color)',
-            backgroundColor: '#1e1e1e',
-            padding: '10px',
-            border: '1px solid #c9c3c3',
             borderRadius: '6px',
           }}>
           &nbsp;Property&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

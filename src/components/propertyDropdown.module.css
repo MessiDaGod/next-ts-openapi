@@ -12,17 +12,13 @@
     height: 30px;
 }
 
-.tr:hover {
-    background: #f7aaaa;
-}
-
 .th,
 .td {
     box-shadow: inset 0 0 0 1px lightgray;
     padding: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+
 }
 
 .th {
@@ -32,6 +28,7 @@
     text-align: center;
     height: 30px;
     cursor: pointer;
+    white-space: nowrap;
     overflow: hidden;
     color: black;
     background: white;
@@ -73,40 +70,45 @@
     }
 }
 
-.rz-dropdown {
-    position: absolute;
-    border-radius: 4px;
-    box-shadow: var(--rz-dropdown-panel-shadow);
-    position: relative;
+
+  .button {
+    align-items: center;
+    padding: 0.5rem 1rem;
     cursor: pointer;
     font-size: 14px;
-    margin: 10px;
-    padding: 10px;
-    color: #c9c3c3;
-    transform: var(--transition);
-    margin-top: 8px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    box-sizing: content-box;
-    padding: 10px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
     cursor: pointer;
-  }
-  .material-symbol-outlined {
-    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
   }
 
-  .dropdown {
-    // border: 1px solid red;
-    margin: 0;
-    padding: 0;
-    width: 150px;
-  }
-  .rz-placeholder {
-    color: var(--rz-input-value-color);
+
+  .active {
+    background-color: #f03a3a;
+    transition-duration: 0.2s;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
   }
 
-  .dropdown-content {
-    margin-top: 15px;
-    width: 100%;
-    display: inline-block;
+  .page-button {
+    transform: translateY(50%);
+    border: none;
   }

@@ -25,40 +25,24 @@ const queryClient = new QueryClient();
 //   }[];
 // };
 
+
+
+export default function App() {
+  return (
+      <Dimensions />
+  );
+}
+
 function getGoodColumns(): Promise<string[]> {
   return fetch('/GoodColumns.json')
     .then((response) => response.json())
     .then((data) => data.map((item: any) => item.Name));
 }
 
-function GenerateDynamicData<T>(data: T[] = []): DataSet[] {
-  const myDataSet: DataSet[] = [];
-
-  // const goodColumns = getGoodColumns();
-
-  for (let i = 0; i < data.length; i++) {
-    const values = Object.entries(data);
-    values.map((value, idx: number) => {
-      myDataSet.push({
-        row: i,
-        columnName: value[0],
-        columnIndex: idx,
-        value: value[1] as string,
-        columnCount: values.length,
-        rowCount: data.length,
-      });
-    });
-  }
-
-  return myDataSet;
-}
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Dimensions />
-    </QueryClientProvider>
-  );
+function getDimensions<T>(): Promise<T[]> {
+  return fetch('/GoodColumns.json')
+    .then((response) => response.json())
+    .then((data) => data.map((item: any) => item.Name));
 }
 
 export function Dimensions<T>() {
@@ -73,32 +57,48 @@ export function Dimensions<T>() {
     setCurrentPage(page);
   }
 
-  const {isLoading, error, isFetching} = useQuery('repoData', () =>
-    axios
-      .get('https://localhost:5006/api/data/GetDimensions')
-      .then((res) => setData(res.data))
-  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function fetchData() {
-      // console.info(data);
-      setData(data);
-      setSize(false);
-      setMouseDown(false);
-    }
-    fetchData();
-  }, [data]);
-
-  useEffect(() => {
-    async function fetchData() {
-      setMouseDown(false);
+      try {
+        const response = await getDimensions();
+        const items = JSON.parse(JSON.stringify(response));
+        setData(items);
+      } catch (error) {
+        return [];
+      }
     }
     fetchData();
   }, []);
 
 
+
   function handleMouseEnter(e) {
     dataGridResize(itemsPerPage);
+  }
+
+  function GenerateDynamicData<T>(data?: T[]): DataSet[] {
+    if (!data) data = [];
+
+    const myDataSet: DataSet[] = [];
+
+    // const goodColumns = getGoodColumns();
+    if (data.length === 0) return myDataSet;
+    for (let i = 0; i < data.length; i++) {
+      const values = Object.entries(data);
+      values.map((value, idx: number) => {
+        myDataSet.push({
+          row: i,
+          columnName: value[0],
+          columnIndex: idx,
+          value: value[1] as string,
+          columnCount: values.length,
+          rowCount: !data ? 0 : data.length,
+        });
+      });
+    }
+
+    return myDataSet;
   }
 
   function handleSort(columnName: string) {
@@ -134,6 +134,7 @@ export function Dimensions<T>() {
     }
   }
 
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
@@ -141,9 +142,9 @@ export function Dimensions<T>() {
 
       const tableRows = [
         Object.keys(gridItems[0].value).map((item, idx) => {
-          const columnNames = item.replaceAll('_', ' ').split('_');
-          const columnNamesWithLineBreaks = columnNames.map(
-            (name, index: number) => (
+          const columnNames = item.replaceAll('_', ' ').split(' ');
+          const columnNamesWithLineBreaks = columnNames
+            .map((name, index: number) => (
               <div
                 id={`${name}${idx}${index}`}
                 key={`${name}${idx}${index}`}
@@ -153,7 +154,7 @@ export function Dimensions<T>() {
                 hidden={isColumnHidden(data, item)}>
                 {name}{' '}
                 <span
-                  className={`${styles['material-symbols-outlined']} material-symbols-outlined`}
+                  className={'material-symbols-outlined'}
                   onClick={() => handleSort(item)}
                   style={{
                     color: 'black',
@@ -166,8 +167,7 @@ export function Dimensions<T>() {
                   className={styles['coldivider']}
                   onMouseEnter={handleMouseEnter}></div>
               </div>
-            )
-          );
+            ))
 
           return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
@@ -175,8 +175,8 @@ export function Dimensions<T>() {
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
             <div key={`${rowIndex}`} className={styles['tr']}>
-              {_row &&
-                Object.entries(_row).map(([key, value], index: number) => (
+              {Object.entries(_row)
+                .map(([key, value], index: number) => (
                   <div
                     key={`${key}_${rowIndex}_${index}`}
                     className={styles['td']}
@@ -190,24 +190,45 @@ export function Dimensions<T>() {
           )),
       ];
 
-      const totalPages = Math.ceil(data.length / itemsPerPage);
-      return (
-        <>
-          <div style={{overflow: 'auto'}}>
+      if (tableRows.length > 0) {
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+        return (
+          <>
             <div id="gridjs_0" className={styles['divTable']}>
               <div className={styles['thead']}>
+                {
+                  <input
+                    id="search-input"
+                    type="search"
+                    className={styles['rz-textbox findcomponent']}
+                    placeholder="Search ..."
+                    autoComplete="on"
+                    style={{
+                      color: 'white',
+                      backgroundColor: 'inherit',
+                      fontSize: '14px',
+                      borderBottom: '1px solid #2f333d',
+                      borderTop: '1px solid #2f333d',
+                      cursor: 'text',
+                      display: 'block',
+                      width: '100%',
+                      padding: '10px',
+                    }}></input>
+                }
                 <div className={styles['tr']}>{tableRows[0]}</div>
               </div>
-              <div className={styles['tbody']}>{tableRows.slice(1)}</div>
+              <div className={styles['tbody']}>
+                {tableRows.slice(1)}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             </div>
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      );
+          </>
+        );
+      }
     }
   }
 
@@ -218,8 +239,7 @@ export function Dimensions<T>() {
       <h1>Dimensions</h1>
       <p>Count: {Array.from(new Set(data)).length}</p>
       <>{table}</>
-      <div>{isFetching ? 'Updating...' : ''}</div>
-      <ReactQueryDevtools initialIsOpen={true} />
+
     </>
   );
 }
