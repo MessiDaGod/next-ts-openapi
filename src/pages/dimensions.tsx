@@ -105,7 +105,9 @@ export function Dimensions<T>() {
     let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
+        //@ts-ignore
         const aValue = a[columnName];
+        //@ts-ignore
         const bValue = b[columnName];
         if (state) {
           if (aValue < bValue) {

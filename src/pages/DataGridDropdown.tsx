@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { getPropOptionsAsync } from "./api/getPropOptions";
-import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
-import styles from "../styles/DataGridDropdown.module.scss";
-import PropOptionsPage from "./propOptions";
-import { dataGridResize } from "./api/dataGridResize";
-import { DataTable, GetDataDictionary } from "./api/DataObject";
-import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
-import { Pagination } from "pages/pagination";
-
+import React, {useState} from 'react';
+import {getPropOptionsAsync} from './api/getPropOptions';
+import {emptyPropOptions, PropOptions} from './api/Objects/PropOptions';
+import styles from '../styles/DataGridDropdown.module.scss';
+import PropOptionsPage from './propOptions';
+import {dataGridResize} from './api/dataGridResize';
+import {DataSet, DataTable, GetDataDictionary} from './api/DataObject';
+import {isColumnHidden, isRowEmpty, parseValue} from './utils';
+import {Pagination} from 'pages/pagination';
 
 type DropdownProps = {
   data?: {
@@ -22,27 +21,27 @@ type DropdownProps = {
   }[];
 };
 
-interface DataSet {
-  [key: number]: number | undefined;
-  row: number | undefined;
-  columnName: string | undefined;
-  columnIndex: number | undefined;
-  value: string | undefined;
-  columnCount: number | undefined;
-  rowCount: number | undefined;
-}
+// interface DataSet {
+//   [key: number]: number | undefined;
+//   row: number | undefined;
+//   columnName: string | undefined;
+//   columnIndex: number | undefined;
+//   value: string | undefined;
+//   columnCount: number | undefined;
+//   rowCount: number | undefined;
+// }
 
 function getGoodColumns(): Promise<string[]> {
-  return fetch("/GoodColumns.json")
+  return fetch('/GoodColumns.json')
     .then((response) => response.json())
     .then((data) => data.map((item: any) => item.Name));
 }
 
 const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [showSearchBox, setShowSearchBox] = useState(false);
-//   const [isResized, setIsResized] = useState<Boolean>(false);
+  const [goodColumns, setGoodColumns] = useState<string[]>(['']);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = useState(true);
@@ -56,6 +55,9 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
         setIsChecked(false);
+        const goodCols = await getGoodColumns();
+        setGoodColumns(goodCols);
+        console.log(goodCols);
       } catch (error) {
         return emptyPropOptions;
       }
@@ -63,9 +65,7 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     fetchData();
   }, []);
 
-
-
-function getCachedValue(key: string, getValueFunction: () => any): any {
+  function getCachedValue(key: string, getValueFunction: () => any): any {
     let value = cache.get(key);
 
     if (value === undefined) {
@@ -109,15 +109,15 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
     }
   }
 
-  function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
-    if (!data) return;
-    if (data.length === 0) return;
+  function GenerateDynamicData<T>(data?: T[]): DataSet[] {
+    if (!data) data = [];
+
     const myDataSet: DataSet[] = [];
 
     // const goodColumns = getGoodColumns();
-
+    if (data.length === 0) return myDataSet;
     for (let i = 0; i < data.length; i++) {
-      const values = Object.entries(data[i]);
+      const values = Object.entries(data);
       values.map((value, idx: number) => {
         myDataSet.push({
           row: i,
@@ -125,7 +125,7 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
           columnIndex: idx,
           value: value[1] as string,
           columnCount: values.length,
-          rowCount: data.length,
+          rowCount: !data ? 0 : data.length,
         });
       });
     }
@@ -142,60 +142,56 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
-      const columns = gridItems[0].columnCount;
       const tableRows = [
-        gridItems.map((item, idx) => {
-          if (idx > columns - 1) return;
-          const columnNames = item.columnName.replaceAll("_", " ").split("_");
-          const columnNamesWithLineBreaks = columnNames.map(
-            (name, index: number) => (
+        Object.keys(gridItems[0].value).map((item, idx) => {
+          const columnNames = item.replaceAll('_', ' ').split('_');
+          const columnNamesWithLineBreaks = columnNames
+            .map((name, index: number) => (
               <div
                 id={`${name}${idx}${index}`}
                 key={`${name}${idx}${index}`}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={item.columnName}
-                hidden={isColumnHidden(data, item.columnName)}
-              >
-                {name}{" "}
+                className={styles['th']}
+                style={{width: '100px'}}
+                data-column-id={item}
+                hidden={isColumnHidden(data, item)}>
+                {name}{' '}
                 <span
-                  className={"material-symbols-outlined"}
-                  onClick={() => handleSort(item.columnName)}
+                  className={'material-symbols-outlined'}
+                  onClick={() => handleSort(item)}
                   style={{
-                    color: "black",
-                    background: "transparent",
-                  }}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
+                    color: 'black',
+                    background: 'transparent',
+                  }}>
+                  {!sortState ? 'expand_more' : 'expand_less'}
                 </span>
                 <div
                   key={`${name}${idx}`}
-                  className={styles["coldivider"]}
-                  onMouseEnter={handleMouseEnter}
-                //   onMouseMove={handleMouseMove}
-                //   onMouseUp={handleMouseUp}
-                ></div>
+                  className={styles['coldivider']}
+                  onMouseEnter={handleMouseEnter}></div>
               </div>
-            )
-          );
+            ))
+            .filter((name) => goodColumns.includes(item));
 
           return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
         }),
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <div key={`${rowIndex}`} className={styles["tr"]}>
-              {Object.entries(_row).map(([key, value], index: number) => (
-                <div
-                  key={`${key}_${rowIndex}_${index}`}
-                  className={styles["td"]}
-                  data-column-id={key}
-                  style={{ width: "100px" }}
-                  hidden={isColumnHidden(data, key)}
-                >
-                  {parseValue(value as string, key)}
-                </div>
-              ))}
+            <div key={`${rowIndex}`} className={styles['tr']}>
+              {Object.entries(_row)
+                .map(([key, value], index: number) => (
+                  <div
+                    key={`${key}_${rowIndex}_${index}`}
+                    className={styles['td']}
+                    data-column-id={key}
+                    style={{width: '100px'}}
+                    hidden={isColumnHidden(data, key)}>
+                    {parseValue(value as string, key)}
+                  </div>
+                ))
+                .filter((row) =>
+                  goodColumns.includes(row.props['data-column-id'])
+                )}
             </div>
           )),
       ];
@@ -204,31 +200,30 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div id="gridjs_0" className={styles["divTable"]}>
-              <div className={styles["thead"]}>
-                {(
+            <div id="gridjs_0" className={styles['divTable']}>
+              <div className={styles['thead']}>
+                {
                   <input
                     id="search-input"
                     type="search"
-                    className={styles["rz-textbox findcomponent"]}
+                    className={styles['rz-textbox findcomponent']}
                     placeholder="Search ..."
                     autoComplete="on"
                     style={{
-                      color: "white",
-                      backgroundColor: "inherit",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #2f333d",
-                      borderTop: "1px solid #2f333d",
-                      cursor: "text",
-                      display: "block",
-                      width: "100%",
-                      padding: "10px",
-                    }}
-                  ></input>
-                )}
-                <div className={styles["tr"]}>{tableRows[0]}</div>
+                      color: 'white',
+                      backgroundColor: 'inherit',
+                      fontSize: '14px',
+                      borderBottom: '1px solid #2f333d',
+                      borderTop: '1px solid #2f333d',
+                      cursor: 'text',
+                      display: 'block',
+                      width: '100%',
+                      padding: '10px',
+                    }}></input>
+                }
+                <div className={styles['tr']}>{tableRows[0]}</div>
               </div>
-              <div className={styles["tbody"]}>
+              <div className={styles['tbody']}>
                 {tableRows.slice(1)}
                 <Pagination
                   currentPage={currentPage}
@@ -246,18 +241,20 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
   const table = GenerateTableHtml();
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const handleCheckboxChange = (event) => {
+  const handleCheckboxChange = (event: any) => {
     setIsChecked(event.target.checked);
   };
 
-  function Checkbox({ isChecked: boolean }) {
+  function Checkbox({}) {
     return (
-        <label>
+      <label>
         <input
           id="checkbox"
           type="checkbox"
           checked={isChecked}
-          onChange={(e) => handleCheckboxChange(e)} />Dropdown with MouseEnter
+          onChange={(e) => handleCheckboxChange(e)}
+        />
+        Dropdown with MouseEnter
       </label>
     );
   }
@@ -265,40 +262,37 @@ function getCachedValue(key: string, getValueFunction: () => any): any {
   return (
     <>
       <Checkbox
-        isChecked={isChecked}
+      // isChecked={isChecked}
       />
       {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
-        className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
+        className={`${styles['dropdown']} ${styles['rz-dropdown']}`}
         onMouseEnter={() => setShowSearchBox(true)}
-        onMouseLeave={() => setShowSearchBox(false)}
-      >
+        onMouseLeave={() => setShowSearchBox(false)}>
         <label
-          className={`${styles["rz-placeholder"]}`}
+          className={`${styles['rz-placeholder']}`}
           style={{
-            width: "100%",
-            cursor: "pointer",
-            color: "var(--rz-input-value-color)",
-            backgroundColor: "#1e1e1e",
-            padding: "10px",
-            border: "1px solid #c9c3c3",
-            borderRadius: "6px",
-          }}
-        >
+            width: '100%',
+            cursor: 'pointer',
+            color: 'var(--rz-input-value-color)',
+            backgroundColor: '#1e1e1e',
+            padding: '10px',
+            border: '1px solid #c9c3c3',
+            borderRadius: '6px',
+          }}>
           &nbsp;Property&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span
-            className={"material-symbols-outlined"}
+            className={'material-symbols-outlined'}
             style={{
-              color: "white",
-              background: "transparent",
-              display: "inline-block",
-              transform: "translateY(25%)",
-            }}
-          >
-            {showSearchBox ? "expand_more" : "expand_less"}
+              color: 'white',
+              background: 'transparent',
+              display: 'inline-block',
+              transform: 'translateY(25%)',
+            }}>
+            {showSearchBox ? 'expand_more' : 'expand_less'}
           </span>
         </label>
-        <div className={styles["dropdown-content"]}>
+        <div className={styles['dropdown-content']}>
           {showSearchBox && isChecked && <div>{table}</div>}
           {!isChecked && <div>{table}</div>}
         </div>

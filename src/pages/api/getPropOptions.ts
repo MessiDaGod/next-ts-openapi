@@ -13,7 +13,7 @@ export async function getPropOptionsAsync<PropOptions>(
     const propOptions: PropOptions[] = JSON.parse(await response.text());
     return propOptions;
   } catch (error) {
-    // ignore
+     return [];
   }
 }
 
@@ -28,6 +28,6 @@ export async function getPropOptions(take: number | null = null) {
     const propOptions: PropOptions[] = JSON.parse(await response.text());
     return propOptions;
   } catch (error) {
-    // ignore
+    return [];
   }
 }
