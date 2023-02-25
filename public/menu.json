@@ -19,12 +19,6 @@
       "New": true
     },
     {
-      "Name": "Dimensions",
-      "Path": "/dimensions",
-      "Icon": "code",
-      "New": true
-    },
-    {
       "Name": "Property Dropdown",
       "Path": "/propertyDropdown",
       "Icon": "code",

@@ -1,10 +1,8 @@
 import Head from "next/head";
-import { Inter } from "@next/font/google";
 import styles from "styles/Home.module.scss";
 import Dropdown from "./dropdown";
 import React from "react";
 
-const inter = Inter({ subsets: ["latin"] });
 
 const Home: React.FC = ({}) => (
   <>
