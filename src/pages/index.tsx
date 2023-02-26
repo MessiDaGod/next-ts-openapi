@@ -14,7 +14,7 @@ const Home: React.FC = ({}) => (
     </Head>
     <main className={styles["main"]}>
       <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
-        <Dropdown jsonFileName="GetOptions" label="Get" />
+        <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
       </div>
     </main>
   </>

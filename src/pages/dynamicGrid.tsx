@@ -113,8 +113,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     dataGridResize(itemsPerPage);
   }, [data]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoizedData = React.useMemo(() => GenerateDynamicData(data), [data]);
+  const memoizedData = React.useMemo(() => GenerateDynamicData(data), []);
 
   function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
     if (!data) return;
@@ -216,7 +215,8 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         ? curRow.offsetHeight - padding
         : 0;
     nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
-
+    console.log(curRow);
+    console.log(nxtRow);
     document.addEventListener("mousemove", function (e3) {
       e3.preventDefault();
       const diffY = e3.pageY - (pageY ?? 0);
@@ -242,6 +242,23 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           });
         }
       }
+
+      if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
+        let allCells = Array.from(
+          new Set([
+            ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
+          ])
+        );
+
+        allCells.forEach((cell) => {
+          (cell as HTMLElement).style.width = "100%";
+          (cell as HTMLElement).style.borderTop = "2px solid blue";
+          (cell as HTMLElement).style.minHeight =
+            (curRowHeight ?? 0) + diffY + "px";
+          (cell as HTMLElement).style.height =
+            (curRowHeight ?? 0) + diffY + "px";
+        });
+      }
     });
   }
 
@@ -265,7 +282,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
               >
                 <span
                   key={"key"}
-                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  className={`${styles["black"]} material-symbols-outlined`}
                   onClick={handleResize}
                   style={{
                     background: "transparent",
@@ -280,13 +297,9 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                 {cols}
                 <span
                   className={`${"material-symbols-outlined"} ${
-                    styles["material-symbols-outlined"]
+                    styles["black"]
                   }`}
                   onClick={() => handleSort(cols)}
-                  style={{
-                    color: "black",
-                    background: "transparent",
-                  }}
                 >
                   {!sortState ? "expand_more" : "expand_less"}
                 </span>
@@ -310,13 +323,9 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                 {cols}{" "}
                 <span
                   className={`${"material-symbols-outlined"} ${
-                    styles["material-symbols-outlined"]
+                    styles["black"]
                   }`}
                   onClick={() => handleSort(cols)}
-                  style={{
-                    color: "black",
-                    background: "transparent",
-                  }}
                 >
                   {!sortState ? "expand_more" : "expand_less"}
                 </span>
@@ -371,12 +380,12 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                   className={styles["divTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">
-                    <div
-                      style={{ width: "100%" }}
+                    {/* <div
+                      style={{ width: "100%", border: "2px solid green" }}
                       className={styles["rowdivider"]}
                       onMouseDown={handleRowClick}
                       onMouseUp={removeMouseDownListener}
-                    ></div>
+                    ></div> */}
                     {header[0]}
                   </div>
 
@@ -388,6 +397,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                       className={styles["rowdivider"]}
                       onMouseDown={handleRowClick}
                       onMouseUp={removeMouseDownListener}
+                      style={{ width: "100%", borderTop: "2px solid green" }}
                     ></div>
                   </div>
                 </div>
