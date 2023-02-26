@@ -18,7 +18,9 @@ import { IconChevron } from "components/Icon/IconChevron";
 async function GetDimensions(take: number | null = null) {
   try {
     let url = `https://localhost:5006/api/data/GetDimensions${
-      take ? `?take=${take}` : ""
+      take
+        ? `?take=${encodeURIComponent(take)}`
+        : ""
     }`;
     const response = await fetch(url, {
       method: "GET",
