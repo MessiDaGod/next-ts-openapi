@@ -14,11 +14,11 @@
 
 .th,
 .td {
-    box-shadow: inset 0 0 0 1px lightgray;
+    // box-shadow: inset 0 0 0 1px lightgray;
     padding: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
-    // box-sizing: content-box;
+    margin-top: "10px";
 }
 
 .th {
@@ -104,35 +104,26 @@
 }
 
 
-
 .rowdivider {
-    border: 2px blue solid;
-    position: relative;
-    width: 100%;
+    position: absolute;
     cursor: row-resize;
     user-select: none;
     touch-action: none;
     display: flex;
-    width: fit-content;
-    height: 30px;
+    width: 100%;
 }
 
 .rowdivider:hover {
     opacity: 1;
-    border: 2px blue solid;
-}
-
-.rowdivider.isResizing {
-    border: 2px blue solid;
-    opacity: 1;
+    // border: 2px yellow solid;
+    cursor: row-resize;
+    display: flex;
+    width: 100%;
 }
 
 @media (hover: hover) {
     .rowdivider {
         opacity: 0;
-    }
-
-    *:hover>.rowdivider {
-        opacity: 1;
+        border: 2px yellow solid;
     }
 }

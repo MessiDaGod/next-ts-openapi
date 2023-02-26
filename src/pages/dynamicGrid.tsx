@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Key } from "react";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable, DataSet } from "./api/DataObject";
 import { Pagination } from "./pagination";
@@ -6,9 +6,14 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "../styles/yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
-import { dataGridResize, getColumnWidths } from "../hooks/dataGridResize";
-import { MouseEventHandler } from "react";
-import PropertyDropdown from "./PropertyDropdown";
+import {
+  dataGridResize,
+  getColumnWidths,
+  paddingDiffY,
+} from "../hooks/dataGridResize";
+import { Button } from "../components/Button";
+import cn from "classnames";
+import { IconChevron } from "components/Icon/IconChevron";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -24,11 +29,19 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
-function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
+interface DynamicGridProps {
+  [key: string]: string;
+  selectItem?: string;
+}
+
+function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const itemsPerPage = 25;
+
+  // const id = children[0].props.id;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -52,7 +65,7 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
             setData(response);
             break;
           case "GetDimensions":
-            response = await GetDimensions(10);
+            response = await GetDimensions(5);
             setData(response);
             break;
           case undefined:
@@ -63,11 +76,11 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
       }
     }
     fetchData();
-  }, [selectItem, myData]);
+  }, [selectItem]);
 
   React.useEffect(() => {
     console.info("resizing due to useEffect in dynamicGrid.tsx");
-    dataGridResize();
+    dataGridResize(itemsPerPage);
     getColumnWidths("gridjs_");
   }, [data]);
 
@@ -132,30 +145,116 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
     }
   }
 
+  let pageY: number | undefined,
+    curRow: HTMLElement | null,
+    nxtRow: HTMLElement | null,
+    curRowHeight: number | undefined,
+    nxtRowHeight: number | undefined;
+
+  function removeMouseDownListener(e) {
+    e.preventDefault();
+    document.addEventListener("mouseup", function (e: MouseEvent): void {
+      curRow = null;
+      nxtRow = null;
+      pageY = undefined;
+      curRowHeight = undefined;
+      nxtRowHeight = undefined;
+      console.info("removed mousedown listener");
+    });
+  }
+  function handleRowClick(e) {
+    e.preventDefault();
+    const target = e.target as HTMLElement;
+
+    const divTable = document.querySelectorAll(
+      '[class*="' + cn(styles["divTable"]) + '"]'
+    )[0];
+
+    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
+    const table = tables[0] as HTMLElement;
+    curRow = target.parentElement as HTMLElement;
+
+    nxtRow = curRow ? (divTable as HTMLElement) : null;
+    pageY = e.pageY;
+
+    const padding = curRow ? paddingDiffY(curRow) : 0;
+
+    curRowHeight =
+      curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
+        ? curRow.offsetHeight - padding
+        : 0;
+    nxtRowHeight = nxtRow ? nxtRow.offsetHeight - padding : 0;
+
+    document.addEventListener("mousemove", function (e3) {
+      e3.preventDefault();
+      const diffY = e3.pageY - (pageY ?? 0);
+
+      if (curRow) {
+        curRow.style.borderBottom = "1px solid red";
+        if (curRow) {
+          let allCells = Array.from(
+            new Set([
+              ...table.querySelectorAll(
+                '[data-row-id="' + curRow.dataset.rowId + '"]'
+              ),
+            ])
+          );
+          if (allCells) {
+            curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
+            curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
+            curRow.style.width = "100%";
+            allCells.forEach((cell) => {
+              (cell as HTMLElement).style.minHeight =
+                (curRowHeight ?? 0) + diffY + "px";
+              (cell as HTMLElement).style.height =
+                (curRowHeight ?? 0) + diffY + "px";
+            });
+          }
+        }
+        if (nxtRow) {
+          nxtRow.style.minHeight = (nxtRowHeight ?? 0) - diffY + "px";
+          nxtRow.style.height = (nxtRowHeight ?? 0) - diffY + "px";
+
+          if (table) {
+            let allCells = Array.from(
+              new Set([
+                ...table.querySelectorAll(
+                  '[data-row-id="' + nxtRow.dataset.rowId + '"]'
+                ),
+              ])
+            );
+            if (allCells)
+              allCells.forEach((cell) => {
+                (cell as HTMLElement).style.minHeight =
+                  (nxtRowHeight ?? 0) + diffY + "px";
+                (cell as HTMLElement).style.height =
+                  (nxtRowHeight ?? 0) + diffY + "px";
+              });
+          }
+        }
+      }
+    });
+  }
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
-
-      const columns = gridItems[0].columnCount;
-      const tableRows = [
-        gridItems.map((item, idx) => {
-          if (idx > columns - 1) return;
-          const columnNames = item.columnName.replaceAll("_", " ").split("_");
-          const columnNamesWithLineBreaks = columnNames.map(
-            (name, index: number) => (
+      const header = Object.values(data).map((key, idx: number) => {
+        const headerData = Object.keys(key).map(
+          (cols) =>
+            !isColumnHidden(data, cols) &&
+            idx == 0 && (
               <div
-                id={`${name}${idx}${index}`}
-                key={`${name}${idx}${index}`}
+                key={cols}
                 className={styles["th"]}
                 style={{ width: "100px" }}
-                data-column-id={item.columnName}
-                hidden={isColumnHidden(data, item.columnName)}
+                data-column-id={cols}
               >
-                {name}{" "}
+                {cols}{" "}
                 <span
                   className={"material-symbols-outlined"}
-                  onClick={() => handleSort(item.columnName)}
+                  onClick={() => handleSort(cols)}
                   style={{
                     color: "black",
                     background: "transparent",
@@ -163,46 +262,48 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
                 >
                   {!sortState ? "expand_more" : "expand_less"}
                 </span>
-                <div
-                  key={`${name}${idx}`}
-                  className={styles["coldivider"]}
-                ></div>
+                <div className={styles["coldivider"]}></div>
               </div>
             )
-          );
+        );
 
-          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
-        }),
-        ...data
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((_row, rowIndex: number) => (
-            <div key={`${rowIndex}`} className={styles["tr"]}>
-              <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
-              {Object.entries(_row).map(([key, value], index: number) => (
-                <div
-                  key={`${key}_${index}`}
-                  className={styles["td"]}
-                  data-column-id={key}
-                  style={{ width: "100px" }}
-                  hidden={isColumnHidden(data, key)}
-                >
-                  {parseValue(value as string, key)}
-                </div>
-              ))}
-            </div>
-          )),
-      ];
+        return headerData;
+      });
+
+      const rows = [...data]
+        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .map((_row, rowIndex: number) => (
+          <div key={`${rowIndex}`} className={styles["tr"]}>
+            <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
+            {Object.entries(_row).map(([key, value], index: number) => (
+              <div
+                key={`${key}_${index}`}
+                className={styles["td"]}
+                data-column-id={key}
+                style={{ width: "100px" }}
+                hidden={isColumnHidden(data, key)}
+              >
+                {parseValue(value as string, key)}
+              </div>
+            ))}
+          </div>
+        ));
+      const tableRows = header;
 
       if (tableRows.length > 0) {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div style={{ overflow: "auto" }}>
-              <div id="gridjs_0" className={styles["divTable"]}>
-                <div className={styles["thead"]}>
-                  <div className={styles["tr"]}>{tableRows[0]}</div>
-                </div>
-                <div className={styles["tbody"]}>{tableRows.slice(1)}</div>
+            <div
+              key={"gridjs_1"}
+              className={styles["divTable"]}
+              style={{ overflow: "auto" }}
+            >
+              <div className={styles["thead"]}>
+                <div className={styles["tr"]}>{header[0]}</div>
+              </div>
+              <div key={"tbody"} className={styles["tbody"]}>
+                {rows.slice(1)}
               </div>
             </div>
             <Pagination
@@ -222,20 +323,23 @@ function DynamicGrid<T>(selectItem?: string, myData?: T[]) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
     return (
-      <React.Fragment>
+      <>
         <span
+          key={"key"}
           className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
           onClick={handleResize}
           style={{
-            color: "red",
             background: "transparent",
-            position: "relative",
+            position: "absolute",
+            zIndex: 1000,
+            color: "black",
+            cursor: "cell",
           }}
         >
           {"aspect_ratio"}
         </span>
-        <div className={styles["datagriddiv"]}>{table}</div>
-      </React.Fragment>
+        {table}
+      </>
     );
   }
 }

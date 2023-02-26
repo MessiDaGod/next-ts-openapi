@@ -6,6 +6,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  experimental: {
+    plugins: true,
+    scrollRestoration: true,
+    legacyBrowsers: false,
+    browsersListForSwc: true,
+  },
 }
 
 module.exports = {

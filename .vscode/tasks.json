@@ -9,7 +9,7 @@
             "tsconfig": "tsconfig.json",
             "option": "watch",
             "problemMatcher": "$tsc-watch",
-            "isBackground": true,
+            "isBackground": false,
             "group": {
                 "kind": "build",
                 "isDefault": true

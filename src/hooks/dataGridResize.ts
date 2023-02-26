@@ -2,7 +2,16 @@ interface ColumnWidths {
   [columnId: string]: number;
 }
 
-function paddingDiff(col: HTMLElement): number {
+export function paddingDiffY(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
+  }
+  const padTop = getStyleVal(col, "padding-top");
+  const padBottom = getStyleVal(col, "padding-bottom");
+  return parseInt(padTop) + parseInt(padBottom);
+}
+
+export function paddingDiff(col: HTMLElement): number {
   if (getStyleVal(col, "box-sizing") === "border-box") {
     return 0;
   }
@@ -75,10 +84,16 @@ export function getColumnWidths(tableId: string): ColumnWidths {
       }
     });
   });
+
+  // const rowDividers = table.querySelectorAll('[class*="' + "rowdivider" + '"]');
+
+  // rowDividers.forEach((rowDivider) => {
+  //   (rowDivider as HTMLElement).style.width = "100%";
+  // });
   return columnWidths;
 }
 
-function setListeners(div: HTMLDivElement): void {
+function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
   if (div.parentElement?.getAttribute("hidden") !== null) return;
   var pageX: number | undefined,
     curCol: HTMLElement | null,
@@ -195,7 +210,7 @@ export function dataGridResize(itemsPerPage?: number) {
   );
   if (resizeDivs && resizeDivs.length > 0) {
     for (let i = 0; i < resizeDivs.length; i++) {
-      setListeners(resizeDivs[i] as HTMLDivElement);
+      setListeners(resizeDivs[i] as HTMLDivElement, itemsPerPage);
     }
   }
 

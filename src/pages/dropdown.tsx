@@ -25,7 +25,7 @@ interface Menu {
 
 const Button: React.FC<ButtonProps> = ({ children }) => {
   return (
-    <button className={cn(
+    <button key={"btn"} className={cn(
       styles["button"]
     )}
       style={{ background: "white", color: "black", fontWeight: "bold" }} >
@@ -85,7 +85,8 @@ const Dropdown: React.FC<DropdownProps> = ({
             </span>
           ))}
       </div>
-      <div className={styles["table-container"]}>{DynamicGrid(selectedItem)}</div>
+      <div style={{ width: "100%", height: "50px"  }}></div>
+      <DynamicGrid key={selectedItem} selectItem={selectedItem} />
     </>
   );
 };
