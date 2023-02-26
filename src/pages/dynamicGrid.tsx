@@ -68,7 +68,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       // Some ResizeObserver calls come after unmount.
       return;
     }
-
   });
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -197,68 +196,50 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     const target = e.target as HTMLElement;
     const divTable = document.querySelectorAll(
       '[class*="' + cn(styles["divTable"]) + '"]'
-    )[0];
+    )[0] as HTMLElement;
 
     const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
     const table = tables[0] as HTMLElement;
-    curRow = target.parentElement as HTMLElement;
-    nxtRow = curRow ? (divTable as HTMLElement) : null;
-    pageY = e.pageY;
+    nxtRow = target.parentElement as HTMLElement;
+    const tmp = nxtRow
+      ? document.querySelectorAll(
+          '[data-row-id="' + (parseInt(nxtRow.dataset.rowId) - 1) + '"]'
+        )
+      : null;
+    curRow = tmp ? (tmp[0] as HTMLElement) : null;
 
+    pageY = e.pageY;
     const padding = curRow ? paddingDiffY(curRow) : 0;
 
     curRowHeight =
       curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
         ? curRow.offsetHeight - padding
         : 0;
-    nxtRowHeight = nxtRow ? nxtRow.offsetHeight - padding : 0;
+    nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
 
     document.addEventListener("mousemove", function (e3) {
       e3.preventDefault();
       const diffY = e3.pageY - (pageY ?? 0);
 
       if (curRow) {
-        curRow.style.borderBottom = "1px solid red";
-        if (curRow) {
-          let allCells = Array.from(
-            new Set([
-              ...table.querySelectorAll(
-                '[data-row-id="' + curRow.dataset.rowId + '"]'
-              ),
-            ])
-          );
-          if (allCells) {
-            curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
-            curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
-            curRow.style.width = "100%";
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.minHeight =
-                (curRowHeight ?? 0) + diffY + "px";
-              (cell as HTMLElement).style.height =
-                (curRowHeight ?? 0) + diffY + "px";
-            });
-          }
-        }
-        if (nxtRow) {
-          nxtRow.style.minHeight = (nxtRowHeight ?? 0) - diffY + "px";
-          nxtRow.style.height = (nxtRowHeight ?? 0) - diffY + "px";
-
-          if (table) {
-            let allCells = Array.from(
-              new Set([
-                ...table.querySelectorAll(
-                  '[data-row-id="' + nxtRow.dataset.rowId + '"]'
-                ),
-              ])
-            );
-            if (allCells)
-              allCells.forEach((cell) => {
-                (cell as HTMLElement).style.minHeight =
-                  (nxtRowHeight ?? 0) + diffY + "px";
-                (cell as HTMLElement).style.height =
-                  (nxtRowHeight ?? 0) + diffY + "px";
-              });
-          }
+        let allCells = Array.from(
+          new Set([
+            ...divTable.querySelectorAll(
+              '[data-row-id="' + curRow.dataset.rowId + '"]'
+            ),
+          ])
+        );
+        if (allCells) {
+          curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
+          curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
+          curRow.style.width = "100%";
+          allCells.forEach((cell) => {
+            (cell as HTMLElement).style.border = "2px solid red";
+            (cell as HTMLElement).style.minHeight =
+              (curRowHeight ?? 0) + diffY + "px";
+            (cell as HTMLElement).style.height =
+              (curRowHeight ?? 0) + diffY + "px";
+          });
         }
       }
     });
@@ -268,17 +249,13 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
-      // [...data]
-      //   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-      //   .map((row, rowIndex: number) => {
-      //     console.log(row, rowIndex);
-      //   });
 
       const header = Object.values(data).map((key, idx: number) => {
         const firstHeader = Object.keys(key).map(
           (cols, index: number) =>
             !isColumnHidden(data, cols) &&
-            idx == 0 && index === 0 && (
+            idx == 0 &&
+            index === 0 && (
               <div
                 key={cols}
                 className={styles["th"]}
@@ -321,7 +298,8 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         const remainingHeaders = Object.keys(key).map(
           (cols, index: number) =>
             !isColumnHidden(data, cols) &&
-            idx == 0 && index > 0 && (
+            idx == 0 &&
+            index > 0 && (
               <div
                 key={cols}
                 className={styles["th"]}
@@ -384,35 +362,46 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         if (rows.length > 0) {
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
-            <><div className={cn(styles["table-container"])}>
-              <div
-                id={"gridjs_0"}
-                ref={tableRef}
-                key={"gridjs_0"}
-                className={styles["divTable"]}
-                style={{ overflow: "auto" }}
-              >
-                <div className={styles["thead"]}>
+            <>
+              <div className={cn(styles["table-container"])}>
+                <div
+                  id={"gridjs_0"}
+                  ref={tableRef}
+                  key={"gridjs_0"}
+                  className={styles["divTable"]}
+                >
                   <div className={styles["tr"]} data-row-id="0">
+                    <div
+                      style={{ width: "100%" }}
+                      className={styles["rowdivider"]}
+                      onMouseDown={handleRowClick}
+                      onMouseUp={removeMouseDownListener}
+                    ></div>
                     {header[0]}
                   </div>
+
+                  <div key={"tbody"} className={styles["tbody"]}>
+                    {rows.slice(1)}
+                  </div>
+                  <div className={styles["tr"]} data-row-id="-1">
+                    <div
+                      className={styles["rowdivider"]}
+                      onMouseDown={handleRowClick}
+                      onMouseUp={removeMouseDownListener}
+                    ></div>
+                  </div>
                 </div>
-                <div key={"tbody"} className={styles["tbody"]}>
-                  {rows.slice(1)}
-                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange} />
-            </div></>
+            </>
           );
         }
-      }
-      catch (err) {
-        return (
-          <Console code={err.message} />
-        )
+      } catch (err) {
+        return <Console code={err.message} />;
       }
     }
   }

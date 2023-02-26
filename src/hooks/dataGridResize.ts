@@ -51,39 +51,39 @@ export function setColumnWidths(tableId: string): ColumnWidths {
     return width;
   }
 
-  let cells = [];
-  // Loop through each cell in the table to find the longest cell in each column
   allRows.forEach((row) => {
     const ths = row.querySelectorAll('[class*="' + "th" + '"]');
     const tds = row.querySelectorAll('[class*="' + "td" + '"]');
-    // const cells = [...headers, ...tds];
-    cells = [...ths, ...tds];
-  });
+    const cells = [...ths, ...tds];
 
-  cells.forEach((cell) => {
-    const columnId = cell.getAttribute("data-column-id");
-    if (columnId && cell.getAttribute("hidden") === null) {
-      const cellCopy = cell as HTMLElement;
-      let spanWidths = 0;
-      const icons = cell.querySelectorAll('span');
-      if (icons && icons.length > 0) {
-        console.log(`# of spans for ${columnId}: ${icons.length}`);
-        for (let i = 0; i < icons.length; i++) {
-
-          const icon = icons[i] as HTMLElement;
-          spanWidths += icon.offsetWidth;
+    cells.forEach((cell) => {
+      const columnId = cell.getAttribute("data-column-id");
+      if (columnId && cell.getAttribute("hidden") === null) {
+        var cellCopy = cell.cloneNode(true) as HTMLElement;
+        var spanWidths = 0;
+        const icons = cell.querySelectorAll("span");
+        if (icons && icons.length > 0) {
+          for (let i = 0; i < icons.length; i++) {
+            const icon = icons[i] as HTMLElement;
+            spanWidths += icon.offsetWidth;
+          }
+        }
+        let iconsToRemove = cellCopy.querySelectorAll("span");
+        for (let i = 0; i < iconsToRemove.length; i++) {
+          iconsToRemove[i].remove();
+        }
+        let cellWidth = visualLength(cellCopy.textContent || "");
+        cellWidth += spanWidths;
+        spanWidths = 0;
+        const existingWidth = columnWidths[columnId];
+        if (cellWidth > (existingWidth || 0)) {
+          columnWidths[columnId] = cellWidth;
         }
       }
-      let cellWidth = visualLength(cellCopy.textContent || "");
-      cellWidth += spanWidths;
-      columnId === "Id" && console.log(`Id width shouldBe 69: ${cellWidth}`);
-      const existingWidth = columnWidths[columnId];
-      if (cellWidth > (existingWidth || 0)) {
-        columnWidths[columnId] = cellWidth;
-      }
-    }
+    });
   });
 
+  console.log(document.querySelector("#cellCopy"));
   Object.entries(columnWidths).map((width) => {
     const [key, value] = width;
     const cols = table.querySelectorAll(`[data-column-id="${key}"]`);

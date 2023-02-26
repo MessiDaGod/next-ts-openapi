@@ -1,16 +1,12 @@
 .divTable {
-    position: "relative";
+    position: relative;
     width: fit-content;
 }
-
-
 
 .table-container {
     position: absolute;
     margin-top: 50px;
   }
-
-
 
 .tr {
     display: flex;
@@ -123,8 +119,6 @@
 
 .rowdivider:hover {
     opacity: 1;
-    cursor: row-resize;
-    display: flex;
 }
 
 @media (hover: hover) {
@@ -132,5 +126,6 @@
         opacity: 0;
         border: 2px yellow solid;
         width: 100%;
+        cursor: row-resize;
     }
 }
