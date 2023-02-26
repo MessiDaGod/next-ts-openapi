@@ -1,4 +1,4 @@
-import React, { Key } from "react";
+import React, { Key, useRef } from "react";
 import { getVendors } from "./api/getVendors";
 import { DataSet } from "./api/DataObject";
 import { Pagination } from "./pagination";
@@ -12,6 +12,7 @@ import {
   paddingDiffY,
 } from "../hooks/dataGridResize";
 import cn from "classnames";
+import { useEvent } from "components/MDX/Sandpack/NavigationBar";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -52,14 +53,21 @@ interface DynamicGridProps {
 
 function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
+  const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isExpanded, setIsExpanded] = React.useState(false);
   const itemsPerPage = 25;
 
-  // const id = children[0].props.id;
-
+  const onContainerResize = useEvent((containerWidth: number) => {
+    if (tableRef.current === null) {
+      // Some ResizeObserver calls come after unmount.
+      return;
+    }
+    const tableWidth = tableRef.current.getBoundingClientRect().width;
+    console.log(tableWidth);
+  });
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
@@ -329,7 +337,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         return (
           <div className={cn(styles["table-container"])}>
             <div
-              id="gridjs_0"
+              ref={tableRef}
               key={"gridjs_0"}
               className={styles["divTable"]}
               style={{ overflow: "auto" }}
