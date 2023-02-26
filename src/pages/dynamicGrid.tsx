@@ -1,6 +1,6 @@
 import React, { Key } from "react";
 import { getVendors } from "./api/getVendors";
-import { GetDataDictionary, DataTable, DataSet } from "./api/DataObject";
+import { DataSet } from "./api/DataObject";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
@@ -11,16 +11,12 @@ import {
   getColumnWidths,
   paddingDiffY,
 } from "../hooks/dataGridResize";
-import { Button } from "../components/Button";
 import cn from "classnames";
-import { IconChevron } from "components/Icon/IconChevron";
 
 async function GetDimensions(take: number | null = null) {
   try {
     let url = `https://localhost:5006/api/data/GetDimensions${
-      take
-        ? `?take=${encodeURIComponent(take)}`
-        : ""
+      take ? `?take=${encodeURIComponent(take)}` : ""
     }`;
     const response = await fetch(url, {
       method: "GET",
@@ -56,6 +52,7 @@ interface DynamicGridProps {
 
 function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
+  const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -100,7 +97,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       }
     }
     fetchData();
-  }, [selectItem]);
+  }, [selected]);
 
   React.useEffect(() => {
     console.info("resizing due to useEffect in dynamicGrid.tsx");
@@ -189,7 +186,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   function handleRowClick(e) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-
+    console.log(target);
     const divTable = document.querySelectorAll(
       '[class*="' + cn(styles["divTable"]) + '"]'
     )[0];
@@ -197,7 +194,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
     const table = tables[0] as HTMLElement;
     curRow = target.parentElement as HTMLElement;
-
+    console.log(curRow);
     nxtRow = curRow ? (divTable as HTMLElement) : null;
     pageY = e.pageY;
 
@@ -265,29 +262,31 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
       const header = Object.values(data).map((key, idx: number) => {
-        const headerData = Object.keys(key).map(
+        const headerData = Object.keys(key,).map(
           (cols) =>
             !isColumnHidden(data, cols) &&
             idx == 0 && (
-              <div
-                key={cols}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={cols}
-              >
-                {cols}{" "}
-                <span
-                  className={"material-symbols-outlined"}
-                  onClick={() => handleSort(cols)}
-                  style={{
-                    color: "black",
-                    background: "transparent",
-                  }}
+              // <div key={`${idx}`} className={styles["tr"]} data-row-id={idx}>
+                <div
+                  key={cols}
+                  className={styles["th"]}
+                  style={{ width: "100px" }}
+                  data-column-id={cols}
                 >
-                  {!sortState ? "expand_more" : "expand_less"}
-                </span>
-                <div className={styles["coldivider"]}></div>
-              </div>
+                  {cols}{" "}
+                  <span
+                    className={"material-symbols-outlined"}
+                    onClick={() => handleSort(cols)}
+                    style={{
+                      color: "black",
+                      background: "transparent",
+                    }}
+                  >
+                    {!sortState ? "expand_more" : "expand_less"}
+                  </span>
+                  <div className={styles["coldivider"]}></div>
+                </div>
+              // </div>
             )
         );
 
@@ -297,7 +296,11 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       const rows = [...data]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
-          <div key={`${rowIndex}`} className={styles["tr"]}>
+          <div
+            key={`${rowIndex}`}
+            className={styles["tr"]}
+            data-row-id={rowIndex}
+          >
             <div
               key={`${rowIndex}`}
               className={styles["rowdivider"]}
