@@ -272,10 +272,10 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
       const rows = [...data]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-        .map((_row, rowIndex: number) => (
+        .map((row, rowIndex: number) => (
           <div key={`${rowIndex}`} className={styles["tr"]}>
             <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
-            {Object.entries(_row).map(([key, value], index: number) => (
+            {Object.entries(row).map(([key, value], index: number) => !isColumnHidden(data, key) && (
               <div
                 key={`${key}_${index}`}
                 className={styles["td"]}
@@ -288,14 +288,15 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
             ))}
           </div>
         ));
-      const tableRows = header;
 
-      if (tableRows.length > 0) {
+      console.log(rows);
+      if (rows.length > 0) {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
             <div
-              key={"gridjs_1"}
+              id="gridjs_0"
+              key={"gridjs_0"}
               className={styles["divTable"]}
               style={{ overflow: "auto" }}
             >
