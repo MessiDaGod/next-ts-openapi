@@ -1,7 +1,16 @@
 .divTable {
-    border: 1px solid lightgray;
+    position: "relative";
     width: fit-content;
 }
+
+
+
+.table-container {
+    position: absolute;
+    margin-top: 50px;
+  }
+
+
 
 .tr {
     display: flex;
@@ -110,20 +119,18 @@
     user-select: none;
     touch-action: none;
     display: flex;
-    width: 100%;
 }
 
 .rowdivider:hover {
     opacity: 1;
-    // border: 2px yellow solid;
     cursor: row-resize;
     display: flex;
-    width: 100%;
 }
 
 @media (hover: hover) {
     .rowdivider {
         opacity: 0;
         border: 2px yellow solid;
+        width: 100%;
     }
 }

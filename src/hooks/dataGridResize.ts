@@ -61,7 +61,9 @@ export function getColumnWidths(tableId: string): ColumnWidths {
       const columnId = cell.getAttribute("data-column-id");
       if (columnId && cell.getAttribute("hidden") === null) {
         const cellText = cell.textContent || "";
-        const cellWidth = visualLength(cellText.replace(" expand_less", "").replace(" expand_more", ""));
+        const cellWidth = visualLength(
+          cellText.replace(" expand_less", "").replace(" expand_more", "")
+        );
         const existingWidth = columnWidths[columnId];
         if (cellWidth > (existingWidth || 0)) {
           columnWidths[columnId] = cellWidth;
@@ -105,7 +107,7 @@ function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
 
   if (div.parentElement) {
     div.addEventListener("dblclick", function (e: MouseEvent): void {
-      const colWidths = getColumnWidths("gridjs_");
+      getColumnWidths("gridjs_");
     });
 
     div.addEventListener(
@@ -199,7 +201,6 @@ function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
     });
   }
 }
-
 
 export function dataGridResize(itemsPerPage?: number) {
   initResizeListeners();

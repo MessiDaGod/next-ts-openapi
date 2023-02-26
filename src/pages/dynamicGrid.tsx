@@ -29,6 +29,24 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
+async function getFromQuery(take: number | null = null, table: string) {
+  try {
+    let url = `https://localhost:5006/api/data/RunSqlQuery${
+      table
+        ? `?table=${encodeURIComponent(table)}`
+        : "" + take
+        ? `?take=${take}`
+        : ""
+    }`;
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    return JSON.parse(await response.text());
+  } catch (error) {
+    return error;
+  }
+}
+
 interface DynamicGridProps {
   [key: string]: string;
   selectItem?: string;
@@ -66,6 +84,10 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
             break;
           case "GetDimensions":
             response = await GetDimensions(5);
+            setData(response);
+            break;
+          case "GetFromQuery":
+            response = await getFromQuery(5, "total");
             setData(response);
             break;
           case undefined:
@@ -274,26 +296,33 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
           <div key={`${rowIndex}`} className={styles["tr"]}>
-            <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
-            {Object.entries(row).map(([key, value], index: number) => !isColumnHidden(data, key) && (
-              <div
-                key={`${key}_${index}`}
-                className={styles["td"]}
-                data-column-id={key}
-                style={{ width: "100px" }}
-                hidden={isColumnHidden(data, key)}
-              >
-                {parseValue(value as string, key)}
-              </div>
-            ))}
+            <div
+              key={`${rowIndex}`}
+              className={styles["rowdivider"]}
+              onMouseDown={handleRowClick}
+              onMouseUp={removeMouseDownListener}
+            ></div>
+            {Object.entries(row).map(
+              ([key, value], index: number) =>
+                !isColumnHidden(data, key) && (
+                  <div
+                    key={`${key}_${index}`}
+                    className={styles["td"]}
+                    data-column-id={key}
+                    style={{ width: "100px" }}
+                    hidden={isColumnHidden(data, key)}
+                  >
+                    {parseValue(value as string, key)}
+                  </div>
+                )
+            )}
           </div>
         ));
 
-      console.log(rows);
       if (rows.length > 0) {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
-          <>
+          <div className={cn(styles["table-container"])}>
             <div
               id="gridjs_0"
               key={"gridjs_0"}
@@ -312,7 +341,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
-          </>
+          </div>
         );
       }
     }

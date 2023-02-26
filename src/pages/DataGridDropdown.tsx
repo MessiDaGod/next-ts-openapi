@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {getPropOptionsAsync} from './api/getPropOptions';
-import {emptyPropOptions, PropOptions} from './api/Objects/PropOptions';
-import styles from './DataGridDropdown.module.scss';
-import PropOptionsPage from './propOptions';
-import {dataGridResize} from '../hooks/dataGridResize';
-import {DataSet, DataTable, GetDataDictionary} from './api/DataObject';
-import {isColumnHidden, isRowEmpty, parseValue} from './utils';
-import {Pagination} from 'pages/pagination';
+import React, { useState } from "react";
+import { getPropOptionsAsync } from "./api/getPropOptions";
+import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
+import styles from "./DataGridDropdown.module.scss";
+import PropOptionsPage from "./propOptions";
+import { dataGridResize, getColumnWidths } from "../hooks/dataGridResize";
+import { DataSet, DataTable, GetDataDictionary } from "./api/DataObject";
+import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
+import { Pagination } from "pages/pagination";
 
 type DropdownProps = {
   data?: {
@@ -32,16 +32,16 @@ type DropdownProps = {
 // }
 
 function getGoodColumns(): Promise<string[]> {
-  return fetch('/GoodColumns.json')
+  return fetch("/GoodColumns.json")
     .then((response) => response.json())
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
+function DataGridDropdown({ props }: { props: DropdownProps[] }) {
   const [data, setData] = React.useState<PropOptions[]>([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
-  const [goodColumns, setGoodColumns] = useState<string[]>(['']);
+  const [goodColumns, setGoodColumns] = useState<string[]>([""]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = useState(true);
@@ -64,6 +64,12 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
     }
     fetchData();
   }, []);
+
+  React.useEffect(() => {
+    console.info("resizing due to useEffect in dynamicGrid.tsx");
+    dataGridResize(itemsPerPage);
+    getColumnWidths("gridjs_");
+  }, [data]);
 
   function getCachedValue(key: string, getValueFunction: () => any): any {
     let value = cache.get(key);
@@ -144,30 +150,33 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
 
       const tableRows = [
         Object.keys(gridItems[0].value).map((item, idx) => {
-          const columnNames = item.replaceAll('_', ' ').split('_');
+          const columnNames = item.replaceAll("_", " ").split("_");
           const columnNamesWithLineBreaks = columnNames
             .map((name, index: number) => (
               <div
                 id={`${name}${idx}${index}`}
                 key={`${name}${idx}${index}`}
-                className={styles['th']}
-                style={{width: '100px'}}
+                className={styles["th"]}
+                style={{ width: "100px" }}
                 data-column-id={item}
-                hidden={isColumnHidden(data, item)}>
-                {name}{' '}
+                hidden={isColumnHidden(data, item)}
+              >
+                {name}{" "}
                 <span
-                  className={'material-symbols-outlined'}
+                  className={"material-symbols-outlined"}
                   onClick={() => handleSort(item)}
                   style={{
-                    color: 'black',
-                    background: 'transparent',
-                  }}>
-                  {!sortState ? 'expand_more' : 'expand_less'}
+                    color: "black",
+                    background: "transparent",
+                  }}
+                >
+                  {!sortState ? "expand_more" : "expand_less"}
                 </span>
                 <div
                   key={`${name}${idx}`}
-                  className={styles['coldivider']}
-                  onMouseEnter={handleMouseEnter}></div>
+                  className={styles["coldivider"]}
+                  onMouseEnter={handleMouseEnter}
+                ></div>
               </div>
             ))
             .filter((name) => goodColumns.includes(item));
@@ -177,21 +186,24 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         ...data
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((_row, rowIndex: number) => (
-            <div key={`${rowIndex}`} className={styles['tr']}>
-              {Object.entries(_row)
-                .map(([key, value], index: number) => (
-                  <div
-                    key={`${key}_${rowIndex}_${index}`}
-                    className={styles['td']}
-                    data-column-id={key}
-                    style={{width: '100px'}}
-                    hidden={isColumnHidden(data, key)}>
-                    {parseValue(value as string, key)}
-                  </div>
-                ))
-                .filter((row) =>
-                  goodColumns.includes(row.props['data-column-id'])
-                )}
+            <div  key={`${rowIndex}`} className={styles["tr"]} style={{ width: "100%" }}>
+              <div className={styles["tr"]}>
+                {Object.entries(_row)
+                  .map(([key, value], index: number) => (
+                    <div
+                      key={`${key}_${rowIndex}_${index}`}
+                      className={styles["td"]}
+                      data-column-id={key}
+                      style={{ width: "100px" }}
+                      hidden={isColumnHidden(data, key)}
+                    >
+                      {parseValue(value as string, key)}
+                    </div>
+                  ))
+                  .filter((row) =>
+                    goodColumns.includes(row.props["data-column-id"])
+                  )}
+              </div>
             </div>
           )),
       ];
@@ -200,30 +212,31 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div id="gridjs_0" className={styles['divTable']}>
-              <div className={styles['thead']}>
+            <div id="gridjs_0" className={styles["divTable"]}>
+              <div className={styles["thead"]}>
                 {
                   <input
                     id="search-input"
                     type="search"
-                    className={styles['rz-textbox findcomponent']}
+                    className={styles["rz-textbox findcomponent"]}
                     placeholder="Search ..."
                     autoComplete="on"
                     style={{
-                      color: 'white',
-                      backgroundColor: 'inherit',
-                      fontSize: '14px',
-                      borderBottom: '1px solid #2f333d',
-                      borderTop: '1px solid #2f333d',
-                      cursor: 'text',
-                      display: 'block',
-                      width: '100%',
-                      padding: '10px',
-                    }}></input>
+                      color: "white",
+                      backgroundColor: "inherit",
+                      fontSize: "14px",
+                      borderBottom: "1px solid #2f333d",
+                      borderTop: "1px solid #2f333d",
+                      cursor: "text",
+                      display: "block",
+                      width: "100%",
+                      padding: "10px",
+                    }}
+                  ></input>
                 }
-                <div className={styles['tr']}>{tableRows[0]}</div>
+                <div className={styles["tr"]}>{tableRows[0]}</div>
               </div>
-              <div className={styles['tbody']}>
+              <div className={styles["tbody"]}>
                 {tableRows.slice(1)}
                 <Pagination
                   currentPage={currentPage}
@@ -266,35 +279,38 @@ const DataGridDropdown: React.FC<DropdownProps> = ({}) => {
       />
       {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
-        className={`${styles['dropdown']} ${styles['rz-dropdown']}`}
+        className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
         onMouseEnter={() => setShowSearchBox(true)}
-        onMouseLeave={() => setShowSearchBox(false)}>
+        onMouseLeave={() => setShowSearchBox(false)}
+      >
         <label
-          className={`${styles['rz-placeholder']}`}
+          className={`${styles["rz-placeholder"]}`}
           style={{
-            width: '100%',
-            cursor: 'pointer',
-            borderRadius: '6px',
-          }}>
+            width: "100%",
+            cursor: "pointer",
+            borderRadius: "6px",
+          }}
+        >
           &nbsp;Property&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span
-            className={'material-symbols-outlined'}
+            className={"material-symbols-outlined"}
             style={{
-              color: 'white',
-              background: 'transparent',
-              display: 'inline-block',
-              transform: 'translateY(25%)',
-            }}>
-            {showSearchBox ? 'expand_more' : 'expand_less'}
+              color: "white",
+              background: "transparent",
+              display: "inline-block",
+              transform: "translateY(25%)",
+            }}
+          >
+            {showSearchBox ? "expand_more" : "expand_less"}
           </span>
         </label>
-        <div className={styles['dropdown-content']}>
+        <div className={styles["dropdown-content"]}>
           {showSearchBox && isChecked && <div>{table}</div>}
           {!isChecked && <div>{table}</div>}
         </div>
       </div>
     </>
   );
-};
+}
 
 export default DataGridDropdown;

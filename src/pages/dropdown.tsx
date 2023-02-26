@@ -43,6 +43,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const [items, setItems] = useState<Menu | null>(null);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+
   useEffect(() => {
     async function getItems() {
       fetch(`${jsonFileName}.json`)
@@ -52,7 +53,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         });
     }
     getItems();
-  }, [jsonFileName]);
+  }, []);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
@@ -85,7 +86,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </span>
           ))}
       </div>
-      <div style={{ width: "100%", height: "50px"  }}></div>
+      <div style={{ width: "100%", height: "auto"  }}></div>
       <DynamicGrid key={selectedItem} selectItem={selectedItem} />
     </>
   );
