@@ -3,7 +3,7 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./DataGridDropdown.module.scss";
 import PropOptionsPage from "./propOptions";
-import { dataGridResize, getColumnWidths } from "../hooks/dataGridResize";
+import { dataGridResize, setColumnWidths } from "../hooks/dataGridResize";
 import { DataSet, DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
@@ -68,7 +68,7 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
   React.useEffect(() => {
     console.info("resizing due to useEffect in dynamicGrid.tsx");
     dataGridResize(itemsPerPage);
-    getColumnWidths("gridjs_");
+    setColumnWidths("gridjs_");
   }, [data]);
 
   function getCachedValue(key: string, getValueFunction: () => any): any {

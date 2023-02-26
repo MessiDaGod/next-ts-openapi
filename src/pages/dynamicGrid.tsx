@@ -8,11 +8,14 @@ import styles from "../styles/yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
 import {
   dataGridResize,
-  getColumnWidths,
+  setColumnWidths,
   paddingDiffY,
 } from "../hooks/dataGridResize";
 import cn from "classnames";
 import { useEvent } from "components/MDX/Sandpack/NavigationBar";
+import { SandpackConsole } from "components/MDX/Sandpack/Console";
+import SandpackRoot from "components/MDX/Sandpack/SandpackRoot";
+import Console from "./Console";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -65,8 +68,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       // Some ResizeObserver calls come after unmount.
       return;
     }
-    const tableWidth = tableRef.current.getBoundingClientRect().width;
-    console.log(tableWidth);
+
   });
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -110,7 +112,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   React.useEffect(() => {
     console.info("resizing due to useEffect in dynamicGrid.tsx");
     dataGridResize(itemsPerPage);
-    getColumnWidths("gridjs_");
   }, [data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,7 +143,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
   function handleResize(e) {
     e.preventDefault();
-    getColumnWidths("gridjs_");
+    setColumnWidths("gridjs_");
   }
 
   function handleSort(columnName: string) {
@@ -194,15 +195,13 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   function handleRowClick(e) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    console.log(target);
     const divTable = document.querySelectorAll(
       '[class*="' + cn(styles["divTable"]) + '"]'
     )[0];
 
-    const tables = [...document.querySelectorAll('[id^="' + "gridjs_" + '"]')];
+    const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
     const table = tables[0] as HTMLElement;
     curRow = target.parentElement as HTMLElement;
-    console.log(curRow);
     nxtRow = curRow ? (divTable as HTMLElement) : null;
     pageY = e.pageY;
 
@@ -269,36 +268,86 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
+      // [...data]
+      //   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+      //   .map((row, rowIndex: number) => {
+      //     console.log(row, rowIndex);
+      //   });
+
       const header = Object.values(data).map((key, idx: number) => {
-        const headerData = Object.keys(key,).map(
-          (cols) =>
+        const firstHeader = Object.keys(key).map(
+          (cols, index: number) =>
             !isColumnHidden(data, cols) &&
-            idx == 0 && (
-              // <div key={`${idx}`} className={styles["tr"]} data-row-id={idx}>
-                <div
-                  key={cols}
-                  className={styles["th"]}
-                  style={{ width: "100px" }}
-                  data-column-id={cols}
+            idx == 0 && index === 0 && (
+              <div
+                key={cols}
+                className={styles["th"]}
+                style={{ width: "100px" }}
+                data-column-id={cols}
+                hidden={isColumnHidden(data, cols)}
+              >
+                <span
+                  key={"key"}
+                  className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
+                  onClick={handleResize}
+                  style={{
+                    background: "transparent",
+                    position: "relative",
+                    zIndex: 10,
+                    color: "black",
+                    cursor: "cell",
+                  }}
                 >
-                  {cols}{" "}
-                  <span
-                    className={"material-symbols-outlined"}
-                    onClick={() => handleSort(cols)}
-                    style={{
-                      color: "black",
-                      background: "transparent",
-                    }}
-                  >
-                    {!sortState ? "expand_more" : "expand_less"}
-                  </span>
-                  <div className={styles["coldivider"]}></div>
-                </div>
-              // </div>
+                  {"aspect_ratio"}
+                </span>
+                {cols}
+                <span
+                  className={`${"material-symbols-outlined"} ${
+                    styles["material-symbols-outlined"]
+                  }`}
+                  onClick={() => handleSort(cols)}
+                  style={{
+                    color: "black",
+                    background: "transparent",
+                  }}
+                >
+                  {!sortState ? "expand_more" : "expand_less"}
+                </span>
+                <div className={styles["coldivider"]}></div>
+              </div>
             )
         );
 
-        return headerData;
+        const remainingHeaders = Object.keys(key).map(
+          (cols, index: number) =>
+            !isColumnHidden(data, cols) &&
+            idx == 0 && index > 0 && (
+              <div
+                key={cols}
+                className={styles["th"]}
+                style={{ width: "100px" }}
+                data-column-id={cols}
+                hidden={isColumnHidden(data, cols)}
+              >
+                {cols}{" "}
+                <span
+                  className={`${"material-symbols-outlined"} ${
+                    styles["material-symbols-outlined"]
+                  }`}
+                  onClick={() => handleSort(cols)}
+                  style={{
+                    color: "black",
+                    background: "transparent",
+                  }}
+                >
+                  {!sortState ? "expand_more" : "expand_less"}
+                </span>
+                <div className={styles["coldivider"]}></div>
+              </div>
+            )
+        );
+
+        return [...firstHeader, ...remainingHeaders];
       });
 
       const rows = [...data]
@@ -323,7 +372,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
-                    hidden={isColumnHidden(data, key)}
                   >
                     {parseValue(value as string, key)}
                   </div>
@@ -332,30 +380,39 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           </div>
         ));
 
-      if (rows.length > 0) {
-        const totalPages = Math.ceil(data.length / itemsPerPage);
+      try {
+        if (rows.length > 0) {
+          const totalPages = Math.ceil(data.length / itemsPerPage);
+          return (
+            <><div className={cn(styles["table-container"])}>
+              <div
+                id={"gridjs_0"}
+                ref={tableRef}
+                key={"gridjs_0"}
+                className={styles["divTable"]}
+                style={{ overflow: "auto" }}
+              >
+                <div className={styles["thead"]}>
+                  <div className={styles["tr"]} data-row-id="0">
+                    {header[0]}
+                  </div>
+                </div>
+                <div key={"tbody"} className={styles["tbody"]}>
+                  {rows.slice(1)}
+                </div>
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange} />
+            </div></>
+          );
+        }
+      }
+      catch (err) {
         return (
-          <div className={cn(styles["table-container"])}>
-            <div
-              ref={tableRef}
-              key={"gridjs_0"}
-              className={styles["divTable"]}
-              style={{ overflow: "auto" }}
-            >
-              <div className={styles["thead"]}>
-                <div className={styles["tr"]}>{header[0]}</div>
-              </div>
-              <div key={"tbody"} className={styles["tbody"]}>
-                {rows.slice(1)}
-              </div>
-            </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        );
+          <Console code={err.message} />
+        )
       }
     }
   }
@@ -365,25 +422,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
-    return (
-      <>
-        <span
-          key={"key"}
-          className={`${styles["material-symbols-outlined"]} material-symbols-outlined`}
-          onClick={handleResize}
-          style={{
-            background: "transparent",
-            position: "absolute",
-            zIndex: 1000,
-            color: "black",
-            cursor: "cell",
-          }}
-        >
-          {"aspect_ratio"}
-        </span>
-        {table}
-      </>
-    );
+    return <>{table}</>;
   }
 }
 

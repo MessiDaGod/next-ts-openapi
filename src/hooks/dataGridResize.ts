@@ -24,7 +24,7 @@ function getStyleVal(elm: HTMLElement, css: string): string {
   return window.getComputedStyle(elm, null).getPropertyValue(css);
 }
 
-export function getColumnWidths(tableId: string): ColumnWidths {
+export function setColumnWidths(tableId: string): ColumnWidths {
   const tables = [...document.querySelectorAll('[id*="' + tableId + '"]')];
   const table = tables[0];
   if (!table) {
@@ -38,7 +38,7 @@ export function getColumnWidths(tableId: string): ColumnWidths {
   function visualLength(s: string) {
     const ruler = document.createElement("div");
     (ruler as HTMLElement).style.boxSizing = `content-box`;
-    ruler.style.display = "inline-block";
+    ruler.style.display = "block";
     ruler.style.visibility = "hidden";
     ruler.style.position = "absolute";
     ruler.style.whiteSpace = "nowrap";
@@ -51,26 +51,39 @@ export function getColumnWidths(tableId: string): ColumnWidths {
     return width;
   }
 
+  let cells = [];
   // Loop through each cell in the table to find the longest cell in each column
   allRows.forEach((row) => {
     const ths = row.querySelectorAll('[class*="' + "th" + '"]');
     const tds = row.querySelectorAll('[class*="' + "td" + '"]');
     // const cells = [...headers, ...tds];
-    const cells = [...ths, ...tds];
-    cells.forEach((cell, columnIndex) => {
-      const columnId = cell.getAttribute("data-column-id");
-      if (columnId && cell.getAttribute("hidden") === null) {
-        const cellText = cell.textContent || "";
-        const cellWidth = visualLength(
-          cellText.replace(" expand_less", "").replace(" expand_more", "")
-        );
-        const existingWidth = columnWidths[columnId];
-        if (cellWidth > (existingWidth || 0)) {
-          columnWidths[columnId] = cellWidth;
+    cells = [...ths, ...tds];
+  });
+
+  cells.forEach((cell) => {
+    const columnId = cell.getAttribute("data-column-id");
+    if (columnId && cell.getAttribute("hidden") === null) {
+      const cellCopy = cell as HTMLElement;
+      let spanWidths = 0;
+      const icons = cell.querySelectorAll('span');
+      if (icons && icons.length > 0) {
+        console.log(`# of spans for ${columnId}: ${icons.length}`);
+        for (let i = 0; i < icons.length; i++) {
+
+          const icon = icons[i] as HTMLElement;
+          spanWidths += icon.offsetWidth;
         }
       }
-    });
+      let cellWidth = visualLength(cellCopy.textContent || "");
+      cellWidth += spanWidths;
+      columnId === "Id" && console.log(`Id width shouldBe 69: ${cellWidth}`);
+      const existingWidth = columnWidths[columnId];
+      if (cellWidth > (existingWidth || 0)) {
+        columnWidths[columnId] = cellWidth;
+      }
+    }
   });
+
   Object.entries(columnWidths).map((width) => {
     const [key, value] = width;
     const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -107,7 +120,7 @@ function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
 
   if (div.parentElement) {
     div.addEventListener("dblclick", function (e: MouseEvent): void {
-      getColumnWidths("gridjs_");
+      setColumnWidths("gridjs_");
     });
 
     div.addEventListener(
