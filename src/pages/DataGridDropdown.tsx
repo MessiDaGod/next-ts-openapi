@@ -19,7 +19,7 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ style }) => {
+const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style }) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
@@ -581,7 +581,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ style }) => {
 
   return (
     <div style={style}>
-      {isChecked && (<Checkbox />)}
+      {showCheckbox && (<Checkbox />)}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
         onMouseEnter={handleShowSearchBox}
