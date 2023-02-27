@@ -500,7 +500,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
         const totalPages = Math.ceil(data.length / itemsPerPage);
         return (
           <>
-            <div id="gridjs_0" className={styles["divTable"]}>
+            <div id="gridjs_0" className={styles["ddTable"]}>
               <div className={styles["thead"]}>
                 {
                   <>

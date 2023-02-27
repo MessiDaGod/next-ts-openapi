@@ -102,7 +102,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   React.useEffect(() => {
     console.info("resizing due to useEffect in dynamicGrid.tsx");
     dataGridResize(itemsPerPage);
-  }, [data]);
+  }, [selected, data]);
 
   React.useEffect(() => { setColumnWidths("gridjs_"); }, []);
   const memoizedData = React.useMemo(() => GenerateDynamicData(data), []);

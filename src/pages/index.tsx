@@ -19,10 +19,13 @@ const Home: React.FC = ({}) => (
     <main className={styles["main"]}>
       <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
         <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
-        <DataGridDropdown myData={properties} style={{ paddingLeft: "210px", width: "fit-content" }} showCheckbox={false}/>
+        <DataGridDropdown style={{ paddingLeft: "210px", width: "fit-content" }} showCheckbox={false}/>
       </div>
     </main>
   </>
 );
 
 export default Home;
+
+
+// myData={properties}
