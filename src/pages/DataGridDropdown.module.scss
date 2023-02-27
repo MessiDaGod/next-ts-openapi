@@ -76,8 +76,8 @@
     width: 175px;
     border: 1px solid blue;
     padding: var(--tablepadding);
-    overflow: visible;
-    cursor: hidden;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .rz-placeholder {

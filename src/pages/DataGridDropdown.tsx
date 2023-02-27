@@ -55,21 +55,15 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
     fetchData();
   }, []);
 
+
   React.useEffect(() => {
-    console.info("resizing due to useEffect in dynamicGrid.tsx");
+    console.info("resizing due to useEffect in DataGridDropdown.tsx");
     dataGridResize(itemsPerPage);
     setColumnWidths("gridjs_");
   }, [data]);
 
-  function getCachedValue(key: string, getValueFunction: () => any): any {
-    let value = cache.get(key);
-
-    if (value === undefined) {
-      value = getValueFunction();
-      cache.set(key, value);
-    }
-
-    return value;
+  function handleShowSearchBox(e) {
+    setShowSearchBox(true);
   }
 
   function handlePageChange(page: number) {
@@ -269,7 +263,7 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
       {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
-        onMouseEnter={() => setShowSearchBox(true)}
+        onMouseEnter={handleShowSearchBox}
         onMouseLeave={() => setShowSearchBox(false)}
       >
         <label

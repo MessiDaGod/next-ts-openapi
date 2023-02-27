@@ -12,11 +12,7 @@ import {
   paddingDiffY,
 } from "../hooks/dataGridResize";
 import cn from "classnames";
-import { useEvent } from "components/MDX/Sandpack/NavigationBar";
-import { SandpackConsole } from "components/MDX/Sandpack/Console";
-import SandpackRoot from "components/MDX/Sandpack/SandpackRoot";
 import Console from "./Console";
-import PropertyDropdown from "./PropertyDropdown";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -32,13 +28,11 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
-async function getFromQuery(take: number | null = null, table: string) {
+async function getFromQuery(table: string) {
   try {
     let url = `https://localhost:5006/api/data/RunSqlQuery${
       table
         ? `?table=${encodeURIComponent(table)}`
-        : "" + take
-        ? `?take=${take}`
         : ""
     }`;
     const response = await fetch(url, {
@@ -91,7 +85,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery(5, "total");
+            response = await getFromQuery("total");
             setData(response);
             break;
           case undefined:
