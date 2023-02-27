@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styles from "styles/Home.module.scss";
+import styles from "./Home.module.scss";
 import ConnectionDropdown from "./connectionDropdown";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";

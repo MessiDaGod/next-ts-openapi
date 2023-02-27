@@ -46,9 +46,12 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
   }, []);
 
   React.useEffect(() => {
-    dataGridResize(itemsPerPage);
-    setColumnWidths("gridjs_");
-    setDropdownWidth();
+    if (showSearchBox) {
+      console.log("React.useEffect initiated");
+      dataGridResize(itemsPerPage);
+      setColumnWidths("gridjs_");
+      setDropdownWidth();
+    }
   }, [showSearchBox]);
 
   interface ColumnWidths {
@@ -512,7 +515,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
                       autoComplete="on"
                       style={{
                         color: "white",
-                        backgroundColor: "inherit",
+                        backgroundColor: "black",
                         fontSize: "14px",
                         borderBottom: "1px solid #2f333d",
                         borderTop: "1px solid #2f333d",
@@ -528,7 +531,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
                         className={"material-symbols-outlined"}
                         style={{
                           color: "white",
-                          background: "transparent",
+                          background: "inherit",
                           display: "flex",
                           position: "relative",
                           transform: "translateY(-30px)",

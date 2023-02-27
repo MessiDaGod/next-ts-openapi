@@ -108,3 +108,39 @@
     // border: 2px solid yellow;
     padding: 20px;
 }
+.button {
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
+  }
+
+
+  .active {
+    background-color: #f03a3a;
+    transition-duration: 0.2s;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    z-index: 5;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
+  }

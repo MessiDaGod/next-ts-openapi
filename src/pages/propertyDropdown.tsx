@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
-import styles from "../styles/propertyDropdown.module.scss";
+import styles from "./propertyDropdown.module.scss";
 import PropOptionsPage from "./propOptions";
 import { dataGridResize } from "../hooks/dataGridResize";
 import { DataTable, GetDataDictionary } from "./api/DataObject";

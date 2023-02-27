@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState, useEffect } from "react";
 import DynamicGrid from "./DynamicGrid";
-import styles from "../styles/Home.module.scss";
+import styles from "./Home.module.scss";
 import { cn } from "./classNames";
 import PropertyDropdown from "./PropertyDropdown";
 import DataGridDropdown from "./DataGridDropdown";

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import styles from "styles/Home.module.scss";
+import styles from "./Home.module.scss";
 import Dropdown from "./dropdown";
 import React from "react";
 import DataGridDropdown from "./DataGridDropdown";
@@ -19,7 +19,7 @@ const Home: React.FC = ({}) => (
     <main className={styles["main"]}>
       <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
         <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
-        <DataGridDropdown style={{ paddingLeft: "210px", width: "fit-content" }} showCheckbox={false}/>
+        <DataGridDropdown style={{ paddingLeft: "210px", width: "fit-content" }} showCheckbox={true}/>
       </div>
     </main>
   </>

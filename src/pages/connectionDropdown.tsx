@@ -1,6 +1,6 @@
 import { cn } from "./classNames";
 import React, { CSSProperties, useState, useEffect } from "react";
-import styles from "../styles/Home.module.scss";
+import styles from "./Home.module.scss";
 // import { setListeners } from "./helpers";
 
 interface DropdownProps {

@@ -2,7 +2,7 @@ import * as monaco from "monaco-editor";
 import { formatSql } from "./api/formatSql";
 import StandaloneCodeEditor from "@monaco-editor/react";
 import React, { useState, useRef, useEffect } from "react";
-import styles from "../styles/Home.module.scss";
+import styles from "./Home.module.scss";
 
 interface CodeEditorProps {
   initialValue: string;

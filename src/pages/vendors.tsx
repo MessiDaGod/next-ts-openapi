@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/yardiInterface.module.scss";
+import styles from "./yardiInterface.module.scss";
 import { dataGridResize } from "../hooks/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";

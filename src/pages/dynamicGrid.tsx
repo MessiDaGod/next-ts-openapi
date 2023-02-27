@@ -4,7 +4,7 @@ import { DataSet } from "./api/DataObject";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
-import styles from "../styles/yardiInterface.module.scss";
+import styles from "./yardiInterface.module.scss";
 import { isColumnHidden, parseValue } from "./utils";
 import {
   dataGridResize,
