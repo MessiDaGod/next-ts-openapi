@@ -269,6 +269,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     });
   }
 
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);

@@ -2,7 +2,11 @@ import Head from "next/head";
 import styles from "styles/Home.module.scss";
 import Dropdown from "./dropdown";
 import React from "react";
+import DataGridDropdown from "./DataGridDropdown";
+import { DataGridDropdownProps } from "./DataGridDropdown"
+import { getPropOptions } from "hooks/getPropOptions";
 
+const properties = getPropOptions(1000);
 
 const Home: React.FC = ({}) => (
   <>
@@ -15,6 +19,7 @@ const Home: React.FC = ({}) => (
     <main className={styles["main"]}>
       <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
         <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
+        <DataGridDropdown myData={properties} style={{ paddingLeft: "210px", width: "fit-content" }} showCheckbox={false}/>
       </div>
     </main>
   </>

@@ -6,7 +6,7 @@
 .table-container {
     position: absolute;
     margin-top: 50px;
-  }
+}
 
 .tr {
     display: flex;
@@ -125,15 +125,14 @@
 @media (hover: hover) {
     .rowdivider {
         opacity: 0;
-        border: 2px yellow solid;
-        width: 100%;
         cursor: row-resize;
     }
 }
+
 .black {
     color: black;
 }
 
 .white {
-    color:white;
+    color: white;
 }

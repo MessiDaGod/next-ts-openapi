@@ -111,8 +111,6 @@ export function setColumnWidths(tableId: string): ColumnWidths {
 
   (table as HTMLElement).style.width = tableWidth.toString() + "px";
   (table as HTMLElement).style.border = "2px solid red";
-
-  console.log(document.querySelectorAll(`[class*="${cn("dropdown")}"]`));
   return columnWidths;
 }
 
