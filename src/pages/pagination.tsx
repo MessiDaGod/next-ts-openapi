@@ -62,8 +62,11 @@ export function Pagination({
 
   return totalPages > 1 ? (
 
-    <div style={{ width: "100%", verticalAlign: "center", textAlign: "center", backgroundColor: "black" }}>
+    <div className={styles["paginationDiv"]} style={{ width: "100%", verticalAlign: "center", textAlign: "center", backgroundColor: "black" }}>
       <div className={styles["tr"]} style={{ height: "50px", textAlign: "center", justifyContent: "center" }}>
+      {pageNumbers.map((pageNumber) => (
+        pageNumber === 1 && (<p key={pageNumber}>Page {pageNumber} of {totalPages}</p>)
+      ))}
         {showChevrons && (
           <div className={styles["td"]} style={{ height: "100%", borderColor: "transparent" }}>
             <span
