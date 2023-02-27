@@ -1,3 +1,5 @@
+import cn from "classnames";
+
 interface ColumnWidths {
   [columnId: string]: number;
 }
@@ -99,8 +101,6 @@ export function setColumnWidths(tableId: string): ColumnWidths {
         (col as HTMLElement).style.width = `${value}px`;
       }
     });
-
-
   });
 
   let tableWidth = 0;
@@ -110,9 +110,9 @@ export function setColumnWidths(tableId: string): ColumnWidths {
   });
 
   (table as HTMLElement).style.width = tableWidth.toString() + "px";
-  (table as HTMLElement).style.border = "2px solid red;";
-  console.log(tableWidth.toString() + "px");
-  console.log(table);
+  (table as HTMLElement).style.border = "2px solid red";
+
+  console.log(document.querySelectorAll(`[class*="${cn("dropdown")}"]`));
   return columnWidths;
 }
 

@@ -60,7 +60,7 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
     console.info("resizing due to useEffect in DataGridDropdown.tsx");
     dataGridResize(itemsPerPage);
     setColumnWidths("gridjs_");
-  }, [data]);
+  }, [showSearchBox]);
 
   function handleShowSearchBox(e) {
     setShowSearchBox(true);
