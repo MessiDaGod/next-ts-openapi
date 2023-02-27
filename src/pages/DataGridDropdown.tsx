@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./DataGridDropdown.module.scss";
@@ -7,6 +7,7 @@ import { DataSet, DataTable, GetDataDictionary } from "./api/DataObject";
 import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
+import Console from "./Console";
 
 export interface DataGridDropdownProps {
   style?: React.CSSProperties;
@@ -19,9 +20,13 @@ function getGoodColumns(): Promise<string[]> {
     .then((data) => data.map((item: any) => item.Name));
 }
 
-const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style }) => {
+const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
+  showCheckbox,
+  style,
+}) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
+  const tableRef = useRef<HTMLDivElement | null>(null);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [goodColumns, setGoodColumns] = useState<string[]>([""]);
   const [sortState, setSortState] = React.useState<boolean>(true);
@@ -430,133 +435,424 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
     dataGridResize(itemsPerPage);
   }
 
+  // function GenerateTableHtml() {
+  //   if (Array.isArray(data) && data.length > 0) {
+  //     const gridItems = GenerateDynamicData(data);
+  //     if (!gridItems) return;
+
+  //     const tableRows = [
+  //       Object.keys(gridItems[0].value).map((item, idx) => {
+  //         const columnNames = item.replaceAll("_", " ").split("_");
+  //         const columnNamesWithLineBreaks = columnNames
+  //           .map((name, index: number) => (
+  //             <div
+  //               id={`${name}${idx}${index}`}
+  //               key={`${name}${idx}${index}`}
+  //               className={styles["th"]}
+  //               style={{ width: "100px" }}
+  //               data-column-id={item}
+  //               hidden={isColumnHidden(data, item)}
+  //             >
+  //               {name}{" "}
+  //               <span
+  //                 className={"material-symbols-outlined"}
+  //                 onClick={() => handleSort(item)}
+  //                 style={{
+  //                   color: "black",
+  //                   background: "transparent",
+  //                 }}
+  //               >
+  //                 {!sortState ? "expand_more" : "expand_less"}
+  //               </span>
+  //               <div
+  //                 key={`${name}${idx}`}
+  //                 className={styles["coldivider"]}
+  //                 onMouseEnter={handleMouseEnter}
+  //               ></div>
+  //             </div>
+  //           ))
+  //           .filter((name) => goodColumns.includes(item));
+
+  //         return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
+  //       }),
+  //       ...data
+  //         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  //         .map((_row, rowIndex: number) => (
+  //           <div
+  //             key={`${rowIndex}`}
+  //             className={styles["tr"]}
+  //             style={{ width: "100%" }}
+  //           >
+  //             <div className={styles["tr"]}>
+  //               {Object.entries(_row)
+  //                 .map(([key, value], index: number) => (
+  //                   <div
+  //                     key={`${key}_${rowIndex}_${index}`}
+  //                     className={styles["td"]}
+  //                     data-column-id={key}
+  //                     style={{ width: "100px" }}
+  //                     hidden={isColumnHidden(data, key)}
+  //                   >
+  //                     {parseValue(value as string, key)}
+  //                   </div>
+  //                 ))
+  //                 .filter((row) =>
+  //                   goodColumns.includes(row.props["data-column-id"])
+  //                 )}
+  //             </div>
+  //           </div>
+  //         )),
+  //     ];
+
+  //     if (tableRows.length > 0) {
+  //       const totalPages = Math.ceil(data.length / itemsPerPage);
+  //       return (
+  //         <>
+  //           <div id="gridjs_0" className={styles["ddTable"]}>
+  //             <div className={styles["thead"]}>
+  //               {
+  //                 <>
+  //                   <input
+  //                     id="search-input"
+  //                     type="search"
+  //                     className={styles["rz-textbox findcomponent"]}
+  //                     placeholder="Search ..."
+  //                     autoComplete="on"
+  //                     style={{
+  //                       color: "white",
+  //                       backgroundColor: "black",
+  //                       fontSize: "14px",
+  //                       borderBottom: "1px solid #2f333d",
+  //                       borderTop: "1px solid #2f333d",
+  //                       cursor: "text",
+  //                       display: "block",
+  //                       width: "100%",
+  //                       padding: "10px",
+  //                     }}
+  //                   >
+  //                   </input>
+  //                   <div style={{ width: "100%" }}>
+  //                   <span
+  //                       className={"material-symbols-outlined"}
+  //                       style={{
+  //                         color: "white",
+  //                         background: "inherit",
+  //                         display: "flex",
+  //                         position: "relative",
+  //                         transform: "translateY(-30px)",
+  //                         float: "right",
+  //                         marginRight: "20px",
+  //                         cursor: "crosshair"
+  //                       }}
+  //                     >
+  //                       {"search"}
+  //                     </span></div>
+  //                 </>
+  //               }
+  //               <div className={styles["tr"]}>{tableRows[0]}</div>
+  //             </div>
+  //             <div className={styles["tbody"]}>
+  //               {tableRows.slice(1)}
+  //               <Pagination
+  //                 currentPage={currentPage}
+  //                 totalPages={totalPages}
+  //                 onPageChange={handlePageChange}
+  //               />
+  //             </div>
+  //           </div>
+  //         </>
+  //       );
+  //     }
+  //   }
+  // }
+
+  let pageY: number | undefined,
+    curRow: HTMLElement | null,
+    nxtRow: HTMLElement | null,
+    curRowHeight: number | undefined,
+    nxtRowHeight: number | undefined;
+
+  function removeMouseDownListener(e) {
+    e.preventDefault();
+    document.addEventListener("mouseup", function (e: MouseEvent): void {
+      curRow = null;
+      nxtRow = null;
+      pageY = undefined;
+      curRowHeight = undefined;
+      nxtRowHeight = undefined;
+      console.info("removed mousedown listener");
+    });
+  }
+
+  function setRowHeights(tableId?: string) {
+    const divTable = document.querySelectorAll(
+      '[class*="' + cn(styles["divTable"]) + '"]'
+    )[0] as HTMLElement;
+    let allrows = Array.from(
+      new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
+    );
+    allrows.forEach((row) => {
+      (row as HTMLElement).style.minHeight = "0px";
+      (row as HTMLElement).style.padding = "0px";
+    });
+  }
+
+  function handleRowClick(e) {
+    e.preventDefault();
+    const target = e.target as HTMLElement;
+    const divTable = document.querySelectorAll(
+      '[class*="' + cn(styles["divTable"]) + '"]'
+    )[0] as HTMLElement;
+
+    const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
+    const table = tables[0] as HTMLElement;
+    nxtRow = target.parentElement as HTMLElement;
+    const tmp = nxtRow
+      ? document.querySelectorAll(
+          '[data-row-id="' + (parseInt(nxtRow.dataset.rowId) - 1) + '"]'
+        )
+      : null;
+    curRow = tmp ? (tmp[0] as HTMLElement) : null;
+
+    pageY = e.pageY;
+    const padding = curRow ? paddingDiffY(curRow) : 0;
+
+    curRowHeight =
+      curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
+        ? curRow.offsetHeight - padding
+        : 0;
+    nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
+    document.addEventListener("mousemove", function (e3) {
+      e3.preventDefault();
+      const diffY = e3.pageY - (pageY ?? 0);
+
+      if (curRow) {
+        let allCells = Array.from(
+          new Set([
+            ...divTable.querySelectorAll(
+              '[data-row-id="' + curRow.dataset.rowId + '"]'
+            ),
+          ])
+        );
+        if (allCells) {
+          curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
+          curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
+          curRow.style.width = "100%";
+          allCells.forEach((cell) => {
+            (cell as HTMLElement).style.minHeight =
+              (curRowHeight ?? 0) + diffY + "px";
+            (cell as HTMLElement).style.height =
+              (curRowHeight ?? 0) + diffY + "px";
+          });
+        }
+      }
+
+      if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
+        let allCells = Array.from(
+          new Set([
+            ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
+          ])
+        );
+
+        allCells.forEach((cell) => {
+          (cell as HTMLElement).style.width = "100%";
+          (cell as HTMLElement).style.minHeight =
+            (curRowHeight ?? 0) + diffY + "px";
+          (cell as HTMLElement).style.height =
+            (curRowHeight ?? 0) + diffY + "px";
+        });
+      }
+    });
+  }
+
+  function handleResize(e) {
+    e.preventDefault();
+    setColumnWidths("gridjs_");
+    setRowHeights();
+  }
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const gridItems = GenerateDynamicData(data);
       if (!gridItems) return;
 
-      const tableRows = [
-        Object.keys(gridItems[0].value).map((item, idx) => {
-          const columnNames = item.replaceAll("_", " ").split("_");
-          const columnNamesWithLineBreaks = columnNames
-            .map((name, index: number) => (
+      const header = Object.values(data).map((key, idx: number) => {
+        const firstHeader = Object.keys(key).map(
+          (cols, index: number) =>
+            !isColumnHidden(data, cols) &&
+            idx == 0 &&
+            index === 0 && (
               <div
-                id={`${name}${idx}${index}`}
-                key={`${name}${idx}${index}`}
+                key={cols}
                 className={styles["th"]}
                 style={{ width: "100px" }}
-                data-column-id={item}
-                hidden={isColumnHidden(data, item)}
+                data-column-id={cols}
+                hidden={isColumnHidden(data, cols)}
               >
-                {name}{" "}
                 <span
-                  className={"material-symbols-outlined"}
-                  onClick={() => handleSort(item)}
+                  key={"key"}
+                  className={`${styles["black"]} material-symbols-outlined`}
+                  onClick={handleResize}
                   style={{
-                    color: "black",
                     background: "transparent",
+                    position: "relative",
+                    zIndex: 10,
+                    color: "black",
+                    cursor: "cell",
                   }}
+                >
+                  {"aspect_ratio"}
+                </span>
+                {cols}
+                <span
+                  className={`${"material-symbols-outlined"} ${
+                    styles["black"]
+                  }`}
+                  onClick={() => handleSort(cols)}
                 >
                   {!sortState ? "expand_more" : "expand_less"}
                 </span>
-                <div
-                  key={`${name}${idx}`}
-                  className={styles["coldivider"]}
-                  onMouseEnter={handleMouseEnter}
-                ></div>
+                <div className={styles["coldivider"]}></div>
               </div>
-            ))
-            .filter((name) => goodColumns.includes(item));
+            )
+        );
 
-          return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
-        }),
-        ...data
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((_row, rowIndex: number) => (
+        const remainingHeaders = Object.keys(key).map(
+          (cols, index: number) =>
+            !isColumnHidden(data, cols) &&
+            idx == 0 &&
+            index > 0 && (
+              <div
+                key={cols}
+                className={styles["th"]}
+                style={{ width: "100px" }}
+                data-column-id={cols}
+                hidden={isColumnHidden(data, cols)}
+              >
+                {cols}{" "}
+                <span
+                  className={`${"material-symbols-outlined"} ${
+                    styles["black"]
+                  }`}
+                  onClick={() => handleSort(cols)}
+                >
+                  {!sortState ? "expand_more" : "expand_less"}
+                </span>
+                <div className={styles["coldivider"]}></div>
+              </div>
+            )
+        );
+
+        return [...firstHeader, ...remainingHeaders];
+      });
+
+      const rows = [...data]
+        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .map((row, rowIndex: number) => (
+          <div
+            key={`${rowIndex}`}
+            className={styles["tr"]}
+            data-row-id={rowIndex}
+          >
             <div
               key={`${rowIndex}`}
-              className={styles["tr"]}
-              style={{ width: "100%" }}
-            >
-              <div className={styles["tr"]}>
-                {Object.entries(_row)
-                  .map(([key, value], index: number) => (
-                    <div
-                      key={`${key}_${rowIndex}_${index}`}
-                      className={styles["td"]}
-                      data-column-id={key}
-                      style={{ width: "100px" }}
-                      hidden={isColumnHidden(data, key)}
-                    >
-                      {parseValue(value as string, key)}
-                    </div>
-                  ))
-                  .filter((row) =>
-                    goodColumns.includes(row.props["data-column-id"])
-                  )}
-              </div>
-            </div>
-          )),
-      ];
+              className={styles["rowdivider"]}
+              onMouseDown={handleRowClick}
+              onMouseUp={removeMouseDownListener}
+            ></div>
+            {Object.entries(row).map(
+              ([key, value], index: number) =>
+                !isColumnHidden(data, key) && (
+                  <div
+                    key={`${key}_${index}`}
+                    className={styles["td"]}
+                    data-column-id={key}
+                    style={{ width: "100px" }}
+                  >
+                    {parseValue(value as string, key)}
+                  </div>
+                )
+            )}
+          </div>
+        ));
 
-      if (tableRows.length > 0) {
-        const totalPages = Math.ceil(data.length / itemsPerPage);
-        return (
-          <>
-            <div id="gridjs_0" className={styles["ddTable"]}>
-              <div className={styles["thead"]}>
-                {
-                  <>
-                    <input
-                      id="search-input"
-                      type="search"
-                      className={styles["rz-textbox findcomponent"]}
-                      placeholder="Search ..."
-                      autoComplete="on"
-                      style={{
-                        color: "white",
-                        backgroundColor: "black",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #2f333d",
-                        borderTop: "1px solid #2f333d",
-                        cursor: "text",
-                        display: "block",
-                        width: "100%",
-                        padding: "10px",
-                      }}
-                    >
-                    </input>
-                    <div style={{ width: "100%" }}>
-                    <span
-                        className={"material-symbols-outlined"}
+      try {
+        if (rows.length > 0) {
+          const totalPages = Math.ceil(data.length / itemsPerPage);
+          return (
+            <>
+              <div className={cn(styles["table-container"])}>
+                <div
+                  id={"gridjs_0"}
+                  ref={tableRef}
+                  key={"gridjs_0"}
+                  className={styles["divTable"]}
+                >
+                  {
+                    <>
+                      <input
+                        id="search-input"
+                        type="search"
+                        className={styles["rz-textbox findcomponent"]}
+                        placeholder="Search ..."
+                        autoComplete="on"
                         style={{
                           color: "white",
-                          background: "inherit",
-                          display: "flex",
-                          position: "relative",
-                          transform: "translateY(-30px)",
-                          float: "right",
-                          marginRight: "20px",
-                          cursor: "crosshair"
+                          backgroundColor: "black",
+                          fontSize: "14px",
+                          borderBottom: "1px solid #2f333d",
+                          borderTop: "1px solid #2f333d",
+                          cursor: "text",
+                          display: "block",
+                          width: "100%",
+                          padding: "10px",
                         }}
-                      >
-                        {"search"}
-                      </span></div>
-                  </>
-                }
-                <div className={styles["tr"]}>{tableRows[0]}</div>
-              </div>
-              <div className={styles["tbody"]}>
-                {tableRows.slice(1)}
+                      ></input>
+                      <div style={{ width: "100%" }}>
+                        <span
+                          className={"material-symbols-outlined"}
+                          style={{
+                            color: "white",
+                            background: "inherit",
+                            display: "flex",
+                            position: "relative",
+                            transform: "translateY(-30px)",
+                            float: "right",
+                            marginRight: "20px",
+                            cursor: "crosshair",
+                          }}
+                        >
+                          {"search"}
+                        </span>
+                      </div>
+                    </>
+                  }
+                  <div className={styles["tr"]} data-row-id="0">
+                    {header[0]}
+                  </div>
+
+                  <div key={"tbody"} className={styles["tbody"]}>
+                    {rows.slice(1)}
+                  </div>
+                  <div className={styles["tr"]} data-row-id="-1">
+                    <div
+                      className={styles["rowdivider"]}
+                      onMouseDown={handleRowClick}
+                      onMouseUp={removeMouseDownListener}
+                    ></div>
+                  </div>
+                </div>
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
                 />
               </div>
-            </div>
-          </>
-        );
+            </>
+          );
+        }
+      } catch (err) {
+        return <Console code={err.message} />;
       }
     }
   }
@@ -584,7 +880,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({ showCheckbox, style
 
   return (
     <div style={style}>
-      {showCheckbox && (<Checkbox />)}
+      {showCheckbox && <Checkbox />}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
         onMouseEnter={handleShowSearchBox}
