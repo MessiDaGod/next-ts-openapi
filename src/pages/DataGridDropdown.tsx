@@ -21,15 +21,6 @@ type DropdownProps = {
   }[];
 };
 
-// interface DataSet {
-//   [key: number]: number | undefined;
-//   row: number | undefined;
-//   columnName: string | undefined;
-//   columnIndex: number | undefined;
-//   value: string | undefined;
-//   columnCount: number | undefined;
-//   rowCount: number | undefined;
-// }
 
 function getGoodColumns(): Promise<string[]> {
   return fetch("/GoodColumns.json")
@@ -54,7 +45,6 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
         const response = await getPropOptionsAsync(20);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
-        setIsChecked(false);
         const goodCols = await getGoodColumns();
         setGoodColumns(goodCols);
         console.log(goodCols);
@@ -274,9 +264,8 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
 
   return (
     <>
-      <Checkbox
-      // isChecked={isChecked}
-      />
+      {/* <Checkbox
+      /> */}
       {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}

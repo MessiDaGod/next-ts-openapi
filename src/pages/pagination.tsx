@@ -89,7 +89,6 @@ export function Pagination({
           className={styles['td']}
           style={{height: '100%', verticalAlign: 'middle', border: 'none'}}>
           <span
-            // className={"material-symbols-outlined"}
             className={`material-symbols-outlined ${styles['page-button']}`}
             onClick={() => handlePageChange(currentPage + 1)}>
             chevron_right

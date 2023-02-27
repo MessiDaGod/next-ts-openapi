@@ -67,20 +67,17 @@
     }
 }
 
-
-
 .material-symbol-outlined {
     cursor: pointer;
 }
 
 .dropdown {
     margin: 0;
-    padding: 40px;
-    width: calc(var(--ddwidth));
+    width: 175px;
     border: 1px solid blue;
     padding: var(--tablepadding);
-    height: 500px;
-    overflow: hidden;
+    overflow: visible;
+    cursor: hidden;
 }
 
 .rz-placeholder {

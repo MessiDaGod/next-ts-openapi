@@ -250,7 +250,6 @@ export function PropertyDropdown({}) {
         Property
       </label>
       <div className={styles["dropdown-content"]}>
-        {/* {showSearchBox && <div>{table}</div>} */}
         {<div>{table}</div>}
       </div>
     </div>

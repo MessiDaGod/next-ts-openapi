@@ -14,7 +14,10 @@
 
 .tr {
     width: fit-content;
-    height: 30px;
+}
+
+.tr:hover {
+    background: #f88c8c;
 }
 
 .th,
@@ -40,9 +43,7 @@
     // box-sizing: content-box;
 }
 
-.td {
-    height: 30px;
-}
+
 
 .coldivider {
     position: absolute;

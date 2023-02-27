@@ -16,6 +16,7 @@ import { useEvent } from "components/MDX/Sandpack/NavigationBar";
 import { SandpackConsole } from "components/MDX/Sandpack/Console";
 import SandpackRoot from "components/MDX/Sandpack/SandpackRoot";
 import Console from "./Console";
+import PropertyDropdown from "./PropertyDropdown";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -63,12 +64,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const itemsPerPage = 25;
 
-  const onContainerResize = useEvent((containerWidth: number) => {
-    if (tableRef.current === null) {
-      // Some ResizeObserver calls come after unmount.
-      return;
-    }
-  });
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
@@ -77,6 +72,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     async function fetchData() {
       try {
         let response = [];
+
         switch (selectItem) {
           case "GetVendors":
             response = await getVendors(100);
@@ -101,6 +97,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           case undefined:
             break;
         }
+      console.log(response);
       } catch (error) {
         console.error(error);
       }
@@ -113,6 +110,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     dataGridResize(itemsPerPage);
   }, [data]);
 
+  React.useEffect(() => { setColumnWidths("gridjs_"); }, []);
   const memoizedData = React.useMemo(() => GenerateDynamicData(data), []);
 
   function GenerateDynamicData<T>(data: T[] | undefined): DataSet[] {
@@ -142,6 +140,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   function handleResize(e) {
     e.preventDefault();
     setColumnWidths("gridjs_");
+    setRowHeights();
   }
 
   function handleSort(columnName: string) {
@@ -190,6 +189,24 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       console.info("removed mousedown listener");
     });
   }
+
+  function setRowHeights(tableId?: string) {
+    const divTable = document.querySelectorAll(
+      '[class*="' + cn(styles["divTable"]) + '"]'
+    )[0] as HTMLElement;
+    let allrows = Array.from(
+      new Set([
+        ...divTable.querySelectorAll(
+          '[data-row-id*=""]'
+        ),
+      ])
+    );
+    allrows.forEach((row) => {
+      (row as HTMLElement).style.minHeight = "0px";
+      (row as HTMLElement).style.padding = "0px";
+    });
+  }
+
   function handleRowClick(e) {
     e.preventDefault();
     const target = e.target as HTMLElement;
@@ -215,8 +232,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         ? curRow.offsetHeight - padding
         : 0;
     nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
-    console.log(curRow);
-    console.log(nxtRow);
     document.addEventListener("mousemove", function (e3) {
       e3.preventDefault();
       const diffY = e3.pageY - (pageY ?? 0);
@@ -234,7 +249,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
           curRow.style.width = "100%";
           allCells.forEach((cell) => {
-            (cell as HTMLElement).style.border = "2px solid red";
             (cell as HTMLElement).style.minHeight =
               (curRowHeight ?? 0) + diffY + "px";
             (cell as HTMLElement).style.height =
@@ -252,7 +266,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
         allCells.forEach((cell) => {
           (cell as HTMLElement).style.width = "100%";
-          (cell as HTMLElement).style.borderTop = "2px solid blue";
           (cell as HTMLElement).style.minHeight =
             (curRowHeight ?? 0) + diffY + "px";
           (cell as HTMLElement).style.height =
@@ -380,12 +393,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                   className={styles["divTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">
-                    {/* <div
-                      style={{ width: "100%", border: "2px solid green" }}
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div> */}
                     {header[0]}
                   </div>
 

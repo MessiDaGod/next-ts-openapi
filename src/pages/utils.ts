@@ -48,7 +48,7 @@ export function isColumnHidden<T>(data: T[], columnName: string): boolean {
 // }
 
 export function parseValue(value: string, columnName: string): string {
-    if (!columnName.toLowerCase().includes("date") && !columnName.toLowerCase().includes("post")) return value;
+    if (!columnName.toLowerCase().includes("date") && !columnName.toLowerCase().includes("post") && !columnName.toLowerCase().includes("month")) return value;
   if (isNaN(Date.parse(value))) return value;
   else {
     const actualDate = new Date(value);

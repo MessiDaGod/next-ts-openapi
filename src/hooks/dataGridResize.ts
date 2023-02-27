@@ -83,17 +83,17 @@ export function setColumnWidths(tableId: string): ColumnWidths {
     });
   });
 
-  console.log(document.querySelector("#cellCopy"));
   Object.entries(columnWidths).map((width) => {
     const [key, value] = width;
     const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
     cols.forEach((col) => {
       if (col) {
-        const padding = paddingDiff(col as HTMLElement);
         (col as HTMLElement).style.width = `auto`;
         (col as HTMLElement).style.display = "inline-block";
         (col as HTMLElement).style.whiteSpace = "nowrap";
         (col as HTMLElement).style.textAlign = "left";
+        (col as HTMLElement).style.padding = "0px";
+        (col as HTMLElement).style.minHeight = "0px";
         (col as HTMLElement).style.minWidth = `${value}px`;
         (col as HTMLElement).style.width = `${value}px`;
       }

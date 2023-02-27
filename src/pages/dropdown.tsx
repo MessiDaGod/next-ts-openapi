@@ -2,6 +2,8 @@ import React, { CSSProperties, useState, useEffect } from "react";
 import DynamicGrid from "./DynamicGrid";
 import styles from "../styles/Home.module.scss";
 import { cn } from "./classNames";
+import PropertyDropdown from "./PropertyDropdown";
+import DataGridDropdown from "./DataGridDropdown";
 
 interface DropdownProps {
   jsonFileName: string;
@@ -86,9 +88,12 @@ const Dropdown: React.FC<DropdownProps> = ({
             </span>
           ))}
       </div>
+      <div style={{ paddingLeft: "200px" }}><DataGridDropdown /></div>
       <div style={{ width: "100%", height: "auto"  }}></div>
       <DynamicGrid key={selectedItem} selectItem={selectedItem} />
     </>
   );
 };
+
+
 export default Dropdown;
