@@ -83,6 +83,7 @@ export function setColumnWidths(tableId: string): ColumnWidths {
     });
   });
 
+
   Object.entries(columnWidths).map((width) => {
     const [key, value] = width;
     const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -98,13 +99,20 @@ export function setColumnWidths(tableId: string): ColumnWidths {
         (col as HTMLElement).style.width = `${value}px`;
       }
     });
+
+
   });
 
-  // const rowDividers = table.querySelectorAll('[class*="' + "rowdivider" + '"]');
+  let tableWidth = 0;
+  const columns = table.querySelectorAll('[class*="' + "th" + '"]');
+  columns.forEach((col) => {
+    tableWidth += parseInt((col as HTMLElement).style.width) + paddingDiff(col as HTMLElement);
+  });
 
-  // rowDividers.forEach((rowDivider) => {
-  //   (rowDivider as HTMLElement).style.width = "100%";
-  // });
+  (table as HTMLElement).style.width = tableWidth.toString() + "px";
+  (table as HTMLElement).style.border = "2px solid red;";
+  console.log(tableWidth.toString() + "px");
+  console.log(table);
   return columnWidths;
 }
 

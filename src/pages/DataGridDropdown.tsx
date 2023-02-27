@@ -258,8 +258,8 @@ function DataGridDropdown({ props }: { props: DropdownProps[] }) {
 
   return (
     <>
-      {/* <Checkbox
-      /> */}
+      <Checkbox
+      />
       {/* <p style={{ color: "red" }}>Is Checked: {`${isChecked}`}</p> */}
       <div
         className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
