@@ -89,9 +89,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </span>
           ))}
       </div>
-      <div style={{ zIndex: 0, position: "relative" }}>
-        <DynamicGrid key={selectedItem} selectItem={selectedItem} />
-      </div>
+      <DynamicGrid key={selectedItem} selectItem={selectedItem} />
     </>
   );
 };

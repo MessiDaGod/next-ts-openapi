@@ -13,8 +13,8 @@
   ],
   "sidebarItems": [
     {
-      "Name": "Data Grid Dropdown",
-      "Path": "/DataGridDropdown",
+      "Name": "Dynamic Grid",
+      "Path": "/DynamicGrid",
       "Icon": "code",
       "New": true
     }

@@ -9,10 +9,8 @@ import DynamicGrid from "./DynamicGrid";
 
 const properties = getPropOptions(1000);
 
+
 const Home: React.FC = ({}) => (
-
-
-
   <>
     <Head>
       <title>Shakely API</title>
@@ -21,16 +19,12 @@ const Home: React.FC = ({}) => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <main className={styles["main"]}>
-      <div key={"main"} style={{ position: "relative", zIndex: 0 }}>
-        <div style={{ display: "flex" }}>
-          <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />{" "}
-        </div>
-        <div style={{ display: "flex" }}>
-          <DataGridDropdown showCheckbox={true} />{" "}
-        </div>
+      <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
+        <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
       </div>
     </main>
   </>
 );
 
 export default Home;
+
