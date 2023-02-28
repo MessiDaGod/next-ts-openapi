@@ -745,7 +745,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div className={cn(styles["table-container"])}>
+              <div className={cn(styles["dd-container"])}>
                 <div
                   id={"gridjs_0"}
                   ref={tableRef}
@@ -874,7 +874,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         <div className={styles["dropdown-content"]}>
           {showSearchBox && isChecked && <>{table}</>}
           {!isChecked && (
-            <div className={styles["table-container"]}>{table}</div>
+            <div className={styles["dd-container"]}>{table}</div>
           )}
         </div>
       </div>

@@ -92,7 +92,6 @@
     overflow: hidden;
     cursor: pointer;
     z-index: 10000;
-    background-color: black;
 }
 
 .rz-placeholder {
@@ -109,7 +108,15 @@
 .table-container {
     background-color: #504c4c;
     padding: 10px;
+    position: absolute;
 }
+.dd-container {
+    background-color: #504c4c;
+    padding: 10px;
+    position: absolute;
+    z-index: 10000000;
+}
+
 .button {
     align-items: center;
     padding: 0.5rem 1rem;
