@@ -14,6 +14,7 @@ export function isRowEmpty<T>(row: T): boolean {
 
 export function isColumnHidden<T>(data: T[], columnName: string): boolean {
   if (Array.isArray(data)) {
+    if (columnName.toLowerCase() === "account" || columnName.toLowerCase() === "person") return false;
     const columnData = data.map((row) => row[columnName]);
     return columnData.every(
       (value) =>

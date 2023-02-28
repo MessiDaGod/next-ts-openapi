@@ -8,6 +8,7 @@ import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
 import GridDropdown from "./GridDropdown";
+import GenericDropdown from "./GenericDropdown";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -17,7 +18,9 @@ async function GetDimensions(take: number | null = null) {
     const response = await fetch(url, {
       method: "GET",
     });
-    return JSON.parse(await response.text());
+    const result = await response.text();
+    console.log(result);
+    return JSON.parse(result);
   } catch (error) {
     return error;
   }
@@ -653,11 +656,15 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                   >
-                    {key === "PROPERTY" ? (
+                    {key.toUpperCase() === "PROPERTY" ? (
                       <GridDropdown
-                        showCheckbox={false}
-                        style={{ position: "absolute", zIndex: 10000000 }}
-                        showPagination={true}
+                      showCheckbox={false}
+                      style={{ position: "absolute", zIndex: 10000000 }}
+                      showPagination={true}
+                    />
+                    ) : key.toUpperCase() === "ACCOUNT" ? (
+                      <GenericDropdown
+                        selectItem="GetAccounts"
                       />
                     ) : (
                       parseValue(value as string, key)
@@ -673,7 +680,10 @@ function DynamicGrid<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div style={style} className={!style ? cn(styles["table-container"]) : ""}>
+              <div
+                style={style}
+                className={!style ? cn(styles["table-container"]) : ""}
+              >
                 <div
                   id={"gridjs_0"}
                   ref={tableRef}
