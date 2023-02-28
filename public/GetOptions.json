@@ -1,6 +1,9 @@
 {
     "Items": [
         {
+            "Value": "GetDimensions"
+        },
+        {
             "Value": "GetFromQuery"
         },
         {
@@ -11,9 +14,6 @@
         },
         {
             "Value": "GetAccounts"
-        },
-        {
-            "Value": "GetDimensions"
         }
     ]
 }

@@ -4,7 +4,7 @@ import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "./DataGridDropdown.module.scss";
-import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
+import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
 import GridDropdown from "./GridDropdown";
@@ -64,12 +64,14 @@ interface DynamicGridProps {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
+  numItems?: number;
 }
 
 function DynamicGrid<T>({
   selectItem,
   style,
   showPagination,
+  numItems,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -83,10 +85,6 @@ function DynamicGrid<T>({
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-  }
-
-  function handleSetSelected() {
-    setSelected(selectItem);
   }
 
   React.useEffect(() => {
@@ -108,7 +106,7 @@ function DynamicGrid<T>({
             setData(response);
             break;
           case "GetDimensions":
-            response = await GetDimensions(1);
+            response = await GetDimensions(numItems ?? 1);
             setData(response);
             break;
           case "GetFromQuery":
@@ -571,6 +569,14 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
+      // [...data]
+      //   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+      //   .map((row, rowIndex: number) =>
+      //     Object.entries(row).map((item) => {
+      //       console.log(row);
+      //     })
+      //   );
+
       const header = Object.values(data).map((key, idx: number) => {
         const firstHeader = Object.keys(key).map(
           (cols, index: number) =>
@@ -682,7 +688,7 @@ function DynamicGrid<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div className={cn(styles["table-container"])}>
+              <div style={style} className={!style ? cn(styles["table-container"]) : ""}>
                 <div
                   id={"gridjs_0"}
                   ref={tableRef}
@@ -714,8 +720,13 @@ function DynamicGrid<T>({
             </>
           );
         }
-      } catch (err) {
-        return <Console code={err.message} />;
+      } catch (error) {
+        if (error instanceof CustomError) {
+          return <Console code={error.message} />;
+        } else {
+          // handle other types of errors
+          throw error;
+        }
       }
     }
   }

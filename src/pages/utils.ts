@@ -58,3 +58,10 @@ export function parseValue(value: string, columnName: string): string {
 export interface ColumnWidths {
   [columnId: string]: number;
 }
+
+export class CustomError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CustomError';
+  }
+}

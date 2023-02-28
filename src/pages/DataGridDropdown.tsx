@@ -2,7 +2,7 @@ import React, { useState, useRef, CSSProperties } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./DataGridDropdown.module.scss";
-import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
+import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
@@ -709,8 +709,13 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
             </>
           );
         }
-      } catch (err) {
-        return <Console code={err.message} />;
+      } catch (error) {
+        if (error instanceof CustomError) {
+          return <Console code={error.message} />;
+        } else {
+          // handle other types of errors
+          throw error;
+        }
       }
     }
   }
