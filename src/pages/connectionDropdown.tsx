@@ -59,12 +59,12 @@ const ConnectionDropdown: React.FC<DropdownProps> = ({
     getItems();
   }, [id, jsonFileName, label, style]);
 
-  useEffect(() => {
-    document.addEventListener("onload", (e) => {
-      e.preventDefault();
-      console.log("onload");
-    });
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("onload", (e) => {
+  //     e.preventDefault();
+  //     // console.log("onload");
+  //   });
+  // }, []);
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);

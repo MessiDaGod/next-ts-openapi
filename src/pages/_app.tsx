@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
         navigator.userAgent
       );
       if (isSafari) {
-        console.log(isSafari);
+        // console.log(isSafari);
         // This is kind of a lie.
         // We still rely on the manual Next.js scrollRestoration logic.
         // However, we *also* don't want Safari grey screen during the back swipe gesture.

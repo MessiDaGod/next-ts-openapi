@@ -52,6 +52,9 @@ interface DynamicGridProps {
   showCheckbox?: boolean;
   tableRef: React.RefObject<HTMLDivElement>;
   ref: React.RefObject<HTMLDivElement>;
+  itemsPerPage?: number | null;
+  numItems?: number | null;
+  columns?: string[] | null;
 }
 
 function GenericDropdown<T>({
@@ -61,6 +64,9 @@ function GenericDropdown<T>({
   showCheckbox,
   tableRef,
   ref,
+  itemsPerPage,
+  numItems,
+  columns,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
@@ -68,17 +74,13 @@ function GenericDropdown<T>({
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = React.useState(true);
   const [showSearchBox, setShowSearchBox] = React.useState(false);
-  const [hasPagination, setHasPagination] = React.useState(
-    showPagination ?? false
-  );
-  const itemsPerPage = 25;
+  const [hasPagination] = React.useState(showPagination ?? false);
+
+  itemsPerPage = itemsPerPage ?? 10;
+  numItems = numItems ?? 100;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-  }
-
-  function handleSetSelected() {
-    setSelected(selectItem);
   }
 
   React.useEffect(() => {
@@ -88,15 +90,15 @@ function GenericDropdown<T>({
 
         switch (selectItem) {
           case "GetVendors":
-            response = await getVendors(2);
+            response = await getVendors(numItems);
             setData(response);
             break;
           case "GetPropOptions":
-            response = await getPropOptionsAsync(10);
+            response = await getPropOptionsAsync(numItems);
             setData(response);
             break;
           case "GetAccounts":
-            response = await getAccounts(10);
+            response = await getAccounts(numItems);
             setData(response);
             break;
           case "GetDimensions":
@@ -104,7 +106,7 @@ function GenericDropdown<T>({
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total", 5);
+            response = await getFromQuery("total", numItems);
             setData(response);
             break;
           case undefined:
@@ -115,15 +117,15 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
+    tableRef && console.log(tableRef);
   }, [tableRef]);
 
   React.useEffect(() => {
     if (selected) {
-      console.log("React.useEffect initiated");
+      console.log("React.useEffect GenericDropdown: " + selected);
+      dataGridResize(itemsPerPage);
       setColumnWidths();
-      setRowHeights();
-      // dataGridResize(itemsPerPage);
-      // setColumnWidths();
+      // setRowHeights();
     }
   }, [data]);
 
@@ -563,75 +565,71 @@ function GenericDropdown<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      const header = Object.values(data).map((key, idx: number) => {
-        const firstHeader = Object.keys(key).map(
-          (cols, index: number) =>
-            !isColumnHidden(data, cols) &&
-            idx == 0 &&
-            index === 0 && (
-              <div
-                key={cols}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={cols}
-                hidden={isColumnHidden(data, cols)}
-              >
-                <span
-                  key={"key"}
-                  className={`${styles["black"]} material-symbols-outlined`}
-                  onClick={handleResize}
-                  style={{
-                    position: "relative",
-                    color: "black",
-                    cursor: "cell",
-                  }}
-                >
-                  {"aspect_ratio"}
-                </span>
-                {cols}
-                <span
-                  className={`${"material-symbols-outlined"} ${
-                    styles["black"]
-                  }`}
-                  onClick={() => handleSort(cols)}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
-                </span>
-                <div className={styles["coldivider"]}></div>
-              </div>
-            )
-        );
+      const myType =
+        selected === "GetPropOptions"
+          ? "Property"
+          : selected === "GetVendors"
+          ? "Vendor"
+          : selected === "GetAccounts"
+          ? "Account"
+          : null;
 
-        const remainingHeaders = Object.keys(key).map(
-          (cols, index: number) =>
-            !isColumnHidden(data, cols) &&
-            idx == 0 &&
-            index > 0 && (
-              <div
-                key={cols}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={cols}
-                hidden={isColumnHidden(data, cols)}
-              >
-                {cols}{" "}
-                <span
-                  className={`${"material-symbols-outlined"} ${
-                    styles["black"]
-                  }`}
-                  onClick={() => handleSort(cols)}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
-                </span>
-                <div className={styles["coldivider"]}></div>
-              </div>
-            )
-        );
+      if (!myType) return null;
+      const myColumns = myType && columns;
+      const columnKeys = Object.entries(myColumns).map(
+        ([key, value], index: number) => {
+          return { Item: myType, Index: index, Name: value["Name"] };
+        }
+      );
 
-        return [...firstHeader, ...remainingHeaders];
-      });
+      const filteredColumns = myType && columnKeys.map((col) => col.Name);
 
-      const rows = [...data]
+      const headerRow = [...filteredColumns].map((col, index: number) => (
+        <div
+          key={col}
+          className={styles["th"]}
+          style={{ width: "100px" }}
+          data-column-id={col}
+          hidden={isColumnHidden(data, col)}
+        >
+          <span
+            key={"key"}
+            className={`${styles["black"]} material-symbols-outlined`}
+            onClick={handleResize}
+            style={{
+              position: "relative",
+              color: "black",
+              cursor: "cell",
+            }}
+          >
+            {"aspect_ratio"}
+          </span>
+          {col}
+          <span
+            className={`${"material-symbols-outlined"} ${styles["black"]}`}
+            onClick={() => handleSort(col)}
+          >
+            {!sortState ? "expand_more" : "expand_less"}
+          </span>
+          <div className={styles["coldivider"]}></div>
+        </div>
+      ));
+
+      const filteredData =
+        filteredColumns &&
+        data.map((obj) => {
+          const filteredProps = {};
+          Object.keys(obj).forEach((key) => {
+            if (filteredColumns.includes(key)) {
+              filteredProps[key] = obj[key];
+            }
+          });
+          return filteredProps;
+        });
+
+      // console.log(filteredData);
+
+      const rows = [...filteredData]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
           <div
@@ -654,16 +652,7 @@ function GenericDropdown<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                   >
-                    {key === "PROPERTY" ? (
-                      <GenericDropdown
-                        showCheckbox={false}
-                        style={{ position: "absolute", zIndex: 10000000 }}
-                        showPagination={true}
-                        ref={ref}
-                      />
-                    ) : (
-                      parseValue(value as string, key)
-                    )}
+                    {parseValue(value as string, key)}
                   </div>
                 )
             )}
@@ -721,8 +710,9 @@ function GenericDropdown<T>({
                       </div>
                     </>
                   }
+
                   <div className={styles["tr"]} data-row-id="0">
-                    {header[0]}
+                    {headerRow}
                   </div>
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}

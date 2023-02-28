@@ -19,7 +19,6 @@ async function GetDimensions(take: number | null = null) {
       method: "GET",
     });
     const result = await response.text();
-    console.log(result);
     return JSON.parse(result);
   } catch (error) {
     return error;
@@ -48,6 +47,7 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
+
 interface DynamicGridProps {
   selectItem?: string;
   style?: React.CSSProperties;
@@ -66,9 +66,8 @@ function DynamicGrid<T>({
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [hasPagination, setHasPagination] = React.useState(
-    showPagination ?? false
-  );
+  const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
+  const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const itemsPerPage = 25;
 
   function handlePageChange(page: number) {
@@ -104,6 +103,7 @@ function DynamicGrid<T>({
           case undefined:
             break;
         }
+
       } catch (error) {
         console.error(error);
       }
@@ -113,13 +113,33 @@ function DynamicGrid<T>({
 
   React.useEffect(() => {
     if (selected) {
-      console.log("React.useEffect initiated");
+      console.log("React.useEffect from DynamicGrid.tsx");
       setColumnWidths();
       setRowHeights();
-      // dataGridResize(itemsPerPage);
-      // setColumnWidths();
+      function getGoodColumns(): Promise<string[]> {
+        return fetch("/GoodColumns.json")
+          .then((response) => response.json())
+      }
+      const goodCols = getGoodColumns();
+      goodCols.then((data) => {
+        setGoodColumns(data);
+      })
+      // console.log(goodColumns);
     }
   }, [data]);
+
+  // React.useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const goodCols = await getGoodColumns();
+  //       setGoodColumns(goodCols);
+  //       setHasPagination(showPagination);
+  //       goodColumns && console.log(`loggin goodColumns from dynamicGrid.tsx ${goodColumns}`);
+  //     } catch (error) {
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
     if (div.parentElement?.getAttribute("hidden") !== null) return;
@@ -564,6 +584,11 @@ function DynamicGrid<T>({
       //       console.log(row);
       //     })
       //   );
+      const columns = goodColumns;
+        // switch (selected) {
+        //   case "GetVendors":
+        //     console.log(["Vendor"])
+        // }
 
       const header = Object.values(data).map((key, idx: number) => {
         const firstHeader = Object.keys(key).map(
@@ -657,17 +682,34 @@ function DynamicGrid<T>({
                     style={{ width: "100px" }}
                   >
                     {key.toUpperCase() === "PROPERTY" ? (
-                      <GridDropdown
-                      showCheckbox={false}
-                      style={{ position: "absolute", zIndex: 10000000 }}
-                      showPagination={true}
-                    />
+                      <GenericDropdown
+                        selectItem="GetPropOptions"
+                        style={{ position: "absolute", zIndex: 10000000 }}
+                        showPagination={true}
+                        showCheckbox={false}
+                        tableRef={tableRef}
+                        ref={undefined}
+                        columns={columns["Property"]}
+                      />
                     ) : key.toUpperCase() === "ACCOUNT" ? (
                       <GenericDropdown
                         selectItem="GetAccounts"
                         style={{ position: "absolute", zIndex: 10000000 }}
                         showPagination={true}
                         showCheckbox={false}
+                        tableRef={tableRef}
+                        ref={undefined}
+                        columns={columns["Account"]}
+                      />
+                    ) : key.toUpperCase() === "PERSON" ? (
+                      <GenericDropdown
+                        selectItem="GetVendors"
+                        style={{ position: "absolute", zIndex: 10000000 }}
+                        showPagination={true}
+                        showCheckbox={false}
+                        tableRef={tableRef}
+                        ref={undefined}
+                        columns={columns["Vendor"]}
                       />
                     ) : (
                       parseValue(value as string, key)

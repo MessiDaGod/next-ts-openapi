@@ -1,5 +1,4 @@
 import React, { CSSProperties, useState, useEffect } from "react";
-import DynamicGrid from "./DynamicGrid";
 import styles from "./Home.module.scss";
 import { cn } from "./classNames";
 
@@ -88,7 +87,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
   function handleItemChange(item: string) {
-    console.log("Dropdown changed to " + item);
+    // console.log("Dropdown changed to " + item);
     onChange(item);;
   }
 

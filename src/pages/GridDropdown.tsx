@@ -6,7 +6,6 @@ import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
-import Dropdown from "./Dropdown";
 
 export interface DataGridDropdownProps {
   style?: React.CSSProperties;
@@ -56,7 +55,7 @@ const GridDropdown: React.FC<DataGridDropdownProps> = ({
   }, []);
 
   React.useEffect(() => {
-    console.log("React.useEffect initiated");
+    console.log("React.useEffect GridDropdown.tsx");
     dataGridResize(itemsPerPage);
     // setColumnWidths();
     setDropdownWidth();

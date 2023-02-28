@@ -1,9 +1,9 @@
 import { useState } from "react";
 import cn from "classnames";
-import Dropdown from "./Dropdown";
-import DynamicGrid from "./DynamicGrid";
 import styles from "./GridDropdown.module.scss";
 import React from "react";
+import Dropdown from "./dropdown";
+import DynamicGrid from "./dynamicGrid";
 
 export default function Form() {
   const [error, setError] = useState(null);

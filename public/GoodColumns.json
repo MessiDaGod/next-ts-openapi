@@ -1,11 +1,35 @@
-[
-    {
-        "Name": "Id"
-    },
-    {
-        "Name": "Property_Code"
-    },
-    {
-        "Name": "Property_Name"
-    }
-]
+{
+    "Property": [
+        {
+            "Name": "Id"
+        },
+        {
+            "Name": "Property_Code"
+        },
+        {
+            "Name": "Property_Name"
+        }
+    ],
+    "Vendor": [
+        {
+            "Name": "Id"
+        },
+        {
+            "Name": "Vendor_Code"
+        },
+        {
+            "Name": "Last_Name"
+        }
+    ],
+    "Account": [
+        {
+            "Name": "Id"
+        },
+        {
+            "Name": "Account_Code"
+        },
+        {
+            "Name": "Description"
+        }
+    ]
+}
