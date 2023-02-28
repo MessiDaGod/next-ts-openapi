@@ -3,7 +3,7 @@ import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
-import styles from "./DataGridDropdown.module.scss";
+import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
@@ -49,18 +49,22 @@ interface DynamicGridProps {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
+  showCheckbox?: boolean;
 }
 
 function GenericDropdown<T>({
   selectItem,
   style,
   showPagination,
+  showCheckbox,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [isChecked, setIsChecked] = React.useState(true);
+  const [showSearchBox, setShowSearchBox] = React.useState(false);
   const [hasPagination, setHasPagination] = React.useState(
     showPagination ?? false
   );
@@ -667,34 +671,85 @@ function GenericDropdown<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div className={cn(styles["table-container"])}>
+              <div className={cn(styles["dd-container"])}>
                 <div
                   id={"gridjs_0"}
                   ref={tableRef}
                   key={"gridjs_0"}
                   className={styles["ddTable"]}
                 >
+                  <div className={styles["thead"]}></div>
+                  {
+                    <>
+                      <input
+                        id="search-input"
+                        type="search"
+                        className={styles["rz-textbox findcomponent"]}
+                        placeholder="Search ..."
+                        autoComplete="on"
+                        style={{
+                          color: "white",
+                          backgroundColor: "black",
+                          fontSize: "14px",
+                          borderBottom: "1px solid #2f333d",
+                          borderTop: "1px solid #2f333d",
+                          cursor: "text",
+                          display: "block",
+                          width: "100%",
+                          padding: "10px",
+                        }}
+                      ></input>
+                      <div style={{ width: "100%" }}>
+                        <span
+                          className={"material-symbols-outlined"}
+                          style={{
+                            color: "white",
+                            background: "black",
+                            display: "flex",
+                            position: "relative",
+                            transform: "translateY(-30px)",
+                            float: "right",
+                            marginRight: "20px",
+                            cursor: "crosshair",
+                          }}
+                        >
+                          {"search"}
+                        </span>
+                      </div>
+                    </>
+                  }
                   <div className={styles["tr"]} data-row-id="0">
                     {header[0]}
                   </div>
-
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  {/* <div className={styles["tr"]} data-row-id="-1">
-                    <div
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div>
-                  </div> */}
+                  {/* {hasPagination && (
+                      <div className={styles["tr"]} data-row-id="-1">
+                        <div
+                          className={styles["rowdivider"]}
+                          onMouseDown={handleRowClick}
+                          onMouseUp={removeMouseDownListener}
+                        ></div>
+                      </div>
+                    )} */}
+                  {hasPagination && (
+                    <div className={styles["tr"]}>
+                      <Pagination
+                        id="pagination"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        style={{
+                          width: "100%",
+                          verticalAlign: "center",
+                          textAlign: "center",
+                          backgroundColor: "black",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-                <Pagination
-                  id="pagination1"
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
               </div>
             </>
           );
@@ -710,11 +765,83 @@ function GenericDropdown<T>({
     }
   }
 
+  function handleShowSearchBox(e) {
+    setShowSearchBox(true);
+  }
+
+  const handleCheckboxChange = (event: any) => {
+    setIsChecked(event.target.checked);
+  };
+
+  function Checkbox({}) {
+    return (
+      <label>
+        <input
+          id="checkbox"
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => handleCheckboxChange(e)}
+        />
+        Dropdown with MouseEnter
+      </label>
+    );
+  }
+
+  function getHeaderValue(selectItem: string): string {
+    switch (selectItem) {
+      case "GetVendors":
+        return "Vendors";
+      case "GetPropOptions":
+        return "Properties";
+      case "GetAccounts":
+        return "Accounts";
+      case "GetDimensions":
+        return "Dimensions";
+      case "GetFromQuery":
+        return "Query";
+      default:
+        return "Properties";
+    }
+  }
+
   const table = GenerateTableHtml();
 
   if (table && Array.isArray(data) && data.length > 0) {
-    // const totalPages = Math.ceil(data.length / itemsPerPage);
-    return <>{table}</>;
+    return (
+      <div style={style}>
+        {showCheckbox && <Checkbox />}
+        <div
+          className={`${styles["dropdown"]}`}
+          onMouseEnter={handleShowSearchBox}
+          onMouseLeave={() => setShowSearchBox(false)}
+        >
+          <label
+            className={`${styles["rz-placeholder"]}`}
+            style={{
+              width: "100%",
+              cursor: "pointer",
+              borderRadius: `${hasPagination ? "6px" : "0px"}`,
+            }}
+          >
+            {getHeaderValue(selectItem)}
+            <span
+              className={"material-symbols-outlined"}
+              style={{
+                color: "white",
+                display: "inline-block",
+                transform: "translateY(25%)",
+              }}
+            >
+              {showSearchBox ? "expand_more" : "expand_less"}
+            </span>
+          </label>
+          <div className={styles["dropdown-content"]}>
+            {showSearchBox && isChecked && <>{table}</>}
+            {!isChecked && <div>{table}</div>}
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 

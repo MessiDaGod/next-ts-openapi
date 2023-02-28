@@ -665,6 +665,9 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "ACCOUNT" ? (
                       <GenericDropdown
                         selectItem="GetAccounts"
+                        style={{ position: "absolute", zIndex: 10000000 }}
+                        showPagination={true}
+                        showCheckbox={false}
                       />
                     ) : (
                       parseValue(value as string, key)
