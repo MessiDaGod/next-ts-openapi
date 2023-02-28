@@ -7,7 +7,6 @@ const properties = getPropOptions(1000);
 
 const Grid: React.FC = ({}) => (
   <>
-    <DataGridDropdown showCheckbox={false} />
     <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
   </>
 );

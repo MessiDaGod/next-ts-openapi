@@ -401,148 +401,17 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     }
   }
 
-  // function GenerateTableHtml() {
-  //   if (Array.isArray(data) && data.length > 0) {
-  //     const gridItems = GenerateDynamicData(data);
-  //     if (!gridItems) return;
-
-  //     const tableRows = [
-  //       Object.keys(gridItems[0].value).map((item, idx) => {
-  //         const columnNames = item.replaceAll("_", " ").split("_");
-  //         const columnNamesWithLineBreaks = columnNames
-  //           .map((name, index: number) => (
-  //             <div
-  //               id={`${name}${idx}${index}`}
-  //               key={`${name}${idx}${index}`}
-  //               className={styles["th"]}
-  //               style={{ width: "100px" }}
-  //               data-column-id={item}
-  //               hidden={isColumnHidden(data, item)}
-  //             >
-  //               {name}{" "}
-  //               <span
-  //                 className={"material-symbols-outlined"}
-  //                 onClick={() => handleSort(item)}
-  //                 style={{
-  //                   color: "black",
-  //                   background: "transparent",
-  //                 }}
-  //               >
-  //                 {!sortState ? "expand_more" : "expand_less"}
-  //               </span>
-  //               <div
-  //                 key={`${name}${idx}`}
-  //                 className={styles["coldivider"]}
-  //                 onMouseEnter={handleMouseEnter}
-  //               ></div>
-  //             </div>
-  //           ))
-  //           .filter((name) => goodColumns.includes(item));
-
-  //         return <div key={`${idx}`}>{columnNamesWithLineBreaks}</div>;
-  //       }),
-  //       ...data
-  //         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-  //         .map((_row, rowIndex: number) => (
-  //           <div
-  //             key={`${rowIndex}`}
-  //             className={styles["tr"]}
-  //             style={{ width: "100%" }}
-  //           >
-  //             <div className={styles["tr"]}>
-  //               {Object.entries(_row)
-  //                 .map(([key, value], index: number) => (
-  //                   <div
-  //                     key={`${key}_${rowIndex}_${index}`}
-  //                     className={styles["td"]}
-  //                     data-column-id={key}
-  //                     style={{ width: "100px" }}
-  //                     hidden={isColumnHidden(data, key)}
-  //                   >
-  //                     {parseValue(value as string, key)}
-  //                   </div>
-  //                 ))
-  //                 .filter((row) =>
-  //                   goodColumns.includes(row.props["data-column-id"])
-  //                 )}
-  //             </div>
-  //           </div>
-  //         )),
-  //     ];
-
-  //     if (tableRows.length > 0) {
-  //       const totalPages = Math.ceil(data.length / itemsPerPage);
-  //       return (
-  //         <>
-  //           <div id="gridjs_0" className={styles["ddTable"]}>
-  //             <div className={styles["thead"]}>
-  //               {
-  //                 <>
-  //                   <input
-  //                     id="search-input"
-  //                     type="search"
-  //                     className={styles["rz-textbox findcomponent"]}
-  //                     placeholder="Search ..."
-  //                     autoComplete="on"
-  //                     style={{
-  //                       color: "white",
-  //                       backgroundColor: "black",
-  //                       fontSize: "14px",
-  //                       borderBottom: "1px solid #2f333d",
-  //                       borderTop: "1px solid #2f333d",
-  //                       cursor: "text",
-  //                       display: "block",
-  //                       width: "100%",
-  //                       padding: "10px",
-  //                     }}
-  //                   >
-  //                   </input>
-  //                   <div style={{ width: "100%" }}>
-  //                   <span
-  //                       className={"material-symbols-outlined"}
-  //                       style={{
-  //                         color: "white",
-  //                         background: "inherit",
-  //                         display: "flex",
-  //                         position: "relative",
-  //                         transform: "translateY(-30px)",
-  //                         float: "right",
-  //                         marginRight: "20px",
-  //                         cursor: "crosshair"
-  //                       }}
-  //                     >
-  //                       {"search"}
-  //                     </span></div>
-  //                 </>
-  //               }
-  //               <div className={styles["tr"]}>{tableRows[0]}</div>
-  //             </div>
-  //             <div className={styles["tbody"]}>
-  //               {tableRows.slice(1)}
-  //               <Pagination
-  //                 currentPage={currentPage}
-  //                 totalPages={totalPages}
-  //                 onPageChange={handlePageChange}
-  //               />
-  //             </div>
-  //           </div>
-  //         </>
-  //       );
-  //     }
-  //   }
-  // }
-
-  const filteredData = Array.isArray(data)
-    ? data.filter(
-        (item) =>
-          item.Property_Code.toString()
-            .toLowerCase()
-            .includes(searchText.toLowerCase()) ||
-          item.Property_Name.toString()
-            .toLowerCase()
-            .includes(searchText.toLowerCase())
-      )
-    : data;
+  // const filteredData = Array.isArray(data)
+  //   ? data.filter(
+  //       (item) =>
+  //         item.Property_Code.toString()
+  //           .toLowerCase()
+  //           .includes(searchText.toLowerCase()) ||
+  //         item.Property_Name.toString()
+  //           .toLowerCase()
+  //           .includes(searchText.toLowerCase())
+  //     )
+  //   : data;
 
   let pageY: number | undefined,
     curRow: HTMLElement | null,

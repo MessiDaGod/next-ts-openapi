@@ -5,7 +5,7 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  id: string;
+  id?: string;
   style?: CSSProperties;
 }
 

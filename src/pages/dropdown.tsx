@@ -2,8 +2,7 @@ import React, { CSSProperties, useState, useEffect } from "react";
 import DynamicGrid from "./DynamicGrid";
 import styles from "./Home.module.scss";
 import { cn } from "./classNames";
-import PropertyDropdown from "./PropertyDropdown";
-import DataGridDropdown from "./DataGridDropdown";
+
 
 interface DropdownProps {
   jsonFileName: string;

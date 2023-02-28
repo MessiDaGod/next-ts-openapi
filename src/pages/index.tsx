@@ -1,15 +1,7 @@
 import Head from "next/head";
 import styles from "./Home.module.scss";
-import Dropdown from "./dropdown";
 import React from "react";
-import DataGridDropdown from "./DataGridDropdown";
-import { DataGridDropdownProps } from "./DataGridDropdown";
-import { getPropOptions } from "hooks/getPropOptions";
-import DynamicGrid from "./DynamicGrid";
 import Grid from "./Grid";
-
-const properties = getPropOptions(1000);
-
 
 const Home: React.FC = ({}) => (
   <>
@@ -20,7 +12,7 @@ const Home: React.FC = ({}) => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <main className={styles["main"]}>
-      <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
+      <div key={"main"} style={{ position: "relative", zIndex: 0 }}>
         <Grid />
       </div>
     </main>
@@ -28,4 +20,3 @@ const Home: React.FC = ({}) => (
 );
 
 export default Home;
-

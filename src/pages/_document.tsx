@@ -1,13 +1,12 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import Link from "next/link";
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional:opsz,wght,FILL,GRAD@48,400,0,0"
-        />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
       </Head>
       <body className="font-sans antialiased text-lg bg-wash dark:bg-wash-dark text-secondary dark:text-secondary-dark leading-base">
         <script

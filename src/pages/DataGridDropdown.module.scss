@@ -156,3 +156,29 @@
 
 
 
+  .rowdivider {
+    position: absolute;
+    cursor: row-resize;
+    user-select: none;
+    touch-action: none;
+    display: flex;
+}
+
+.rowdivider:hover {
+    opacity: 1;
+}
+
+@media (hover: hover) {
+    .rowdivider {
+        opacity: 0;
+        cursor: row-resize;
+    }
+}
+
+.black {
+    color: black;
+}
+
+.white {
+    color: white;
+}

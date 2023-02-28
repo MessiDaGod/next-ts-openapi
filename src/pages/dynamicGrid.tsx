@@ -24,11 +24,12 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
-async function getFromQuery(table: string) {
+async function getFromQuery(table: string, take: number) {
   try {
     let url = `https://localhost:5006/api/data/RunSqlQuery${
-      table ? `?table=${encodeURIComponent(table)}` : ""
-    }`;
+      table ? `?table=${encodeURIComponent(table)}` : ""}`;
+
+    url += take ? `?take=${encodeURIComponent(take)}` : "";
     const response = await fetch(url, {
       method: "GET",
     });
@@ -49,7 +50,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  // const [isExpanded, setIsExpanded] = React.useState(false);
   const itemsPerPage = 25;
 
   function handlePageChange(page: number) {
@@ -68,23 +69,23 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
         switch (selectItem) {
           case "GetVendors":
-            response = await getVendors(100);
+            response = await getVendors(2);
             setData(response);
             break;
           case "GetPropOptions":
-            response = await getPropOptionsAsync(100);
+            response = await getPropOptionsAsync(10);
             setData(response);
             break;
           case "GetAccounts":
-            response = await getAccounts(100);
+            response = await getAccounts(10);
             setData(response);
             break;
           case "GetDimensions":
-            response = await GetDimensions(5);
+            response = await GetDimensions(1);
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total");
+            response = await getFromQuery("total", 5);
             setData(response);
             break;
           case undefined:
@@ -632,7 +633,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
       try {
         if (rows.length > 0) {
-          console.log(tableRef);
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
