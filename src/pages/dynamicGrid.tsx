@@ -66,13 +66,19 @@ interface DynamicGridProps {
   showPagination?: boolean;
 }
 
-function DynamicGrid<T>({ selectItem, style, showPagination }: DynamicGridProps) {
+function DynamicGrid<T>({
+  selectItem,
+  style,
+  showPagination,
+}: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
+  const [hasPagination, setHasPagination] = React.useState(
+    showPagination ?? false
+  );
   const itemsPerPage = 25;
 
   function handlePageChange(page: number) {
@@ -117,15 +123,17 @@ function DynamicGrid<T>({ selectItem, style, showPagination }: DynamicGridProps)
       }
     }
     fetchData();
-  }, []);
+  }, [tableRef]);
 
   React.useEffect(() => {
     if (selected) {
       console.log("React.useEffect initiated");
-      dataGridResize(itemsPerPage);
       setColumnWidths();
+      setRowHeights();
+      // dataGridResize(itemsPerPage);
+      // setColumnWidths();
     }
-  }, [selected]);
+  }, [data]);
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
     if (div.parentElement?.getAttribute("hidden") !== null) return;
@@ -482,14 +490,16 @@ function DynamicGrid<T>({ selectItem, style, showPagination }: DynamicGridProps)
     const divTable = document.querySelectorAll(
       '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
-    let allrows = Array.from(
-      new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
-    );
-    allrows.forEach((row) => {
-      (row as HTMLElement).style.minHeight = "0px";
-      (row as HTMLElement).style.padding = "0px";
-      (row as HTMLElement).style.zIndex = "0";
-    });
+    if (divTable) {
+      let allrows = Array.from(
+        new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
+      );
+      allrows.forEach((row) => {
+        (row as HTMLElement).style.minHeight = "0px";
+        (row as HTMLElement).style.padding = "0px";
+        (row as HTMLElement).style.zIndex = "0";
+      });
+    }
   }
 
   function handleRowClick(e) {
@@ -653,7 +663,11 @@ function DynamicGrid<T>({ selectItem, style, showPagination }: DynamicGridProps)
                     style={{ width: "100px" }}
                   >
                     {key === "PROPERTY" ? (
-                      <DataGridDropdown showCheckbox={false} style={{ position: "absolute", zIndex: 10000000 }} showPagination={true} />
+                      <DataGridDropdown
+                        showCheckbox={false}
+                        style={{ position: "absolute", zIndex: 10000000 }}
+                        showPagination={true}
+                      />
                     ) : (
                       parseValue(value as string, key)
                     )}
