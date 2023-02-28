@@ -23,21 +23,6 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
-// async function getFromQuery(table: string, take: number) {
-//   try {
-//     let url = `https://localhost:5006/api/data/RunSqlQuery${
-//       table ? `?table=${encodeURIComponent(table)}` : ""}`;
-
-//     url += take ? `?take=${encodeURIComponent(take)}` : "";
-//     const response = await fetch(url, {
-//       method: "GET",
-//     });
-//     return JSON.parse(await response.text());
-//   } catch (error) {
-//     return error;
-//   }
-// }
-
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
   const params = { table, take };
@@ -94,15 +79,15 @@ function DynamicGrid<T>({
 
         switch (selectItem) {
           case "GetVendors":
-            response = await getVendors(2);
+            response = await getVendors(numItems ?? 1);
             setData(response);
             break;
           case "GetPropOptions":
-            response = await getPropOptionsAsync(10);
+            response = await getPropOptionsAsync(numItems ?? 1);
             setData(response);
             break;
           case "GetAccounts":
-            response = await getAccounts(10);
+            response = await getAccounts(numItems ?? 1);
             setData(response);
             break;
           case "GetDimensions":
@@ -110,7 +95,7 @@ function DynamicGrid<T>({
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total", 5);
+            response = await getFromQuery("total", numItems ?? 1);
             setData(response);
             break;
           case undefined:

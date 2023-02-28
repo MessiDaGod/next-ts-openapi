@@ -1,20 +1,47 @@
 import { useState } from "react";
+import cn from "classnames";
 import Dropdown from "./Dropdown";
 import DynamicGrid from "./DynamicGrid";
 import styles from "./GridDropdown.module.scss";
+import React from "react";
 
 export default function Form() {
-  const [answer, setAnswer] = useState<number>(1);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
-  const [item, setItem] = useState(null);
-  const [numItems, setNumItems] = useState(1);
+  const [item, setItem] = useState('');
+  const [numItems, setNumItems] = useState<number>(0);
 
-  function handleSetItem(e) {
+  async function handleSetItem(e) {
     setItem(e);
+    setStatus("submitting");
+    try {
+      await submitForm(item);
+      setStatus("success");
+    } catch (err) {
+      setStatus("typing");
+      setError(err);
+    }
+    await submitForm(item);
   }
 
-  async function handleSubmit(e) {
+  React.useEffect(() => {
+    setNumItems(1);
+  }, []);
+
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+  //   setStatus("submitting");
+  //   try {
+  //     await submitForm(item);
+  //     setStatus("success");
+  //   } catch (err) {
+  //     setStatus("typing");
+  //     setError(err);
+  //   }
+  // }
+
+  async function handleTextareaChange(e) {
+    setNumItems(e.target.value);
     e.preventDefault();
     setStatus("submitting");
     try {
@@ -24,12 +51,6 @@ export default function Form() {
       setStatus("typing");
       setError(err);
     }
-  }
-
-  function handleTextareaChange(e) {
-    console.log(`numItems changed to: ${numItems}`);
-    setNumItems(e.target.value);
-    setAnswer(e.target.value);
   }
 
   return (
@@ -49,22 +70,23 @@ export default function Form() {
         </div>
         <div className={styles["tr"]}>
           <form
-            onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
             style={{
               display: "block",
-              zIndex: 3,
+              zIndex: 1,
               margin: "20px",
             }}
           >
             <input
               style={{ top: "50px", display: "block" }}
+              className={cn(styles["rz-textbox"], styles["findcomponent"])}
               type="number"
-              value={answer}
+              value={numItems}
               onChange={handleTextareaChange}
               disabled={false}
             />
             <br />
-            <button disabled={answer === 0}>Submit</button>
+            {/* <button disabled={numItems === 0}>Submit</button> */}
             {error !== null && <p className="Error">{error.message}</p>}
           </form>
         </div>
@@ -72,7 +94,7 @@ export default function Form() {
           {status === "success" && (
             <DynamicGrid
               style={{
-                display: "inline-block",
+                display: "block",
                 margin: "50px",
                 position: "relative",
               }}
