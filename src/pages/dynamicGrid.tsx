@@ -7,7 +7,6 @@ import styles from "./DataGridDropdown.module.scss";
 import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
-import Dropdown from "./dropdown";
 import DataGridDropdown from "./DataGridDropdown";
 
 async function GetDimensions(take: number | null = null) {
@@ -64,15 +63,16 @@ async function getFromQuery(table: string, take: number) {
 interface DynamicGridProps {
   selectItem?: string;
   style?: React.CSSProperties;
+  showPagination?: boolean;
 }
 
-function DynamicGrid<T>({ selectItem, style }: DynamicGridProps) {
+function DynamicGrid<T>({ selectItem, style, showPagination }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  // const [isExpanded, setIsExpanded] = React.useState(false);
+  const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
   const itemsPerPage = 25;
 
   function handlePageChange(page: number) {
@@ -653,7 +653,7 @@ function DynamicGrid<T>({ selectItem, style }: DynamicGridProps) {
                     style={{ width: "100px" }}
                   >
                     {key === "PROPERTY" ? (
-                      <DataGridDropdown style={{ position: "absolute" }} />
+                      <DataGridDropdown showCheckbox={false} style={{ position: "absolute", zIndex: 10000000 }} showPagination={true} />
                     ) : (
                       parseValue(value as string, key)
                     )}
@@ -682,13 +682,13 @@ function DynamicGrid<T>({ selectItem, style }: DynamicGridProps) {
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  <div className={styles["tr"]} data-row-id="-1">
+                  {/* <div className={styles["tr"]} data-row-id="-1">
                     <div
                       className={styles["rowdivider"]}
                       onMouseDown={handleRowClick}
                       onMouseUp={removeMouseDownListener}
                     ></div>
-                  </div>
+                  </div> */}
                 </div>
                 <Pagination
                   id="pagination1"

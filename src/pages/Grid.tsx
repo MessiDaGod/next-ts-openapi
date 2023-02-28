@@ -1,26 +1,52 @@
 import Dropdown from "./dropdown";
-import React from "react";
+import React, { useState } from "react";
 import { getPropOptions } from "hooks/getPropOptions";
 import DataGridDropdown from "./DataGridDropdown";
 import DynamicGrid from "./DynamicGrid";
 
-const properties = getPropOptions(1000);
+// const properties = getPropOptions(1000);
 
 function Grid({}) {
+const [item, setItem] = useState(null);
+
+function handleSetItem(e) {
+  setItem(e);
+}
+
   return (
     <>
-      <div style={{display: "flex" }}>
+      {/* <div style={{display: "flex", width: "100%" }}>
         <Dropdown
-          style={{ marginBottom: "30px", position: "relative", zIndex: 2 }}
+          style={{ marginBottom: "30px", position: "absolute", zIndex: 1000000 }}
           jsonFileName="GetOptions"
           label="Choose Item to Display"
+          onChange={(e) => handleSetItem(e)}
+          showCheckbox={true}
         />
       </div>
-      <div style={{ display: "flex",  top: "100ox"  }}>
+      <div style={{ display: "inline-block",  top: "100ox"  }}>
         <DynamicGrid
           style={{ zIndex: -1 }}
-          key={"GetDimensions"}
-          selectItem={"GetDimensions"}
+          key={item}
+          selectItem={item}
+        />
+      </div> */}
+
+<div className={}>
+        <Dropdown
+          style={{ marginBottom: "30px", position: "absolute", zIndex: 1000000 }}
+          jsonFileName="GetOptions"
+          label="Choose Item to Display"
+          onChange={(e) => handleSetItem(e)}
+          showCheckbox={true}
+        />
+      </div>
+<div className={}>
+      <div style={{ display: "inline-block",  top: "100ox"  }}>
+        <DynamicGrid
+          style={{ zIndex: -1 }}
+          key={item}
+          selectItem={item}
         />
       </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, CSSProperties } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./DataGridDropdown.module.scss";
@@ -11,6 +11,7 @@ import Dropdown from "./dropdown";
 export interface DataGridDropdownProps {
   style?: React.CSSProperties;
   showCheckbox?: boolean;
+  showPagination?: boolean;
 }
 
 function getGoodColumns(): Promise<string[]> {
@@ -22,6 +23,7 @@ function getGoodColumns(): Promise<string[]> {
 const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   showCheckbox,
   style,
+  showPagination,
 }) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -31,7 +33,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = useState(true);
-  const [hasPagination, setHasPagination] = useState(true);
+  const [hasPagination, setHasPagination] = useState(false);
   const itemsPerPage = 10;
   const cache = new Map<string, any>();
 
@@ -43,6 +45,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         setData(items);
         const goodCols = await getGoodColumns();
         setGoodColumns(goodCols);
+        setHasPagination(showPagination);
       } catch (error) {
         return emptyPropOptions;
       }
@@ -53,7 +56,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   React.useEffect(() => {
     console.log("React.useEffect initiated");
     dataGridResize(itemsPerPage);
-    setColumnWidths();
+    // setColumnWidths();
     setDropdownWidth();
   }, [showSearchBox]);
 
@@ -746,7 +749,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
           style={{
             width: "100%",
             cursor: "pointer",
-            borderRadius: "6px",
+            borderRadius: `${hasPagination ? '6px' : '0px'}`,
           }}
         >
           Property

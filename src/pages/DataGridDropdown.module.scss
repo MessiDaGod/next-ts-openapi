@@ -26,9 +26,9 @@
     height: 30px;
 }
 
-.tr:hover {
-    background: #f7aaaa;
-}
+// .tr:hover {
+//     background: #f7aaaa;
+// }
 
 .th,
 .td {
@@ -85,7 +85,8 @@
 
 .dropdown {
     margin: 0;
-    padding: var(--tablepadding);
+    // padding: var(--tablepadding);
+    padding: 0;
     overflow: hidden;
     cursor: pointer;
     z-index: 10;
@@ -103,8 +104,8 @@
 }
 
 .table-container {
-    background-color: #504c4c;
-    padding: 10px;
+    // background-color: #504c4c;
+    // padding: 20px;
     // position: absolute;
     z-index: 0;
 }

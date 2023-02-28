@@ -8,6 +8,7 @@ interface DropdownProps {
   label: string;
   style?: CSSProperties;
   showCheckbox?: boolean;
+  onChange?: (event: string) => void;
 }
 
 interface ButtonProps {
@@ -41,6 +42,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   label,
   style,
   showCheckbox,
+  onChange,
 }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -81,8 +83,14 @@ const Dropdown: React.FC<DropdownProps> = ({
   const handleMouseLeave = () => setShowDropdown(false);
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
+    handleItemChange(item);
     setShowDropdown(false);
   };
+
+  function handleItemChange(item: string) {
+    console.log("Dropdown changed to " + item);
+    onChange(item);;
+  }
 
   return (
     <>
@@ -95,18 +103,18 @@ const Dropdown: React.FC<DropdownProps> = ({
         <Button id="dd" label={label}>
           {selectedItem}
         </Button>
-        {/* {showCheckbox && <Checkbox />} */}
-        {showDropdown && items?.Items.map((value, index) => (
-          <span
-            key={index}
-            onClick={() => handleItemClick(value.Value)}
-            onMouseEnter={() => setHoveredItem(index)}
-            onMouseLeave={() => setHoveredItem(null)}
-            className={styles["dropdown-item"]}
-          >
-            {value.Value}
-          </span>
-        ))}
+        {showDropdown &&
+          items?.Items.map((value, index) => (
+            <span
+              key={index}
+              onClick={() => handleItemClick(value.Value)}
+              onMouseEnter={() => setHoveredItem(index)}
+              onMouseLeave={() => setHoveredItem(null)}
+              className={styles["dropdown-item"]}
+            >
+              {value.Value}
+            </span>
+          ))}
       </div>
     </>
   );
