@@ -50,6 +50,8 @@ interface DynamicGridProps {
   style?: React.CSSProperties;
   showPagination?: boolean;
   showCheckbox?: boolean;
+  tableRef: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement>;
 }
 
 function GenericDropdown<T>({
@@ -57,9 +59,10 @@ function GenericDropdown<T>({
   style,
   showPagination,
   showCheckbox,
+  tableRef,
+  ref,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
-  const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -652,10 +655,11 @@ function GenericDropdown<T>({
                     style={{ width: "100px" }}
                   >
                     {key === "PROPERTY" ? (
-                      <GridDropdown
+                      <GenericDropdown
                         showCheckbox={false}
                         style={{ position: "absolute", zIndex: 10000000 }}
                         showPagination={true}
+                        ref={ref}
                       />
                     ) : (
                       parseValue(value as string, key)
@@ -674,7 +678,6 @@ function GenericDropdown<T>({
               <div className={cn(styles["dd-container"])}>
                 <div
                   id={"gridjs_0"}
-                  ref={tableRef}
                   key={"gridjs_0"}
                   className={styles["ddTable"]}
                 >

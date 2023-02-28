@@ -12,6 +12,7 @@ export interface DataGridDropdownProps {
   style?: React.CSSProperties;
   showCheckbox?: boolean;
   showPagination?: boolean;
+  ref: React.RefObject<HTMLDivElement>;
 }
 
 function getGoodColumns(): Promise<string[]> {
@@ -24,6 +25,7 @@ const GridDropdown: React.FC<DataGridDropdownProps> = ({
   showCheckbox,
   style,
   showPagination,
+  ref,
 }) => {
   const [data, setData] = React.useState<PropOptions[]>([]);
   const [searchText, setSearchText] = useState("");
