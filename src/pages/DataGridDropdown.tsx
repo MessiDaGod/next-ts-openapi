@@ -2,9 +2,7 @@ import React, { useState, useRef } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./DataGridDropdown.module.scss";
-import PropOptionsPage from "./propOptions";
-import { DataSet, DataTable, GetDataDictionary } from "./api/DataObject";
-import { isColumnHidden, isRowEmpty, parseValue } from "./utils";
+import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
@@ -54,14 +52,10 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     if (showSearchBox) {
       console.log("React.useEffect initiated");
       dataGridResize(itemsPerPage);
-      setColumnWidths("gridjs_");
+      setColumnWidths();
       setDropdownWidth();
     }
   }, [showSearchBox]);
-
-  interface ColumnWidths {
-    [columnId: string]: number;
-  }
 
   function paddingDiffY(col: HTMLElement): number {
     if (getStyleVal(col, "box-sizing") === "border-box") {
@@ -103,93 +97,95 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     });
   }
 
-  function setColumnWidths(tableId: string): ColumnWidths {
-    const tables = [...document.querySelectorAll('[id*="' + tableId + '"]')];
-    const table = tables[0];
-    if (!table) {
-      return {};
-    }
+  function setColumnWidths() {
+    const tables = [...document.querySelectorAll('[id*="' + "gridjs" + '"]')];
+    tables.forEach((mytable) => {
+      const table = mytable;
+      if (!table) return;
 
-    const columnWidths: ColumnWidths = {};
+      const columnWidths: ColumnWidths = {};
 
-    const allRows = [...tables[0].querySelectorAll('[class*="' + "tr" + '"]')];
+      const allRows = [
+        ...tables[0].querySelectorAll('[class*="' + "tr" + '"]'),
+      ];
 
-    function visualLength(s: string) {
-      const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `content-box`;
-      ruler.style.display = "block";
-      ruler.style.visibility = "hidden";
-      ruler.style.position = "absolute";
-      ruler.style.whiteSpace = "nowrap";
-      ruler.style.padding = "0.25rem";
-      ruler.innerText = s;
-      document.body.appendChild(ruler);
-      const padding = paddingDiff(ruler as HTMLElement);
-      const width = Math.round(ruler.getBoundingClientRect().width + padding);
-      document.body.removeChild(ruler);
-      return width;
-    }
+      function visualLength(s: string) {
+        const ruler = document.createElement("div");
+        (ruler as HTMLElement).style.boxSizing = `content-box`;
+        ruler.style.display = "block";
+        ruler.style.visibility = "hidden";
+        ruler.style.position = "absolute";
+        ruler.style.whiteSpace = "nowrap";
+        ruler.style.padding = "0.25rem";
+        ruler.innerText = s;
+        document.body.appendChild(ruler);
+        const padding = paddingDiff(ruler as HTMLElement);
+        const width = Math.round(ruler.getBoundingClientRect().width + padding);
+        document.body.removeChild(ruler);
+        return width;
+      }
 
-    allRows.forEach((row) => {
-      const ths = row.querySelectorAll('[class*="' + "th" + '"]');
-      const tds = row.querySelectorAll('[class*="' + "td" + '"]');
-      const cells = [...ths, ...tds];
+      allRows.forEach((row) => {
+        const ths = row.querySelectorAll('[class*="' + "th" + '"]');
+        const tds = row.querySelectorAll('[class*="' + "td" + '"]');
+        const cells = [...ths, ...tds];
 
-      cells.forEach((cell) => {
-        const columnId = cell.getAttribute("data-column-id");
-        if (columnId && cell.getAttribute("hidden") === null) {
-          var cellCopy = cell.cloneNode(true) as HTMLElement;
-          var spanWidths = 0;
-          const icons = cell.querySelectorAll("span");
-          if (icons && icons.length > 0) {
-            for (let i = 0; i < icons.length; i++) {
-              const icon = icons[i] as HTMLElement;
-              spanWidths += icon.offsetWidth;
+        cells.forEach((cell) => {
+          const columnId = cell.getAttribute("data-column-id");
+          if (columnId && cell.getAttribute("hidden") === null) {
+            var cellCopy = cell.cloneNode(true) as HTMLElement;
+            var spanWidths = 0;
+            const icons = cell.querySelectorAll("span");
+            if (icons && icons.length > 0) {
+              for (let i = 0; i < icons.length; i++) {
+                const icon = icons[i] as HTMLElement;
+                spanWidths += icon.offsetWidth;
+              }
+            }
+            let iconsToRemove = cellCopy.querySelectorAll("span");
+            for (let i = 0; i < iconsToRemove.length; i++) {
+              iconsToRemove[i].remove();
+            }
+            let cellWidth = visualLength(cellCopy.textContent || "");
+            cellWidth += spanWidths;
+            spanWidths = 0;
+            const existingWidth = columnWidths[columnId];
+            if (cellWidth > (existingWidth || 0)) {
+              columnWidths[columnId] = cellWidth;
             }
           }
-          let iconsToRemove = cellCopy.querySelectorAll("span");
-          for (let i = 0; i < iconsToRemove.length; i++) {
-            iconsToRemove[i].remove();
-          }
-          let cellWidth = visualLength(cellCopy.textContent || "");
-          cellWidth += spanWidths;
-          spanWidths = 0;
-          const existingWidth = columnWidths[columnId];
-          if (cellWidth > (existingWidth || 0)) {
-            columnWidths[columnId] = cellWidth;
-          }
-        }
+        });
       });
-    });
 
-    Object.entries(columnWidths).map((width) => {
-      const [key, value] = width;
-      const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
-      cols.forEach((col) => {
-        if (col) {
-          (col as HTMLElement).style.width = `auto`;
-          (col as HTMLElement).style.display = "inline-block";
-          (col as HTMLElement).style.whiteSpace = "nowrap";
-          (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.padding = "0px";
-          (col as HTMLElement).style.minHeight = "0px";
-          (col as HTMLElement).style.minWidth = `${value}px`;
-          (col as HTMLElement).style.width = `${value}px`;
-        }
+      Object.entries(columnWidths).map((width) => {
+        const [key, value] = width;
+        const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
+        cols.forEach((col) => {
+          if (col) {
+            (col as HTMLElement).style.width = `auto`;
+            (col as HTMLElement).style.display = "inline-block";
+            (col as HTMLElement).style.whiteSpace = "nowrap";
+            (col as HTMLElement).style.textAlign = "left";
+            (col as HTMLElement).style.padding = "0px";
+            (col as HTMLElement).style.minHeight = "0px";
+            (col as HTMLElement).style.minWidth = `${value}px`;
+            (col as HTMLElement).style.width = `${value}px`;
+          }
+        });
       });
-    });
 
-    let tableWidth = 0;
-    const columns = table.querySelectorAll('[class*="' + "th" + '"]');
-    columns.forEach((col) => {
-      tableWidth +=
-        parseInt((col as HTMLElement).style.width) +
-        paddingDiff(col as HTMLElement);
-    });
+      let tableWidth = 0;
+      const columns = table.querySelectorAll('[class*="' + "th" + '"]');
+      columns.forEach((col) => {
+        tableWidth +=
+          parseInt((col as HTMLElement).style.width) +
+          paddingDiff(col as HTMLElement);
+      });
 
-    (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    // (table as HTMLElement).style.border = "2px solid red";
-    return columnWidths;
+      (table as HTMLElement).style.width = tableWidth.toString() + "px";
+      // (table as HTMLElement).style.border = "2px solid red";
+      return columnWidths;
+    });
   }
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
@@ -204,7 +200,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
 
     if (div.parentElement) {
       div.addEventListener("dblclick", function (e: MouseEvent): void {
-        setColumnWidths("gridjs_");
+        setColumnWidths();
       });
 
       div.addEventListener(
@@ -407,35 +403,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     }
   }
 
-  function GenerateDynamicData<T>(data?: T[]): DataSet[] {
-    if (!data) data = [];
-
-    const myDataSet: DataSet[] = [];
-
-    // const goodColumns = getGoodColumns();
-    if (data.length === 0) return myDataSet;
-    for (let i = 0; i < data.length; i++) {
-      const values = Object.entries(data);
-      values.map((value, idx: number) => {
-        myDataSet.push({
-          row: i,
-          columnName: value[0],
-          columnIndex: idx,
-          value: value[1] as string,
-          columnCount: values.length,
-          rowCount: !data ? 0 : data.length,
-        });
-      });
-    }
-
-    return myDataSet;
-  }
-
-  function handleMouseEnter(e) {
-    dataGridResize(itemsPerPage);
-  }
-
-  // function GenerateTableHtml() {
+   // function GenerateTableHtml() {
   //   if (Array.isArray(data) && data.length > 0) {
   //     const gridItems = GenerateDynamicData(data);
   //     if (!gridItems) return;
@@ -667,15 +635,12 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
 
   function handleResize(e) {
     e.preventDefault();
-    setColumnWidths("gridjs_");
+    setColumnWidths();
     setRowHeights();
   }
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      const gridItems = GenerateDynamicData(data);
-      if (!gridItems) return;
-
       const header = Object.values(data).map((key, idx: number) => {
         const firstHeader = Object.keys(key).map(
           (cols, index: number) =>
@@ -694,7 +659,6 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                   className={`${styles["black"]} material-symbols-outlined`}
                   onClick={handleResize}
                   style={{
-                    background: "transparent",
                     position: "relative",
                     zIndex: 10,
                     color: "black",
@@ -786,8 +750,9 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                   id={"gridjs_0"}
                   ref={tableRef}
                   key={"gridjs_0"}
-                  className={styles["divTable"]}
+                  className={styles["ddTable"]}
                 >
+                  <div className={styles["thead"]}></div>
                   {
                     <>
                       <input
@@ -813,7 +778,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                           className={"material-symbols-outlined"}
                           style={{
                             color: "white",
-                            background: "inherit",
+                            background: "black",
                             display: "flex",
                             position: "relative",
                             transform: "translateY(-30px)",
@@ -894,12 +859,11 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
             borderRadius: "6px",
           }}
         >
-          &nbsp;Property&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Property
           <span
             className={"material-symbols-outlined"}
             style={{
               color: "white",
-              background: "transparent",
               display: "inline-block",
               transform: "translateY(25%)",
             }}
@@ -908,9 +872,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
           </span>
         </label>
         <div className={styles["dropdown-content"]}>
-          {showSearchBox && isChecked && (
-            <div className={styles["table-container"]}>{table}</div>
-          )}
+          {showSearchBox && isChecked && <>{table}</>}
           {!isChecked && (
             <div className={styles["table-container"]}>{table}</div>
           )}

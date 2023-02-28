@@ -61,14 +61,36 @@ export function Pagination({
   }
 
   return totalPages > 1 ? (
-
-    <div className={styles["paginationDiv"]} style={{ width: "100%", verticalAlign: "center", textAlign: "center", backgroundColor: "black" }}>
-      <div className={styles["tr"]} style={{ height: "50px", textAlign: "center", justifyContent: "center" }}>
-      {pageNumbers.map((pageNumber) => (
-        pageNumber === 1 && (<p key={pageNumber}>Page {pageNumber} of {totalPages}</p>)
-      ))}
+    <div
+      className={styles["paginationDiv"]}
+      style={{
+        width: "100%",
+        verticalAlign: "center",
+        textAlign: "center",
+        backgroundColor: "black",
+      }}
+    >
+      <div
+        className={styles["tr"]}
+        style={{
+          height: "50px",
+          textAlign: "center",
+          justifyContent: "center",
+        }}
+      >
+        {pageNumbers.map(
+          (pageNumber) =>
+            pageNumber === 1 && (
+              <p key={currentPage}>
+                Page {currentPage} of {totalPages}
+              </p>
+            )
+        )}
         {showChevrons && (
-          <div className={styles["td"]} style={{ height: "100%", borderColor: "transparent" }}>
+          <div
+            className={styles["td"]}
+            style={{ height: "100%", borderColor: "transparent" }}
+          >
             <span
               className={`material-symbols-outlined ${styles["page-button"]}`}
               onClick={() => handlePageChange(currentPage - 1)}
@@ -78,24 +100,21 @@ export function Pagination({
           </div>
         )}
         {pageNumbers.map((pageNumber) => (
-            <button
-              id={`button${pageNumber}`}
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={`${
-                pageNumber === currentPage ? styles.active : styles.button
-              } ${styles["td"]}`}
-              style={{ color: "white", width: "auto", display: "flex" }}
-            >
-              {pageNumber}
-            </button>
+          <button
+            id={`button${pageNumber}`}
+            key={pageNumber}
+            onClick={() => handlePageChange(pageNumber)}
+            className={`${
+              pageNumber === currentPage ? styles.active : styles.button
+            } ${styles["td"]}`}
+            style={{ color: "white", width: "auto", display: "flex" }}
+          >
+            {pageNumber}
+          </button>
         ))}
 
         {showChevrons && (
-          <div
-            className={styles["td"]}
-            style={{ height: "100%" }}
-          >
+          <div className={styles["td"]} style={{ height: "100%" }}>
             <span
               className={`material-symbols-outlined ${styles["page-button"]}`}
               onClick={() => handlePageChange(currentPage + 1)}

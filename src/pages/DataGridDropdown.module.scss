@@ -5,7 +5,7 @@
     background-color: #2e2e2e;
     border: 1px solid white;
     padding: 10px;
-    z-index: 9;
+    z-index: 0;
 }
 
 .ddTable {
@@ -15,7 +15,7 @@
     background-color: #2e2e2e;
     border: 1px solid white;
     padding: 10px;
-    z-index: 10;
+    z-index: 100000;
 }
 
 .tr {
@@ -40,6 +40,7 @@
     text-overflow: ellipsis;
     text-align: left;
     font-size: 14px;
+    z-index: 0;
 }
 
 .th {
@@ -90,6 +91,8 @@
     padding: var(--tablepadding);
     overflow: hidden;
     cursor: pointer;
+    z-index: 10000;
+    background-color: black;
 }
 
 .rz-placeholder {

@@ -1,5 +1,3 @@
-// @ts-nocheck
-// @ts-ignore
 import {Linter} from 'eslint/lib/linter/linter';
 
 import type {Diagnostic} from '@codemirror/lint';
