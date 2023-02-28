@@ -24,18 +24,37 @@ async function GetDimensions(take: number | null = null) {
   }
 }
 
-async function getFromQuery(table: string, take: number) {
-  try {
-    let url = `https://localhost:5006/api/data/RunSqlQuery${
-      table ? `?table=${encodeURIComponent(table)}` : ""}`;
+// async function getFromQuery(table: string, take: number) {
+//   try {
+//     let url = `https://localhost:5006/api/data/RunSqlQuery${
+//       table ? `?table=${encodeURIComponent(table)}` : ""}`;
 
-    url += take ? `?take=${encodeURIComponent(take)}` : "";
-    const response = await fetch(url, {
+//     url += take ? `?take=${encodeURIComponent(take)}` : "";
+//     const response = await fetch(url, {
+//       method: "GET",
+//     });
+//     return JSON.parse(await response.text());
+//   } catch (error) {
+//     return error;
+//   }
+// }
+
+async function getFromQuery(table: string, take: number) {
+  const url = "https://localhost:5006/api/data/RunSqlQuery";
+  const params = { table, take };
+  const queryString = Object.entries(params)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join("&");
+  const fullUrl = `${url}?${queryString}`;
+  try {
+    const response = await fetch(fullUrl, {
       method: "GET",
     });
-    return JSON.parse(await response.text());
+    const data = await response.json();
+    return data;
   } catch (error) {
-    return error;
+    console.error(error);
+    return null;
   }
 }
 
@@ -57,8 +76,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     setCurrentPage(page);
   }
 
-  function handleSetSelected()
-  {
+  function handleSetSelected() {
     setSelected(selectItem);
   }
 
@@ -624,7 +642,11 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     data-column-id={key}
                     style={{ width: "100px" }}
                   >
-                    {key === "PROPERTY" ? <DataGridDropdown /> : parseValue(value as string, key)}
+                    {key === "PROPERTY" ? (
+                      <DataGridDropdown />
+                    ) : (
+                      parseValue(value as string, key)
+                    )}
                   </div>
                 )
             )}
@@ -659,7 +681,8 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     ></div>
                   </div>
                 </div>
-                <Pagination id="pagination1"
+                <Pagination
+                  id="pagination1"
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
