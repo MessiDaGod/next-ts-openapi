@@ -5,7 +5,6 @@
     background-color: #2e2e2e;
     border: 1px solid white;
     padding: 10px;
-    z-index: 0;
 }
 
 .ddTable {
@@ -15,7 +14,6 @@
     background-color: #2e2e2e;
     border: 1px solid white;
     padding: 10px;
-    z-index: 100000;
 }
 
 .tr {
@@ -40,7 +38,6 @@
     text-overflow: ellipsis;
     text-align: left;
     font-size: 14px;
-    z-index: 0;
 }
 
 .th {
@@ -91,7 +88,7 @@
     padding: var(--tablepadding);
     overflow: hidden;
     cursor: pointer;
-    z-index: 10000;
+    z-index: 10;
 }
 
 .rz-placeholder {
@@ -108,13 +105,13 @@
 .table-container {
     background-color: #504c4c;
     padding: 10px;
-    position: absolute;
+    // position: absolute;
+    z-index: 0;
 }
 .dd-container {
     background-color: #504c4c;
     padding: 10px;
     position: absolute;
-    z-index: 10000000;
 }
 
 .button {
@@ -123,7 +120,6 @@
     cursor: pointer;
     font-size: 14px;
     color: black;
-    z-index: 5;
     border-style: solid;
     border-color: white;
     cursor: pointer;
@@ -143,7 +139,6 @@
     cursor: pointer;
     font-size: 14px;
     color: black;
-    z-index: 5;
     border-style: solid;
     border-color: white;
     cursor: pointer;

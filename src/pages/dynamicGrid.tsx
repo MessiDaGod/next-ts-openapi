@@ -3,7 +3,7 @@ import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
-import styles from "./yardiInterface.module.scss";
+import styles from "./DataGridDropdown.module.scss";
 import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
@@ -43,7 +43,10 @@ async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
   const params = { table, take };
   const queryString = Object.entries(params)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
     .join("&");
   const fullUrl = `${url}?${queryString}`;
   try {
@@ -59,11 +62,11 @@ async function getFromQuery(table: string, take: number) {
 }
 
 interface DynamicGridProps {
-  [key: string]: string;
   selectItem?: string;
+  style?: React.CSSProperties;
 }
 
-function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
+function DynamicGrid<T>({ selectItem, style }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
@@ -179,6 +182,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           if (curCol) {
             curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             curCol.style.width = (curColWidth ?? 0) + diffX + "px";
+            (curCol as HTMLElement).style.zIndex = "0";
 
             if (tables[0]) {
               let allCells = Array.from(
@@ -194,6 +198,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     (curColWidth ?? 0) + diffX + "px";
                   (cell as HTMLElement).style.width =
                     (curColWidth ?? 0) + diffX + "px";
+                  (cell as HTMLElement).style.zIndex = "0";
                 });
             }
           }
@@ -201,6 +206,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
           if (nxtCol) {
             nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
             nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
+            (nxtCol as HTMLElement).style.zIndex = "0";
 
             if (tables[0]) {
               let allCells = Array.from(
@@ -216,6 +222,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     (nxtColWidth ?? 0) + diffX + "px";
                   (cell as HTMLElement).style.width =
                     (nxtColWidth ?? 0) + diffX + "px";
+                  (cell as HTMLElement).style.zIndex = "0";
                 });
             }
           }
@@ -258,6 +265,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         columns.forEach((th) => {
           th.style.width = th.getBoundingClientRect().width + "px";
           th.style.minWidth = th.getBoundingClientRect().width + "px";
+          (th as HTMLElement).style.zIndex = "0";
         });
         resizableGrid(tables[i] as HTMLTableElement);
       }
@@ -350,6 +358,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         ruler.style.position = "absolute";
         ruler.style.whiteSpace = "nowrap";
         ruler.style.padding = "0.25rem";
+        (ruler as HTMLElement).style.zIndex = "0";
         ruler.innerText = s;
         document.body.appendChild(ruler);
         const padding = paddingDiff(ruler as HTMLElement);
@@ -401,6 +410,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
             (col as HTMLElement).style.textAlign = "left";
             (col as HTMLElement).style.padding = "0px";
             (col as HTMLElement).style.minHeight = "0px";
+            (col as HTMLElement).style.zIndex = "0";
             (col as HTMLElement).style.minWidth = `${value}px`;
             (col as HTMLElement).style.width = `${value}px`;
           }
@@ -416,7 +426,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
       });
 
       (table as HTMLElement).style.width = tableWidth.toString() + "px";
-      // (table as HTMLElement).style.border = "2px solid red";
+      (table as HTMLElement).style.zIndex = "0";
       return columnWidths;
     });
   }
@@ -470,7 +480,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
   function setRowHeights(tableId?: string) {
     const divTable = document.querySelectorAll(
-      '[class*="' + cn(styles["divTable"]) + '"]'
+      '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
     let allrows = Array.from(
       new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
@@ -478,6 +488,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     allrows.forEach((row) => {
       (row as HTMLElement).style.minHeight = "0px";
       (row as HTMLElement).style.padding = "0px";
+      (row as HTMLElement).style.zIndex = "0";
     });
   }
 
@@ -485,7 +496,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
     e.preventDefault();
     const target = e.target as HTMLElement;
     const divTable = document.querySelectorAll(
-      '[class*="' + cn(styles["divTable"]) + '"]'
+      '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
 
     const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
@@ -539,7 +550,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
         );
 
         allCells.forEach((cell) => {
-          (cell as HTMLElement).style.width = "100%";
           (cell as HTMLElement).style.minHeight =
             (curRowHeight ?? 0) + diffY + "px";
           (cell as HTMLElement).style.height =
@@ -643,7 +653,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     style={{ width: "100px" }}
                   >
                     {key === "PROPERTY" ? (
-                      <DataGridDropdown />
+                      <DataGridDropdown style={{ position: "absolute" }} />
                     ) : (
                       parseValue(value as string, key)
                     )}
@@ -663,7 +673,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                   id={"gridjs_0"}
                   ref={tableRef}
                   key={"gridjs_0"}
-                  className={styles["divTable"]}
+                  className={styles["ddTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">
                     {header[0]}
@@ -677,7 +687,6 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                       className={styles["rowdivider"]}
                       onMouseDown={handleRowClick}
                       onMouseUp={removeMouseDownListener}
-                      style={{ width: "100%", borderTop: "2px solid green" }}
                     ></div>
                   </div>
                 </div>

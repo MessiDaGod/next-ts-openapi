@@ -3,11 +3,11 @@ import DynamicGrid from "./DynamicGrid";
 import styles from "./Home.module.scss";
 import { cn } from "./classNames";
 
-
 interface DropdownProps {
   jsonFileName: string;
   label: string;
   style?: CSSProperties;
+  showCheckbox?: boolean;
 }
 
 interface ButtonProps {
@@ -40,11 +40,13 @@ const Dropdown: React.FC<DropdownProps> = ({
   jsonFileName = {},
   label,
   style,
+  showCheckbox,
 }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
   const [items, setItems] = useState<Menu | null>(null);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+  const [isChecked, setIsChecked] = useState(true);
 
   useEffect(() => {
     async function getItems() {
@@ -56,6 +58,24 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
     getItems();
   }, []);
+
+  const handleCheckboxChange = (event: any) => {
+    setIsChecked(event.target.checked);
+  };
+
+  function Checkbox({}) {
+    return (
+      <label>
+        <input
+          id="checkbox"
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => handleCheckboxChange(e)}
+        />
+        Dropdown with MouseEnter
+      </label>
+    );
+  }
 
   const handleMouseEnter = () => setShowDropdown(true);
   const handleMouseLeave = () => setShowDropdown(false);
@@ -75,20 +95,19 @@ const Dropdown: React.FC<DropdownProps> = ({
         <Button id="dd" label={label}>
           {selectedItem}
         </Button>
-        {showDropdown &&
-          items?.Items.map((value, index) => (
-            <span
-              key={index}
-              onClick={() => handleItemClick(value.Value)}
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className={styles["dropdown-item"]}
-            >
-              {value.Value}
-            </span>
-          ))}
+        {/* {showCheckbox && <Checkbox />} */}
+        {showDropdown && items?.Items.map((value, index) => (
+          <span
+            key={index}
+            onClick={() => handleItemClick(value.Value)}
+            onMouseEnter={() => setHoveredItem(index)}
+            onMouseLeave={() => setHoveredItem(null)}
+            className={styles["dropdown-item"]}
+          >
+            {value.Value}
+          </span>
+        ))}
       </div>
-      <DynamicGrid key={selectedItem} selectItem={selectedItem} />
     </>
   );
 };

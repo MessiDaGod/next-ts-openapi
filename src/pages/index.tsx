@@ -12,7 +12,7 @@ const Home: React.FC = ({}) => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <main className={styles["main"]}>
-      <div key={"main"} style={{ position: "relative", zIndex: 0 }}>
+      <div key={"main"}>
         <Grid />
       </div>
     </main>

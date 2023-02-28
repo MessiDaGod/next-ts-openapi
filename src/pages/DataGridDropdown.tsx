@@ -31,6 +31,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [isChecked, setIsChecked] = useState(true);
+  const [hasPagination, setHasPagination] = useState(true);
   const itemsPerPage = 10;
   const cache = new Map<string, any>();
 
@@ -675,27 +676,31 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  <div className={styles["tr"]} data-row-id="-1">
-                    <div
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div>
-                  </div>{" "}
-                  <div className={styles["tr"]}>
-                    <Pagination
-                      id="pagination"
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={handlePageChange}
-                      style={{
-                        width: "100%",
-                        verticalAlign: "center",
-                        textAlign: "center",
-                        backgroundColor: "black",
-                      }}
-                    />{" "}
-                  </div>
+                  {hasPagination && (
+                    <div className={styles["tr"]} data-row-id="-1">
+                      <div
+                        className={styles["rowdivider"]}
+                        onMouseDown={handleRowClick}
+                        onMouseUp={removeMouseDownListener}
+                      ></div>
+                    </div>
+                  )}
+                  {hasPagination && (
+                    <div className={styles["tr"]}>
+                      <Pagination
+                        id="pagination"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        style={{
+                          width: "100%",
+                          verticalAlign: "center",
+                          textAlign: "center",
+                          backgroundColor: "black",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </>

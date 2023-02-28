@@ -120,11 +120,14 @@
 
 .rowdivider:hover {
     opacity: 1;
+    width: 100%;
+    cursor: row-resize;
 }
 
 @media (hover: hover) {
     .rowdivider {
-        opacity: 0;
+        opacity: 1;
+        width: 100%;
         cursor: row-resize;
     }
 }
