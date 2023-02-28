@@ -8,6 +8,7 @@ import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
 import Dropdown from "./dropdown";
+import DataGridDropdown from "./DataGridDropdown";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -622,7 +623,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     data-column-id={key}
                     style={{ width: "100px" }}
                   >
-                    {parseValue(value as string, key)}
+                    {key === "PROPERTY" ? <DataGridDropdown /> : parseValue(value as string, key)}
                   </div>
                 )
             )}
