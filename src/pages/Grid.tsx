@@ -1,11 +1,7 @@
-import Dropdown from "./dropdown";
+import Dropdown from "./Dropdown";
 import React, { useState } from "react";
-import { getPropOptions } from "hooks/getPropOptions";
-import DataGridDropdown from "./DataGridDropdown";
 import DynamicGrid from "./DynamicGrid";
-import styles from "./DataGridDropdown.module.scss";
-
-// const properties = getPropOptions(1000);
+import styles from "./GridDropdown.module.scss";
 
 function Grid({}) {
   const [item, setItem] = useState(null);
@@ -15,46 +11,46 @@ function Grid({}) {
   }
 
   return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <td className={styles["td"]}>
-              <div
-                className={styles["tr"]}
-                style={{ display: "flex", width: "auto" }}
-              >
-                <Dropdown
-                  style={{
-                    marginBottom: "30px",
-                    position: "absolute",
-                    zIndex: 1000000,
-                  }}
-                  jsonFileName="GetOptions"
-                  label="Choose Item to Display"
-                  onChange={(e) => handleSetItem(e)}
-                  showCheckbox={true}
-                />
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td className={styles["td"]}>
-              <div
-                style={{ display: "inline-block", top: "100ox" }}
-                className={styles["tr"]}
-              >
-                <DynamicGrid
-                  style={{ zIndex: -1 }}
-                  key={item}
-                  selectItem={item}
-                />
-              </div>
-            </td>
-          </tr>
-        </thead>
-      </table>
-    </>
+    <table>
+      <thead>
+        <tr>
+          <td>
+            <div
+              className={styles["tr"]}
+              style={{ display: "flex", width: "auto" }}
+            >
+              <Dropdown
+                style={{
+                  position: "absolute",
+                }}
+                jsonFileName="GetOptions"
+                label="Choose Item to Display"
+                onChange={(e) => handleSetItem(e)}
+                showCheckbox={true}
+              />
+            </div>
+          </td>
+        </tr>
+        <tr style={{ height: "10px" }}>
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <div
+              style={{ display: "inline-block" }}
+              className={styles["tr"]}
+            >
+              <DynamicGrid
+                style={{ zIndex: -1, padding: "0" }}
+                key={item}
+                selectItem={item}
+                showPagination={false}
+              />
+            </div>
+          </td>
+        </tr>
+      </thead>
+    </table>
   );
 }
 

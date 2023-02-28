@@ -1,139 +1,194 @@
-import React, { useRef } from "react";
-import { getVendors } from "./api/getVendors";
-import { Pagination } from "./pagination";
+import React, { useState, useRef, CSSProperties } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
-import { getAccounts } from "./api/getAccounts";
-import styles from "./DataGridDropdown.module.scss";
+import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
+import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
+import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
-import GridDropdown from "./GridDropdown";
+import Dropdown from "./Dropdown";
 
-async function GetDimensions(take: number | null = null) {
-  try {
-    let url = `https://localhost:5006/api/data/GetDimensions${
-      take ? `?take=${encodeURIComponent(take)}` : ""
-    }`;
-    const response = await fetch(url, {
-      method: "GET",
-    });
-    return JSON.parse(await response.text());
-  } catch (error) {
-    return error;
-  }
-}
-
-// async function getFromQuery(table: string, take: number) {
-//   try {
-//     let url = `https://localhost:5006/api/data/RunSqlQuery${
-//       table ? `?table=${encodeURIComponent(table)}` : ""}`;
-
-//     url += take ? `?take=${encodeURIComponent(take)}` : "";
-//     const response = await fetch(url, {
-//       method: "GET",
-//     });
-//     return JSON.parse(await response.text());
-//   } catch (error) {
-//     return error;
-//   }
-// }
-
-async function getFromQuery(table: string, take: number) {
-  const url = "https://localhost:5006/api/data/RunSqlQuery";
-  const params = { table, take };
-  const queryString = Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join("&");
-  const fullUrl = `${url}?${queryString}`;
-  try {
-    const response = await fetch(fullUrl, {
-      method: "GET",
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-interface DynamicGridProps {
-  selectItem?: string;
+export interface DataGridDropdownProps {
   style?: React.CSSProperties;
+  showCheckbox?: boolean;
   showPagination?: boolean;
 }
 
-function DynamicGrid<T>({
-  selectItem,
+function getGoodColumns(): Promise<string[]> {
+  return fetch("/GoodColumns.json")
+    .then((response) => response.json())
+    .then((data) => data.map((item: any) => item.Name));
+}
+
+const GridDropdown: React.FC<DataGridDropdownProps> = ({
+  showCheckbox,
   style,
   showPagination,
-}: DynamicGridProps) {
-  const [data, setData] = React.useState<T[]>([]);
+}) => {
+  const [data, setData] = React.useState<PropOptions[]>([]);
+  const [searchText, setSearchText] = useState("");
   const tableRef = useRef<HTMLDivElement | null>(null);
-  const [selected, setSelected] = React.useState(selectItem);
+  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [goodColumns, setGoodColumns] = useState<string[]>([""]);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [hasPagination, setHasPagination] = React.useState(
-    showPagination ?? false
-  );
-  const itemsPerPage = 25;
-
-  function handlePageChange(page: number) {
-    setCurrentPage(page);
-  }
-
-  function handleSetSelected() {
-    setSelected(selectItem);
-  }
+  const [isChecked, setIsChecked] = useState(true);
+  const [hasPagination, setHasPagination] = useState(false);
+  const itemsPerPage = 10;
+  const cache = new Map<string, any>();
 
   React.useEffect(() => {
     async function fetchData() {
       try {
-        let response = [];
-
-        switch (selectItem) {
-          case "GetVendors":
-            response = await getVendors(2);
-            setData(response);
-            break;
-          case "GetPropOptions":
-            response = await getPropOptionsAsync(10);
-            setData(response);
-            break;
-          case "GetAccounts":
-            response = await getAccounts(10);
-            setData(response);
-            break;
-          case "GetDimensions":
-            response = await GetDimensions(1);
-            setData(response);
-            break;
-          case "GetFromQuery":
-            response = await getFromQuery("total", 5);
-            setData(response);
-            break;
-          case undefined:
-            break;
-        }
+        const response = await getPropOptionsAsync(20);
+        const items = JSON.parse(JSON.stringify(response));
+        setData(items);
+        const goodCols = await getGoodColumns();
+        setGoodColumns(goodCols);
+        setHasPagination(showPagination);
       } catch (error) {
-        console.error(error);
+        return emptyPropOptions;
       }
     }
     fetchData();
-  }, [tableRef]);
+  }, []);
 
   React.useEffect(() => {
-    if (selected) {
-      console.log("React.useEffect initiated");
-      setColumnWidths();
-      setRowHeights();
-      // dataGridResize(itemsPerPage);
-      // setColumnWidths();
+    console.log("React.useEffect initiated");
+    dataGridResize(itemsPerPage);
+    // setColumnWidths();
+    setDropdownWidth();
+  }, [showSearchBox]);
+
+  function paddingDiffY(col: HTMLElement): number {
+    if (getStyleVal(col, "box-sizing") === "border-box") {
+      return 0;
     }
-  }, [data]);
+    const padTop = getStyleVal(col, "padding-top");
+    const padBottom = getStyleVal(col, "padding-bottom");
+    return parseInt(padTop) + parseInt(padBottom);
+  }
+
+  function paddingDiff(col: HTMLElement): number {
+    if (getStyleVal(col, "box-sizing") === "border-box") {
+      return 0;
+    }
+    const padLeft = getStyleVal(col, "padding-left");
+    const padRight = getStyleVal(col, "padding-right");
+    return parseInt(padLeft) + parseInt(padRight);
+  }
+
+  function getStyleVal(elm: HTMLElement, css: string): string {
+    return window.getComputedStyle(elm, null).getPropertyValue(css);
+  }
+
+  function setDropdownWidth() {
+    const tables = document.querySelectorAll('[id*="' + "gridjs" + '"]');
+    tables.forEach((mytable) => {
+      const table = mytable as HTMLElement;
+      const dropdownDivs = document.querySelectorAll(
+        '[class*="' + "dropdown" + '"]'
+      );
+      dropdownDivs.forEach((dropdownDiv) => {
+        const dropdown = dropdownDiv as HTMLElement;
+        const parent = (table as HTMLElement).parentElement
+          .parentElement as HTMLElement;
+        dropdown.style.border = "";
+
+        // let page = document.getElementById("pagination") as HTMLElement;
+        // if (page) page.style.width = tableRef.current?.offsetWidth + "px";
+      });
+    });
+  }
+
+  function setColumnWidths() {
+    const tables = [...document.querySelectorAll('[id*="' + "gridjs" + '"]')];
+    tables.forEach((mytable) => {
+      const table = mytable;
+      if (!table) return;
+
+      const columnWidths: ColumnWidths = {};
+
+      const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
+
+      function visualLength(s: string) {
+        const ruler = document.createElement("div");
+        (ruler as HTMLElement).style.boxSizing = `content-box`;
+        ruler.style.display = "block";
+        ruler.style.visibility = "hidden";
+        ruler.style.position = "absolute";
+        ruler.style.whiteSpace = "nowrap";
+        // ruler.style.padding = "0.25rem";
+        ruler.innerText = s;
+        document.body.appendChild(ruler);
+        const padding = paddingDiff(ruler as HTMLElement);
+        const width = Math.round(ruler.getBoundingClientRect().width + padding);
+        document.body.removeChild(ruler);
+        return width;
+      }
+
+      allRows.forEach((row) => {
+        const ths = row.querySelectorAll('[class*="' + "th" + '"]');
+        const tds = row.querySelectorAll('[class*="' + "td" + '"]');
+        const cells = [...ths, ...tds];
+
+        cells.forEach((cell) => {
+          const columnId = cell.getAttribute("data-column-id");
+          if (columnId && cell.getAttribute("hidden") === null) {
+            var cellCopy = cell.cloneNode(true) as HTMLElement;
+            var spanWidths = 0;
+            const icons = cell.querySelectorAll("span");
+            if (icons && icons.length > 0) {
+              for (let i = 0; i < icons.length; i++) {
+                const icon = icons[i] as HTMLElement;
+                spanWidths += icon.offsetWidth;
+              }
+            }
+            let iconsToRemove = cellCopy.querySelectorAll("span");
+            for (let i = 0; i < iconsToRemove.length; i++) {
+              iconsToRemove[i].remove();
+            }
+            let cellWidth = visualLength(cellCopy.textContent || "");
+            cellWidth += spanWidths;
+            spanWidths = 0;
+            const existingWidth = columnWidths[columnId];
+            if (cellWidth > (existingWidth || 0)) {
+              columnWidths[columnId] = cellWidth;
+            }
+          }
+        });
+      });
+
+      Object.entries(columnWidths).map((width) => {
+        const [key, value] = width;
+        const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
+        cols.forEach((col) => {
+          if (col) {
+            (col as HTMLElement).style.width = `auto`;
+            (col as HTMLElement).style.display = "inline-block";
+            (col as HTMLElement).style.whiteSpace = "nowrap";
+            (col as HTMLElement).style.textAlign = "left";
+            (col as HTMLElement).style.padding = "0px";
+            (col as HTMLElement).style.minHeight = "0px";
+            (col as HTMLElement).style.minWidth = `${value}px`;
+            (col as HTMLElement).style.width = `${value}px`;
+          }
+        });
+      });
+
+      let tableWidth = 0;
+      const columns = table.querySelectorAll('[class*="' + "th" + '"]');
+      columns.forEach((col) => {
+        tableWidth +=
+          parseInt((col as HTMLElement).style.width) +
+          paddingDiff(col as HTMLElement);
+      });
+
+      (table as HTMLElement).style.width = tableWidth.toString() + "px";
+      // (table as HTMLElement).style.border = "2px solid red";
+      return columnWidths;
+    });
+  }
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
     if (div.parentElement?.getAttribute("hidden") !== null) return;
@@ -190,7 +245,6 @@ function DynamicGrid<T>({
           if (curCol) {
             curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-            (curCol as HTMLElement).style.zIndex = "0";
 
             if (tables[0]) {
               let allCells = Array.from(
@@ -206,7 +260,6 @@ function DynamicGrid<T>({
                     (curColWidth ?? 0) + diffX + "px";
                   (cell as HTMLElement).style.width =
                     (curColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.zIndex = "0";
                 });
             }
           }
@@ -214,7 +267,6 @@ function DynamicGrid<T>({
           if (nxtCol) {
             nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
             nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-            (nxtCol as HTMLElement).style.zIndex = "0";
 
             if (tables[0]) {
               let allCells = Array.from(
@@ -230,7 +282,6 @@ function DynamicGrid<T>({
                     (nxtColWidth ?? 0) + diffX + "px";
                   (cell as HTMLElement).style.width =
                     (nxtColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.zIndex = "0";
                 });
             }
           }
@@ -273,7 +324,6 @@ function DynamicGrid<T>({
         columns.forEach((th) => {
           th.style.width = th.getBoundingClientRect().width + "px";
           th.style.minWidth = th.getBoundingClientRect().width + "px";
-          (th as HTMLElement).style.zIndex = "0";
         });
         resizableGrid(tables[i] as HTMLTableElement);
       }
@@ -318,125 +368,12 @@ function DynamicGrid<T>({
     }
   }
 
-  function handleResize(e) {
-    e.preventDefault();
-    setColumnWidths();
-    setRowHeights();
+  function handleShowSearchBox(e) {
+    setShowSearchBox(true);
   }
 
-  function paddingDiffY(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padTop = getStyleVal(col, "padding-top");
-    const padBottom = getStyleVal(col, "padding-bottom");
-    return parseInt(padTop) + parseInt(padBottom);
-  }
-
-  function paddingDiff(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padLeft = getStyleVal(col, "padding-left");
-    const padRight = getStyleVal(col, "padding-right");
-    return parseInt(padLeft) + parseInt(padRight);
-  }
-
-  function getStyleVal(elm: HTMLElement, css: string): string {
-    return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
-
-  function setColumnWidths() {
-    const tables = [...document.querySelectorAll('[id*="' + "gridjs" + '"]')];
-    tables.forEach((mytable) => {
-      const table = mytable;
-      if (!table) return;
-
-      const columnWidths: ColumnWidths = {};
-
-      const allRows = [
-        ...tables[0].querySelectorAll('[class*="' + "tr" + '"]'),
-      ];
-
-      function visualLength(s: string) {
-        const ruler = document.createElement("div");
-        (ruler as HTMLElement).style.boxSizing = `content-box`;
-        ruler.style.display = "block";
-        ruler.style.visibility = "hidden";
-        ruler.style.position = "absolute";
-        ruler.style.whiteSpace = "nowrap";
-        ruler.style.padding = "0.25rem";
-        (ruler as HTMLElement).style.zIndex = "0";
-        ruler.innerText = s;
-        document.body.appendChild(ruler);
-        const padding = paddingDiff(ruler as HTMLElement);
-        const width = Math.round(ruler.getBoundingClientRect().width + padding);
-        document.body.removeChild(ruler);
-        return width;
-      }
-
-      allRows.forEach((row) => {
-        const ths = row.querySelectorAll('[class*="' + "th" + '"]');
-        const tds = row.querySelectorAll('[class*="' + "td" + '"]');
-        const cells = [...ths, ...tds];
-
-        cells.forEach((cell) => {
-          const columnId = cell.getAttribute("data-column-id");
-          if (columnId && cell.getAttribute("hidden") === null) {
-            var cellCopy = cell.cloneNode(true) as HTMLElement;
-            var spanWidths = 0;
-            const icons = cell.querySelectorAll("span");
-            if (icons && icons.length > 0) {
-              for (let i = 0; i < icons.length; i++) {
-                const icon = icons[i] as HTMLElement;
-                spanWidths += icon.offsetWidth;
-              }
-            }
-            let iconsToRemove = cellCopy.querySelectorAll("span");
-            for (let i = 0; i < iconsToRemove.length; i++) {
-              iconsToRemove[i].remove();
-            }
-            let cellWidth = visualLength(cellCopy.textContent || "");
-            cellWidth += spanWidths;
-            spanWidths = 0;
-            const existingWidth = columnWidths[columnId];
-            if (cellWidth > (existingWidth || 0)) {
-              columnWidths[columnId] = cellWidth;
-            }
-          }
-        });
-      });
-
-      Object.entries(columnWidths).map((width) => {
-        const [key, value] = width;
-        const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
-        cols.forEach((col) => {
-          if (col) {
-            (col as HTMLElement).style.width = `auto`;
-            (col as HTMLElement).style.display = "inline-block";
-            (col as HTMLElement).style.whiteSpace = "nowrap";
-            (col as HTMLElement).style.textAlign = "left";
-            (col as HTMLElement).style.padding = "0px";
-            (col as HTMLElement).style.minHeight = "0px";
-            (col as HTMLElement).style.zIndex = "0";
-            (col as HTMLElement).style.minWidth = `${value}px`;
-            (col as HTMLElement).style.width = `${value}px`;
-          }
-        });
-      });
-
-      let tableWidth = 0;
-      const columns = table.querySelectorAll('[class*="' + "th" + '"]');
-      columns.forEach((col) => {
-        tableWidth +=
-          parseInt((col as HTMLElement).style.width) +
-          paddingDiff(col as HTMLElement);
-      });
-
-      (table as HTMLElement).style.width = tableWidth.toString() + "px";
-      (table as HTMLElement).style.zIndex = "0";
-      return columnWidths;
-    });
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
   }
 
   function handleSort(columnName: string) {
@@ -468,6 +405,18 @@ function DynamicGrid<T>({
     }
   }
 
+  // const filteredData = Array.isArray(data)
+  //   ? data.filter(
+  //       (item) =>
+  //         item.Property_Code.toString()
+  //           .toLowerCase()
+  //           .includes(searchText.toLowerCase()) ||
+  //         item.Property_Name.toString()
+  //           .toLowerCase()
+  //           .includes(searchText.toLowerCase())
+  //     )
+  //   : data;
+
   let pageY: number | undefined,
     curRow: HTMLElement | null,
     nxtRow: HTMLElement | null,
@@ -487,25 +436,22 @@ function DynamicGrid<T>({
   }
 
   function setRowHeights(tableId?: string) {
-    const divTable = document.querySelectorAll(
+    const ddTable = document.querySelectorAll(
       '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
-    if (divTable) {
-      let allrows = Array.from(
-        new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
-      );
-      allrows.forEach((row) => {
-        (row as HTMLElement).style.minHeight = "0px";
-        (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = "0";
-      });
-    }
+    let allrows = Array.from(
+      new Set([...ddTable.querySelectorAll('[data-row-id*=""]')])
+    );
+    allrows.forEach((row) => {
+      (row as HTMLElement).style.minHeight = "0px";
+      (row as HTMLElement).style.padding = "0px";
+    });
   }
 
   function handleRowClick(e) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    const divTable = document.querySelectorAll(
+    const ddTable = document.querySelectorAll(
       '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
 
@@ -526,7 +472,7 @@ function DynamicGrid<T>({
       curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
         ? curRow.offsetHeight - padding
         : 0;
-    nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
+    nxtRowHeight = ddTable ? ddTable.offsetHeight - padding : 0;
     document.addEventListener("mousemove", function (e3) {
       e3.preventDefault();
       const diffY = e3.pageY - (pageY ?? 0);
@@ -534,7 +480,7 @@ function DynamicGrid<T>({
       if (curRow) {
         let allCells = Array.from(
           new Set([
-            ...divTable.querySelectorAll(
+            ...ddTable.querySelectorAll(
               '[data-row-id="' + curRow.dataset.rowId + '"]'
             ),
           ])
@@ -554,12 +500,11 @@ function DynamicGrid<T>({
 
       if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
         let allCells = Array.from(
-          new Set([
-            ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
-          ])
+          new Set([...ddTable.querySelectorAll('[data-row-id="' + "-1" + '"]')])
         );
 
         allCells.forEach((cell) => {
+          (cell as HTMLElement).style.width = "100%";
           (cell as HTMLElement).style.minHeight =
             (curRowHeight ?? 0) + diffY + "px";
           (cell as HTMLElement).style.height =
@@ -567,6 +512,12 @@ function DynamicGrid<T>({
         });
       }
     });
+  }
+
+  function handleResize(e) {
+    e.preventDefault();
+    setColumnWidths();
+    setRowHeights();
   }
 
   function GenerateTableHtml() {
@@ -584,18 +535,6 @@ function DynamicGrid<T>({
                 data-column-id={cols}
                 hidden={isColumnHidden(data, cols)}
               >
-                <span
-                  key={"key"}
-                  className={`${styles["black"]} material-symbols-outlined`}
-                  onClick={handleResize}
-                  style={{
-                    position: "relative",
-                    color: "black",
-                    cursor: "cell",
-                  }}
-                >
-                  {"aspect_ratio"}
-                </span>
                 {cols}
                 <span
                   className={`${"material-symbols-outlined"} ${
@@ -662,15 +601,7 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                   >
-                    {key === "PROPERTY" ? (
-                      <GridDropdown
-                        showCheckbox={false}
-                        style={{ position: "absolute", zIndex: 10000000 }}
-                        showPagination={true}
-                      />
-                    ) : (
-                      parseValue(value as string, key)
-                    )}
+                    {parseValue(value as string, key)}
                   </div>
                 )
             )}
@@ -682,34 +613,85 @@ function DynamicGrid<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div className={cn(styles["table-container"])}>
+              <div className={cn(styles["dd-container"])}>
                 <div
                   id={"gridjs_0"}
                   ref={tableRef}
                   key={"gridjs_0"}
                   className={styles["ddTable"]}
                 >
+                  <div className={styles["thead"]}></div>
+                  {
+                    <>
+                      <input
+                        id="search-input"
+                        type="search"
+                        className={styles["rz-textbox findcomponent"]}
+                        placeholder="Search ..."
+                        autoComplete="on"
+                        style={{
+                          color: "white",
+                          backgroundColor: "black",
+                          fontSize: "14px",
+                          borderBottom: "1px solid #2f333d",
+                          borderTop: "1px solid #2f333d",
+                          cursor: "text",
+                          display: "block",
+                          width: "100%",
+                          padding: "10px",
+                        }}
+                      ></input>
+                      <div style={{ width: "100%" }}>
+                        <span
+                          className={"material-symbols-outlined"}
+                          style={{
+                            color: "white",
+                            background: "black",
+                            display: "flex",
+                            position: "relative",
+                            transform: "translateY(-30px)",
+                            float: "right",
+                            marginRight: "20px",
+                            cursor: "crosshair",
+                          }}
+                        >
+                          {"search"}
+                        </span>
+                      </div>
+                    </>
+                  }
                   <div className={styles["tr"]} data-row-id="0">
                     {header[0]}
                   </div>
-
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  {/* <div className={styles["tr"]} data-row-id="-1">
-                    <div
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div>
-                  </div> */}
+                  {/* {hasPagination && (
+                    <div className={styles["tr"]} data-row-id="-1">
+                      <div
+                        className={styles["rowdivider"]}
+                        onMouseDown={handleRowClick}
+                        onMouseUp={removeMouseDownListener}
+                      ></div>
+                    </div>
+                  )} */}
+                  {hasPagination && (
+                    <div className={styles["tr"]}>
+                      <Pagination
+                        id="pagination"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        style={{
+                          width: "100%",
+                          verticalAlign: "center",
+                          textAlign: "center",
+                          backgroundColor: "black",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-                <Pagination
-                  id="pagination1"
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
               </div>
             </>
           );
@@ -721,12 +703,61 @@ function DynamicGrid<T>({
   }
 
   const table = GenerateTableHtml();
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  if (table && Array.isArray(data) && data.length > 0) {
-    const totalPages = Math.ceil(data.length / itemsPerPage);
+  const handleCheckboxChange = (event: any) => {
+    setIsChecked(event.target.checked);
+  };
 
-    return <>{table}</>;
+  function Checkbox({}) {
+    return (
+      <label>
+        <input
+          id="checkbox"
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => handleCheckboxChange(e)}
+        />
+        Dropdown with MouseEnter
+      </label>
+    );
   }
-}
 
-export default DynamicGrid;
+  return (
+    <div style={style}>
+      {showCheckbox && <Checkbox />}
+      <div
+        className={`${styles["dropdown"]}`}
+        onMouseEnter={handleShowSearchBox}
+        onMouseLeave={() => setShowSearchBox(false)}
+      >
+        <label
+          className={`${styles["rz-placeholder"]}`}
+          style={{
+            width: "100%",
+            cursor: "pointer",
+            borderRadius: `${hasPagination ? '1px' : '0px'}`,
+          }}
+        >
+          Property
+          <span
+            className={"material-symbols-outlined"}
+            style={{
+              color: "white",
+              display: "inline-block",
+              transform: "translateY(25%)",
+            }}
+          >
+            {showSearchBox ? "expand_more" : "expand_less"}
+          </span>
+        </label>
+        <div className={styles["dropdown-content"]}>
+          {showSearchBox && isChecked && <>{table}</>}
+          {!isChecked && <div>{table}</div>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GridDropdown;

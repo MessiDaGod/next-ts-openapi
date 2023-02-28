@@ -6,7 +6,7 @@ import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
-import Dropdown from "./dropdown";
+import Dropdown from "./Dropdown";
 
 export interface DataGridDropdownProps {
   style?: React.CSSProperties;
