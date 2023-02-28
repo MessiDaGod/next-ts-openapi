@@ -12,6 +12,6 @@ export async function getVendors(take: number | null = null) {
     const vendors: Vendor[] = JSON.parse(await response.text());
     return vendors;
   } catch (error) {
-    // ignore
+    return [];
   }
 }
