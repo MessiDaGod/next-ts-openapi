@@ -1,16 +1,20 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import styles from "./DataGridDropdown.module.scss";
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  id: string;
+  style?: CSSProperties;
 }
 
 export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
+  id,
+  style,
 }: PaginationProps) {
   const [showChevrons, setShowChevrons] = React.useState<boolean>(true);
 
@@ -62,14 +66,9 @@ export function Pagination({
 
   return totalPages > 1 ? (
     <div
+    id={id}
       className={styles["paginationDiv"]}
-      style={{
-        position: "fixed",
-        width: "100%",
-        verticalAlign: "center",
-        textAlign: "center",
-        backgroundColor: "black",
-      }}
+      style={style}
     >
       <div
         className={styles["tr"]}
@@ -83,7 +82,7 @@ export function Pagination({
           (pageNumber) =>
             pageNumber === 1 && (
               <p key={currentPage}>
-                Page {currentPage} of {totalPages}
+                Page <br />{currentPage}of {totalPages}&nbsp;
               </p>
             )
         )}

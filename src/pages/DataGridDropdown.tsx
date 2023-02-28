@@ -6,6 +6,7 @@ import { ColumnWidths, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
 import Console from "./Console";
+import Dropdown from "./dropdown";
 
 export interface DataGridDropdownProps {
   style?: React.CSSProperties;
@@ -90,14 +91,8 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
           .parentElement as HTMLElement;
         dropdown.style.border = "";
 
-        const paginationdivs = document.querySelectorAll(
-          '[class*="' + cn(styles["paginationDiv"]) + '"]'
-        );
-        console.log(paginationdivs);
-        paginationdivs.forEach((div) => {
-          console.log("paginationdiv");
-          (div as HTMLElement).style.width = dropdown.offsetWidth + "px";
-        });
+        // let page = document.getElementById("pagination") as HTMLElement;
+        // if (page) page.style.width = tableRef.current?.offsetWidth + "px";
       });
     });
   }
@@ -110,9 +105,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
 
       const columnWidths: ColumnWidths = {};
 
-      const allRows = [
-        ...tables[0].querySelectorAll('[class*="' + "tr" + '"]'),
-      ];
+      const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
 
       function visualLength(s: string) {
         const ruler = document.createElement("div");
@@ -810,23 +803,32 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                   <div className={styles["tr"]} data-row-id="0">
                     {header[0]}
                   </div>
-
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  <div className={styles["tr"]} data-row-id="-1"></div>
-                  <div
-                    className={styles["rowdivider"]}
-                    onMouseDown={handleRowClick}
-                    onMouseUp={removeMouseDownListener}
-                  ></div>
+                  <div className={styles["tr"]} data-row-id="-1">
+                    <div
+                      className={styles["rowdivider"]}
+                      onMouseDown={handleRowClick}
+                      onMouseUp={removeMouseDownListener}
+                    ></div>
+                  </div>{" "}
+                  <div className={styles["tr"]}>
+                    <Pagination
+                      id="pagination"
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      style={{
+                        width: "100%",
+                        verticalAlign: "center",
+                        textAlign: "center",
+                        backgroundColor: "black",
+                      }}
+                    />{" "}
+                  </div>
                 </div>
               </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
             </>
           );
         }
@@ -861,7 +863,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     <div style={style}>
       {showCheckbox && <Checkbox />}
       <div
-        className={`${styles["dropdown"]} ${styles["rz-dropdown"]}`}
+        className={`${styles["dropdown"]}`}
         onMouseEnter={handleShowSearchBox}
         onMouseLeave={() => setShowSearchBox(false)}
       >
