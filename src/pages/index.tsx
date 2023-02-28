@@ -6,6 +6,7 @@ import DataGridDropdown from "./DataGridDropdown";
 import { DataGridDropdownProps } from "./DataGridDropdown";
 import { getPropOptions } from "hooks/getPropOptions";
 import DynamicGrid from "./DynamicGrid";
+import Grid from "./Grid";
 
 const properties = getPropOptions(1000);
 
@@ -20,7 +21,7 @@ const Home: React.FC = ({}) => (
     </Head>
     <main className={styles["main"]}>
       <div key={"main" }style={{ position: "relative", zIndex: 0 }}>
-        <Dropdown jsonFileName="GetOptions" label="Choose Item to Display" />
+        <Grid />
       </div>
     </main>
   </>

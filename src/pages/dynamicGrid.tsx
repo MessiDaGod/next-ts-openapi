@@ -631,6 +631,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
 
       try {
         if (rows.length > 0) {
+          console.log(tableRef);
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>

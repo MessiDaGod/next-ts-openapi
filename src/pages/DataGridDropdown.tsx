@@ -49,12 +49,10 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (showSearchBox) {
-      console.log("React.useEffect initiated");
-      dataGridResize(itemsPerPage);
-      setColumnWidths();
-      setDropdownWidth();
-    }
+    console.log("React.useEffect initiated");
+    dataGridResize(itemsPerPage);
+    setColumnWidths();
+    setDropdownWidth();
   }, [showSearchBox]);
 
   function paddingDiffY(col: HTMLElement): number {
@@ -90,9 +88,16 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         const dropdown = dropdownDiv as HTMLElement;
         const parent = (table as HTMLElement).parentElement
           .parentElement as HTMLElement;
-        // dropdown.style.width = table.style.width;
-        dropdown.style.border = "2px solid yellow";
-        dropdown.style.border = "none";
+        dropdown.style.border = "";
+
+        const paginationdivs = document.querySelectorAll(
+          '[class*="' + cn(styles["paginationDiv"]) + '"]'
+        );
+        console.log(paginationdivs);
+        paginationdivs.forEach((div) => {
+          console.log("paginationdiv");
+          (div as HTMLElement).style.width = dropdown.offsetWidth + "px";
+        });
       });
     });
   }
@@ -403,7 +408,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
     }
   }
 
-   // function GenerateTableHtml() {
+  // function GenerateTableHtml() {
   //   if (Array.isArray(data) && data.length > 0) {
   //     const gridItems = GenerateDynamicData(data);
   //     if (!gridItems) return;
@@ -534,6 +539,18 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   //   }
   // }
 
+  const filteredData = Array.isArray(data)
+    ? data.filter(
+        (item) =>
+          item.Property_Code.toString()
+            .toLowerCase()
+            .includes(searchText.toLowerCase()) ||
+          item.Property_Name.toString()
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
+      )
+    : data;
+
   let pageY: number | undefined,
     curRow: HTMLElement | null,
     nxtRow: HTMLElement | null,
@@ -553,11 +570,11 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   }
 
   function setRowHeights(tableId?: string) {
-    const divTable = document.querySelectorAll(
-      '[class*="' + cn(styles["divTable"]) + '"]'
+    const ddTable = document.querySelectorAll(
+      '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
     let allrows = Array.from(
-      new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
+      new Set([...ddTable.querySelectorAll('[data-row-id*=""]')])
     );
     allrows.forEach((row) => {
       (row as HTMLElement).style.minHeight = "0px";
@@ -568,8 +585,8 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   function handleRowClick(e) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    const divTable = document.querySelectorAll(
-      '[class*="' + cn(styles["divTable"]) + '"]'
+    const ddTable = document.querySelectorAll(
+      '[class*="' + cn(styles["ddTable"]) + '"]'
     )[0] as HTMLElement;
 
     const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
@@ -589,7 +606,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
       curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
         ? curRow.offsetHeight - padding
         : 0;
-    nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
+    nxtRowHeight = ddTable ? ddTable.offsetHeight - padding : 0;
     document.addEventListener("mousemove", function (e3) {
       e3.preventDefault();
       const diffY = e3.pageY - (pageY ?? 0);
@@ -597,7 +614,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
       if (curRow) {
         let allCells = Array.from(
           new Set([
-            ...divTable.querySelectorAll(
+            ...ddTable.querySelectorAll(
               '[data-row-id="' + curRow.dataset.rowId + '"]'
             ),
           ])
@@ -617,9 +634,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
 
       if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
         let allCells = Array.from(
-          new Set([
-            ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
-          ])
+          new Set([...ddTable.querySelectorAll('[data-row-id="' + "-1" + '"]')])
         );
 
         allCells.forEach((cell) => {
@@ -799,20 +814,19 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  <div className={styles["tr"]} data-row-id="-1">
-                    <div
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div>
-                  </div>
+                  <div className={styles["tr"]} data-row-id="-1"></div>
+                  <div
+                    className={styles["rowdivider"]}
+                    onMouseDown={handleRowClick}
+                    onMouseUp={removeMouseDownListener}
+                  ></div>
                 </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
               </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </>
           );
         }
@@ -873,9 +887,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         </label>
         <div className={styles["dropdown-content"]}>
           {showSearchBox && isChecked && <>{table}</>}
-          {!isChecked && (
-            <div className={styles["dd-container"]}>{table}</div>
-          )}
+          {!isChecked && <div>{table}</div>}
         </div>
       </div>
     </div>

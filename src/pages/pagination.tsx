@@ -64,6 +64,7 @@ export function Pagination({
     <div
       className={styles["paginationDiv"]}
       style={{
+        position: "fixed",
         width: "100%",
         verticalAlign: "center",
         textAlign: "center",
