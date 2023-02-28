@@ -658,7 +658,7 @@ function DynamicGrid<T>({ selectItem }: DynamicGridProps) {
                     ></div>
                   </div>
                 </div>
-                <Pagination
+                <Pagination id="pagination1"
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
