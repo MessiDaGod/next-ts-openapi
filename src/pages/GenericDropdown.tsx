@@ -813,7 +813,7 @@ function GenericDropdown<T>({
               {showSearchBox ? "expand_more" : "expand_less"}
             </span>
           </label>
-          <div className={styles["dropdown-content"]}>
+          <div className={(!showSearchBox ? `${styles["dropdown-content-hidden"]}` : `${styles["dropdown-content"]}`)}>
             {showSearchBox && isChecked && <>{table}</>}
             {!isChecked && <div>{table}</div>}
           </div>
