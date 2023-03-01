@@ -407,13 +407,10 @@ function DynamicGrid<T>({
             td.style.zIndex = "10";
           });
 
-        /** we are on the last column, expand the width of the table */
-        if (!nxtCol) {
-          table.style.minWidth =
-            (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
-          table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
+          table.style.width =
+            (parseInt(table.style.width) ?? 0) + 1 + "px";
+          // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
           table.style.zIndex = "0";
-        }
       }
 
       // (2) move the colDivider on mousemove
@@ -427,6 +424,10 @@ function DynamicGrid<T>({
         removeAllListeners();
         colDivider.onmouseup = null;
       };
+    };
+
+    colDivider.ondragstart = function() {
+      return false;
     };
 
     if (colDivider) {
@@ -598,8 +599,7 @@ function DynamicGrid<T>({
                 <div
                   id={"gridjs_"}
                   ref={tableRef}
-                  // key={"gridjs_0"}
-                  className={styles["ddTable"]}
+                  className={styles["divTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">
                     {header[0]}
@@ -608,13 +608,6 @@ function DynamicGrid<T>({
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
-                  {/* <div className={styles["tr"]} data-row-id="-1">
-                    <div
-                      className={styles["rowdivider"]}
-                      onMouseDown={handleRowClick}
-                      onMouseUp={removeMouseDownListener}
-                    ></div>
-                  </div> */}
                 </div>
                 <Pagination
                   id="pagination1"
@@ -628,9 +621,8 @@ function DynamicGrid<T>({
         }
       } catch (error) {
         if (error instanceof CustomError) {
-          return <>{error.message}</>;
+          return <div className={"error"}>{error.message}</div>;
         } else {
-          // handle other types of errors
           throw error;
         }
       }

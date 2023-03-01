@@ -2,6 +2,16 @@ import Head from "next/head";
 import styles from "./Home.module.scss";
 import React from "react";
 import Grid from "./Grid";
+import { RouteItem } from "./getRouteMeta";
+import { Page } from "./Page";
+
+
+interface PageProps {
+  children: React.ReactNode;
+  routeTree: RouteItem;
+  meta: { title?: string; description?: string };
+  section: "learn" | "reference" | "home";
+}
 
 const Home: React.FC = ({}) => (
   <>
@@ -14,6 +24,7 @@ const Home: React.FC = ({}) => (
     <main className={styles["main"]}>
       <div key={"main"}>
         <Grid />
+
       </div>
     </main>
   </>
