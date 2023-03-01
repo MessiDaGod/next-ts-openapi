@@ -1,4 +1,4 @@
-import { cn } from "./classNames";
+import cn from "classNames";
 import React, { CSSProperties, useState, useEffect } from "react";
 import styles from "./Home.module.scss";
 // import { setListeners } from "./helpers";

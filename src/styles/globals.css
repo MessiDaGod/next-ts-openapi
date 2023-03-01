@@ -256,3 +256,9 @@ input  {
   padding: 0 14px;
   text-align: center;
 }
+
+
+.input:hover {
+  border: white;
+  margin: 5px;
+}

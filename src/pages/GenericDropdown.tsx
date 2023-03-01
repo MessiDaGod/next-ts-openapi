@@ -6,7 +6,7 @@ import { getAccounts } from "./api/getAccounts";
 import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
-import Console from "./Console";
+
 import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
@@ -766,7 +766,7 @@ function GenericDropdown<T>({
         }
       } catch (error) {
         if (error instanceof CustomError) {
-          return <Console code={error.message} />;
+          return <>{error.message}</>
         } else {
           // handle other types of errors
           throw error;

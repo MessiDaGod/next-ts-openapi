@@ -1,13 +1,12 @@
 import React from "react";
 import styles from "./Home.module.scss";
-import { dataGridResize } from "../hooks/dataGridResize";
 import { PropOptions, emptyPropOptions } from "./api//Objects/PropOptions";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
 import { Pagination } from "./pagination";
 
 function handleSetData() {
-  dataGridResize();
+
 }
 
 function PropOptionsPage() {

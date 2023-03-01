@@ -5,8 +5,8 @@ import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
 import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
-import cn from "classnames";
-import Console from "./Console";
+import cn from "classNames";
+
 import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
@@ -78,26 +78,6 @@ function DynamicGrid<T>({
     setCurrentPage(page);
   }
 
-  React.useEffect(() => {
-    async function fetchData() {
-      try {
-        let response = [];
-
-        switch (selectItem) {
-          case "GetDimensions":
-            response = await GetDimensions(numItems ?? 1);
-            setData(response);
-            break;
-          case undefined:
-            break;
-        }
-
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, [tableRef]);
 
   React.useEffect(() => {
     if (selected) {
@@ -120,18 +100,30 @@ function DynamicGrid<T>({
 //     setColumnWidths();
 // }, [tableRef]);
 
-  // React.useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const goodCols = await getGoodColumns();
-  //       setGoodColumns(goodCols);
-  //       setHasPagination(showPagination);
-  //       goodColumns && console.log(`loggin goodColumns from dynamicGrid.tsx ${goodColumns}`);
-  //     } catch (error) {
-  //     }
-  //   }
-  //   fetchData();
-  // }, []);
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        let response = [];
+
+        switch (selectItem) {
+          case "GetDimensions":
+            response = await GetDimensions(numItems ?? 1);
+            setData(response);
+            break;
+            case "GetFromQuery":
+              response = await getFromQuery("total", numItems ?? 1);
+              setData(response);
+              break;
+          case undefined:
+            break;
+        }
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchData();
+  }, [numItems, selectItem]);
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
     // console.log(div);
@@ -754,7 +746,7 @@ function DynamicGrid<T>({
         }
       } catch (error) {
         if (error instanceof CustomError) {
-          return <Console code={error.message} />;
+          return <>{error.message}</>
         } else {
           // handle other types of errors
           throw error;

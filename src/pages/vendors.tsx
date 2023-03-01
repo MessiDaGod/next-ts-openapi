@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./yardiInterface.module.scss";
-import { dataGridResize } from "../hooks/dataGridResize";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";
@@ -40,7 +39,6 @@ function Vendors() {
       }
     }
     fetchData();
-    dataGridResize(itemsPerPage);
   }, []);
 
   function handleSort(columnName: string) {

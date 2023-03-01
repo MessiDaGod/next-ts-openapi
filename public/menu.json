@@ -23,12 +23,6 @@
       "Path": "/Grid",
       "Icon": "code",
       "New": true
-    },
-    {
-      "Name": "Property Dropdown",
-      "Path": "/PropertyDropdown",
-      "Icon": "code",
-      "New": true
     }
   ]
 }

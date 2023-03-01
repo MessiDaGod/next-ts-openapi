@@ -5,7 +5,7 @@ import styles from "./DataGridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
-import Console from "./Console";
+
 
 
 export interface DataGridDropdownProps {
@@ -711,7 +711,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         }
       } catch (error) {
         if (error instanceof CustomError) {
-          return <Console code={error.message} />;
+          return <>{error.message}</>
         } else {
           // handle other types of errors
           throw error;

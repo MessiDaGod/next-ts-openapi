@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { ga } from "../utils/analytics";
-import { cn } from "./classNames";
+import cn from "classNames";
 import "styles/globals.css";
 import '../styles/algolia.css';
 import '../styles/index.css';
