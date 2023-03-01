@@ -208,7 +208,7 @@ function DynamicGrid<T>({
       return width;
     }
 
-    allRows.forEach((row) => {
+    allRows.forEach((row, rowNumber: number) => {
       const ths = row.querySelectorAll('[class*="' + "_th" + '"]');
       const tds = row.querySelectorAll('[class*="' + "_td" + '"]');
       const cells = [...ths, ...tds];
@@ -236,6 +236,7 @@ function DynamicGrid<T>({
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
           }
+          console.log(`padding for columnId:  ${columnId}, row #${rowNumber} ${paddingDiff(cell as HTMLElement)}`);
         }
       });
     });
@@ -401,9 +402,9 @@ function DynamicGrid<T>({
             td.style.zIndex = "10";
           });
 
-        table.style.width = (parseInt(table.style.width) ?? 0) + 1 + "px";
         // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-        table.style.zIndex = "0";
+        // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
+        // table.style.zIndex = "0";
       }
 
       // (2) move the colDivider on mousemove

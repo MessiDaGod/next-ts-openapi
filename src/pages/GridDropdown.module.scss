@@ -1,17 +1,11 @@
 .divTable,
 .ddTable {
-    width: fit-content;
-    width: 100%;
-    overflow: hidden;
-    background-color: #2e2e2e;
-    border: 1px solid white;
-    padding: 10px;
+    width: auto;
     border-collapse: collapse;
-
 }
 
 .ddTable {
-    border: 1px solid red;
+    border: 1px solid blue;
 }
 
 .divTable {
@@ -37,7 +31,6 @@
 
 .th,
 .gridtd {
-    padding: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
@@ -47,7 +40,6 @@
 }
 
 .th {
-    padding: 2px 4px;
     position: relative;
     font-weight: bold;
     text-align: left;
@@ -60,7 +52,7 @@
 }
 
 .td {
-    border-right: 1px solid yellow;
+    border-right: 1px solid red;
 }
 
 .tr-hoverable:hover {
@@ -69,10 +61,6 @@
     width: 100%;
 }
 
-.td {
-    height: 30px;
-    border-right: rgb(70, 70, 73) 1px solid;
-}
 
 .coldivider {
     position: absolute;
