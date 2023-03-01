@@ -6,15 +6,17 @@
     border: 1px solid white;
     padding: 10px;
     border-collapse: collapse;
+    border: 1px solid red;
 }
 
 .ddTable {
     width: fit-content;
-    width: auto;
+    width: 100%;
     overflow: hidden;
     margin: 0;
     padding: 0;
     border-collapse: collapse;
+    border: 1px solid red;
 }
 
 
@@ -31,19 +33,23 @@
     overflow: hidden;
     text-align: left;
     font-size: 14px;
+    padding: 0;
     margin: 0;
-    padding: 0.25rem;
 }
 
-.th {
+.th,
+.gridtd {
+    padding: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
     font-size: 14px;
+    padding: 0;
     margin: 0;
 }
 
 .th {
+    padding: 2px 4px;
     position: relative;
     font-weight: bold;
     text-align: left;
@@ -54,33 +60,19 @@
     background: white;
     border-right: 1px solid blue;
 }
-
+.td {
+    border-right: 1px solid yellow;
+}
 .tr-hoverable:hover {
     background: #f7aaaa;
     display: flex;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: left;
 }
 
 .td {
     height: 30px;
-    display: flex;
-    // justify-content: center;
-    align-items: center;
-    text-align: left;
+    border-right:rgb(70, 70, 73) 1px solid;
 }
-
-.td:hover {
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: left;
-}
-
 
 .coldivider {
     position: absolute;
@@ -92,6 +84,7 @@
     cursor: col-resize;
     user-select: none;
     touch-action: none;
+    background: black;
 }
 
 @media (hover: hover) {
@@ -114,7 +107,7 @@
     padding: 0;
     overflow: hidden;
     cursor: pointer;
-    z-index: 0;
+    z-index: 10;
 }
 
 .rz-placeholder {
@@ -134,7 +127,6 @@
     margin-bottom: 15px;
     visibility: hidden;
 }
-
 .table-container {
     padding: 0;
     margin: 0;
@@ -164,7 +156,7 @@
 }
 
 
-.active:not(.dropdown) {
+.active {
     background-color: #f03a3a;
     transition-duration: 0.2s;
     align-items: center;
@@ -224,20 +216,4 @@
     border-top: 1px solid #2f333d;
     width: 100%;
     cursor: pointer;
-}
-
-.ddTable {
-    border-collapse: collapse;
-}
-
-.ddTable .td {
-    border: 1px solid red;
-}
-
-.ddTable>.td:not(:last-child) {
-    border-right: none;
-}
-
-.ddTable .tr:not(:last-child) .td {
-    border-bottom: none;
-}
+  }
