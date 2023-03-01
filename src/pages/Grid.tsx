@@ -3,9 +3,9 @@ import cn from "classnames";
 import styles from "./GridDropdown.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
-import DynamicGrid from "./dynamicGrid";
+import DynamicGrid from "./DynamicGrid";
 
-export default function Form() {
+export default function Grid() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState('');
@@ -78,7 +78,7 @@ export default function Form() {
             }}
           >
             <input
-              style={{ top: "50px", display: "block" }}
+              style={{ top: "50px", display: "block", padding: "10px", width: "50px", cursor: "pointer" }}
               className={cn(styles["rz-textbox"], styles["findcomponent"])}
               type="number"
               value={numItems}
