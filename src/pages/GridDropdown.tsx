@@ -4,7 +4,7 @@ import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
 import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
-import cn from "classnames";
+import cn from "classNames";
 
 
 export interface DataGridDropdownProps {
@@ -206,7 +206,7 @@ const GridDropdown: React.FC<DataGridDropdownProps> = ({
         setColumnWidths();
       });
 
-      div.addEventListener(
+      document.addEventListener(
         "mousedown",
         function (e: MouseEvent): void {
           var target = e.target as HTMLElement;

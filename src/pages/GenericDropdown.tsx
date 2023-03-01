@@ -122,10 +122,10 @@ function GenericDropdown<T>({
     fetchData();
   }, [tableRef]);
 
-  React.useEffect(() => {
-    dataGridResize(itemsPerPage);
-    setColumnWidths();
-  }, [showSearchBox]);
+
+  // React.useEffect(() => {
+  //   handleResize();
+  // }, [selected]);
 
   // React.useEffect(() => {
   //   if (selected) {
@@ -135,17 +135,18 @@ function GenericDropdown<T>({
   //   }
   // }, [data]);
 
-  function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
-    if (div.parentElement?.getAttribute("hidden") !== null) return;
+  function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  const div = e.target as HTMLDivElement;
     var pageX: number | undefined,
       curCol: HTMLElement | null,
       nxtCol: HTMLElement | null,
       prevCol: HTMLElement | null,
       curColWidth: number | undefined,
-      nxtColWidth: number | undefined,
-      prevColWidth: number | undefined;
+      nxtColWidth: number | undefined;
 
-    if (div.parentElement) {
+    console.log("setting listeners from GenericDropdown.tsx");
+
+    if (div) {
       div.addEventListener("dblclick", function (e: MouseEvent): void {
         setColumnWidths();
       });
@@ -154,17 +155,13 @@ function GenericDropdown<T>({
         "mousedown",
         function (e: MouseEvent): void {
           var target = e.target as HTMLElement;
-          curCol = target ? target.parentElement : null;
+          curCol = target ? target : null;
           var nextCol = curCol
             ? (curCol.nextElementSibling as HTMLElement)
             : null;
           nextCol = nextCol
             ? (nextCol?.nextElementSibling as HTMLElement)
             : null;
-          if (curCol)
-            prevCol = curCol
-              ? (curCol.previousElementSibling as HTMLElement)
-              : null;
           pageX = e.pageX;
 
           const padding = curCol ? paddingDiff(curCol) : 0;
@@ -174,15 +171,16 @@ function GenericDropdown<T>({
               ? curCol.offsetWidth - padding
               : 0;
           if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-          if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
         },
         { passive: true }
       );
 
-      document.addEventListener(
+      div.addEventListener(
         "mousemove",
         function (e: MouseEvent): void {
+          e.preventDefault();
+          console.log("mousemove div");
+          console.log(div);
           const diffX = e.pageX - (pageX ?? 0);
           const tables = [...div.querySelectorAll('[id^="' + "gridjs_" + '"]')];
           if (curCol) {
@@ -205,6 +203,7 @@ function GenericDropdown<T>({
                   (cell as HTMLElement).style.width =
                     (curColWidth ?? 0) + diffX + "px";
                   (cell as HTMLElement).style.zIndex = "0";
+                  (cell as HTMLElement).style.border = "2px solid blue";
                 });
             }
           }
@@ -233,7 +232,7 @@ function GenericDropdown<T>({
             }
           }
         },
-        { passive: true, once: false }
+        { passive: false, once: false }
       );
 
       document.addEventListener("mouseup", function (e: MouseEvent): void {
@@ -246,78 +245,7 @@ function GenericDropdown<T>({
     }
   }
 
-  function dataGridResize(itemsPerPage?: number) {
-    initResizeListeners();
-    let resizeDivs = Array.from(
-      new Set([
-        ...document.querySelectorAll('div[class*="' + "coldivider" + '"]'),
-      ])
-    );
-    if (resizeDivs && resizeDivs.length > 0) {
-      for (let i = 0; i < resizeDivs.length; i++) {
-        setListeners(resizeDivs[i] as HTMLDivElement, itemsPerPage);
-      }
-    }
-
-    function initResizeListeners() {
-      if (!document) return;
-      const tables = [
-        ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
-      ];
-      for (let i = 0; i < tables.length; i++) {
-        const columns = Array.from(
-          new Set([...tables[i].querySelectorAll("th")])
-        );
-        columns.forEach((th) => {
-          th.style.width = th.getBoundingClientRect().width + "px";
-          th.style.minWidth = th.getBoundingClientRect().width + "px";
-          (th as HTMLElement).style.zIndex = "0";
-        });
-        resizableGrid(tables[i] as HTMLTableElement);
-      }
-
-      function resizableGrid(table: HTMLTableElement) {
-        const rows = Array.from(
-          table.getElementsByTagName('div[class*="' + "tr" + '"]')
-        );
-        const cells = Array.from(
-          table.getElementsByTagName('div[class*="' + "td" + '"]')
-        );
-
-        cells.forEach((cell) => {
-          setCellListeners(cell as HTMLElement);
-        });
-
-        rows.forEach((tr) => {
-          setRowListeners(tr as HTMLElement);
-        });
-
-        function setCellListeners(cell: HTMLElement) {
-          if (cell.dataset.columnId === "Row")
-            cell.addEventListener("mouseover", function (_e) {
-              this.classList.add("cellhoverover");
-            });
-
-          cell.addEventListener("mouseout", function (_e) {
-            this.classList.remove("cellhoverover");
-          });
-        }
-
-        function setRowListeners(row: HTMLElement) {
-          row.addEventListener("mouseover", function (_e) {
-            this.classList.add("hoverover");
-          });
-
-          row.addEventListener("mouseout", function (_e) {
-            this.classList.remove("hoverover");
-          });
-        }
-      }
-    }
-  }
-
-  function handleResize(e) {
-    e.preventDefault();
+  function handleResize() {
     setColumnWidths();
     setRowHeights();
   }
@@ -633,7 +561,7 @@ function GenericDropdown<T>({
           >
             {!sortState ? "expand_more" : "expand_less"}
           </span>
-          <div className={styles["coldivider"]}></div>
+          <div className={styles["coldivider"]} onClick={setListeners}></div>
         </div>
       ));
 
@@ -656,6 +584,7 @@ function GenericDropdown<T>({
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
           <div
+            id={row[columnKeys[0].Name]}
             key={row[columnKeys[0].Name]}
             data-row-id={rowIndex}
             className={cn(styles["tr"], styles["tr-hoverable"])}
@@ -740,6 +669,7 @@ function GenericDropdown<T>({
                   <div className={styles["tr"]} data-row-id="0">
                     {headerRow}
                   </div>
+
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows.slice(1)}
                   </div>
@@ -766,7 +696,7 @@ function GenericDropdown<T>({
         }
       } catch (error) {
         if (error instanceof CustomError) {
-          return <>{error.message}</>
+          return <>{error.message}</>;
         } else {
           // handle other types of errors
           throw error;
@@ -777,7 +707,6 @@ function GenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setShowSearchBox(true);
-    dataGridResize(itemsPerPage);
     setColumnWidths();
   }
 
