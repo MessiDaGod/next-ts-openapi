@@ -5,6 +5,7 @@
     background-color: #2e2e2e;
     border: 1px solid white;
     padding: 10px;
+    border-collapse: collapse;
 }
 
 .ddTable {
@@ -13,6 +14,7 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
+    border-collapse: collapse;
 }
 
 
@@ -24,12 +26,9 @@
     vertical-align: center;
 }
 
-
-
 .th,
 .td {
     padding-top: 0.25rem;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: left;
@@ -70,6 +69,7 @@
 
 .td {
     height: 30px;
+    border-right:rgb(70, 70, 73) 1px solid;
 }
 
 .coldivider {

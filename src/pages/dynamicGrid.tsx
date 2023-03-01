@@ -371,91 +371,72 @@ function DynamicGrid<T>({
     });
   }
 
-  function removeListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    // e.preventDefault();
-    console.info("removed removeListeners");
-    removeAllListeners("mousedown");
-    removeAllListeners("mousemove");
-    removeAllListeners("mouseup");
-  }
-
-  var pageX: number | undefined,
-    curCol: HTMLElement | null,
-    nxtCol: HTMLElement | null,
-    curColWidth: number | undefined,
-    nxtColWidth: number | undefined;
-
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    let pageX: number | undefined,
+      curCol: HTMLElement | null,
+      nxtCol: HTMLElement | null,
+      curColWidth: number | undefined,
+      nxtColWidth: number | undefined;
     const colDivider = e.target as HTMLElement;
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
     const headerDiv = colDivider.parentElement;
-
+    const table = tableRef.current as HTMLElement;
     colDivider.onmousedown = function (e) {
       const target = headerDiv;
       curCol = target ? target : null;
       nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-      pageX = e.pageX;
-
       const padding = curCol ? paddingDiff(curCol) : 0;
 
+      pageX = e.pageX;
+      const columnId = headerDiv.dataset.columnId;
+      const currentColumnAllCells = [
+        ...table.querySelectorAll(
+          '[data-column-id*="' + headerDiv.dataset.columnId + '"]'
+        ),
+      ];
+      const nextColumnAllCells = [
+        ...table.querySelectorAll(
+          '[data-column-id*="' + nxtCol.dataset.columnId + '"]'
+        ),
+      ];
       curColWidth =
         curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
           ? curCol.offsetWidth - padding
           : 0;
-      if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
+
+      nxtColWidth =
+        nxtCol && nxtCol.offsetWidth > 0 && nxtCol.offsetWidth > padding
+          ? nxtCol.offsetWidth - padding
+          : 0;
+      console.log(columnId);
 
       function onMouseMove(e) {
-        console.info("mousemove activated...");
         const diffX = e.pageX - (pageX ?? 0);
-        const tables = [
-          ...headerDiv.querySelectorAll('[id^="' + "gridjs_" + '"]'),
-        ];
-        if (curCol) {
-          curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-          curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-          (curCol as HTMLElement).style.zIndex = "0";
+        headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+        headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
+        headerDiv.style.zIndex = "0";
 
-          let allCells = Array.from(
-            new Set([
-              ...tables[0].querySelectorAll(
-                '[data-column-id="' + curCol.dataset.columnId + '"]'
-              ),
-            ])
-          );
-          if (allCells)
-            allCells.forEach((cell) => {
-              (cell as HTMLElement).style.minWidth =
-                (curColWidth ?? 0) + diffX + "px";
-              (cell as HTMLElement).style.width =
-                (curColWidth ?? 0) + diffX + "px";
-              (cell as HTMLElement).style.zIndex = "0";
-              (cell as HTMLElement).style.border = "2px solid blue";
-            });
-        }
+        if (currentColumnAllCells)
+          currentColumnAllCells.forEach((cell) => {
+            const td = cell as HTMLElement;
+            td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+            td.style.width = (curColWidth ?? 0) + diffX + "px";
+            td.style.zIndex = "0";
+            console.log(`current columns width: ${td.style.width}`);
+          });
 
-        if (nxtCol) {
-          nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
-          nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-          (nxtCol as HTMLElement).style.zIndex = "0";
+        nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
+        nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
+        nxtCol.style.zIndex = "0";
 
-          if (tables[0]) {
-            let allCells = Array.from(
-              new Set([
-                ...tables[0].querySelectorAll(
-                  '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-                ),
-              ])
-            );
-            if (allCells)
-              allCells.forEach((cell) => {
-                (cell as HTMLElement).style.minWidth =
-                  (nxtColWidth ?? 0) + diffX + "px";
-                (cell as HTMLElement).style.width =
-                  (nxtColWidth ?? 0) + diffX + "px";
-                (cell as HTMLElement).style.zIndex = "0";
-              });
-          }
-        }
+        if (nextColumnAllCells)
+          nextColumnAllCells.forEach((cell) => {
+            const td = cell as HTMLElement;
+            td.style.minWidth = (nxtColWidth ?? 0) + diffX + "px";
+            td.style.width = (nxtColWidth ?? 0) + diffX + "px";
+            td.style.zIndex = "0";
+            console.log(`next Columns width: ${td.style.width}`);
+          });
       }
 
       // (2) move the colDivider on mousemove
@@ -471,8 +452,8 @@ function DynamicGrid<T>({
       };
     };
 
-    if (headerDiv) {
-      headerDiv.addEventListener("dblclick", function (e: MouseEvent): void {
+    if (colDivider) {
+      colDivider.addEventListener("dblclick", function (e: MouseEvent): void {
         setColumnWidths();
       });
     }
