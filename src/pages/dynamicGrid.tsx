@@ -238,8 +238,6 @@ function DynamicGrid<T>({
           }
         }
       });
-
-      console.log(columnWidths);
     });
 
     Object.entries(columnWidths).map((width) => {
@@ -273,9 +271,6 @@ function DynamicGrid<T>({
     return columnWidths;
   }
 
-
-
-
   function setRowHeights(tableId?: string) {
     const divTable = document.querySelectorAll(
       '[class*="' + cn(styles["ddTable"]) + '"]'
@@ -293,12 +288,11 @@ function DynamicGrid<T>({
   }
 
   function handleRowClick(e) {
-
-  let pageY: number | undefined,
-    curRow: HTMLElement | null,
-    nxtRow: HTMLElement | null,
-    curRowHeight: number | undefined,
-    nxtRowHeight: number | undefined;
+    let pageY: number | undefined,
+      curRow: HTMLElement | null,
+      nxtRow: HTMLElement | null,
+      curRowHeight: number | undefined,
+      nxtRowHeight: number | undefined;
     console.log("handleRowClick from dynamicGrid.tsx");
     e.preventDefault();
     const target = e.target as HTMLElement;
@@ -407,10 +401,9 @@ function DynamicGrid<T>({
             td.style.zIndex = "10";
           });
 
-          table.style.width =
-            (parseInt(table.style.width) ?? 0) + 1 + "px";
-          // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-          table.style.zIndex = "0";
+        table.style.width = (parseInt(table.style.width) ?? 0) + 1 + "px";
+        // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
+        table.style.zIndex = "0";
       }
 
       // (2) move the colDivider on mousemove
@@ -426,7 +419,7 @@ function DynamicGrid<T>({
       };
     };
 
-    colDivider.ondragstart = function() {
+    colDivider.ondragstart = function () {
       return false;
     };
 
@@ -439,92 +432,33 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      // [...data]
-      //   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-      //   .map((row, rowIndex: number) =>
-      //     Object.entries(row).map((item) => {
-      //       console.log(row);
-      //     })
-      //   );
-      const columns = goodColumns;
-      // switch (selected) {
-      //   case "GetVendors":
-      //     console.log(["Vendor"])
-      // }
-
-      const header = Object.values(data).map((key, idx: number) => {
-        const firstHeader = Object.keys(key).map(
-          (cols, index: number) =>
-            !isColumnHidden(data, cols) &&
-            idx == 0 &&
-            index === 0 && (
-              <div
-                key={cols}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={cols}
-                hidden={isColumnHidden(data, cols)}
+      const columns = Object.keys(data[0]);
+      const header = columns.map((cols, idx: number) => {
+        return (
+          !isColumnHidden(data, cols) && (
+            <div
+              key={cols}
+              className={styles["th"]}
+              style={{ width: "100px" }}
+              data-column-id={cols}
+            >
+              {cols}
+              <span
+                className={`${"material-symbols-outlined"} ${styles["black"]}`}
+                onClick={() => handleSort(cols)}
               >
-                <span
-                  key={"key"}
-                  className={`${styles["black"]} material-symbols-outlined`}
-                  onClick={handleResize}
-                  style={{
-                    // position: "relative",
-                    color: "black",
-                    cursor: "cell",
-                  }}
-                >
-                  {"aspect_ratio"}
-                </span>
-                {cols}
-                <span
-                  className={`${"material-symbols-outlined"} ${
-                    styles["black"]
-                  }`}
-                  onClick={() => handleSort(cols)}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
-                </span>
-                <div
-                  className={styles["coldivider"]}
-                  onMouseEnter={setListeners}
-                ></div>
-              </div>
-            )
-        );
-
-        const remainingHeaders = Object.keys(key).map(
-          (cols, index: number) =>
-            !isColumnHidden(data, cols) &&
-            idx == 0 &&
-            index > 0 && (
+                {!sortState ? "expand_more" : "expand_less"}
+              </span>
               <div
-                key={cols}
-                className={styles["th"]}
-                style={{ width: "100px" }}
-                data-column-id={cols}
-                hidden={isColumnHidden(data, cols)}
-              >
-                {cols}{" "}
-                <span
-                  className={`${"material-symbols-outlined"} ${
-                    styles["black"]
-                  }`}
-                  onClick={() => handleSort(cols)}
-                >
-                  {!sortState ? "expand_more" : "expand_less"}
-                </span>
-                <div
-                  className={styles["coldivider"]}
-                  onMouseEnter={setListeners}
-                ></div>
-              </div>
-            )
+                className={styles["coldivider"]}
+                onMouseEnter={setListeners}
+              ></div>
+            </div>
+          )
         );
-
-        return [...firstHeader, ...remainingHeaders];
       });
+
+      console.log(header);
 
       const rows = [...data]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -602,7 +536,7 @@ function DynamicGrid<T>({
                   className={styles["divTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">
-                    {header[0]}
+                    {header}
                   </div>
 
                   <div key={"tbody"} className={styles["tbody"]}>

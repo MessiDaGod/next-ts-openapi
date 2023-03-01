@@ -1,4 +1,5 @@
-.divTable {
+.divTable,
+.ddTable {
     width: fit-content;
     width: 100%;
     overflow: hidden;
@@ -6,19 +7,16 @@
     border: 1px solid white;
     padding: 10px;
     border-collapse: collapse;
-    border: 1px solid red;
+
 }
 
 .ddTable {
-    width: fit-content;
-    width: 100%;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    border-collapse: collapse;
     border: 1px solid red;
 }
 
+.divTable {
+    border: 1px solid yellow;
+}
 
 .tr {
     display: flex;
@@ -60,9 +58,11 @@
     background: white;
     border-right: 1px solid blue;
 }
+
 .td {
     border-right: 1px solid yellow;
 }
+
 .tr-hoverable:hover {
     background: #f7aaaa;
     display: flex;
@@ -71,7 +71,7 @@
 
 .td {
     height: 30px;
-    border-right:rgb(70, 70, 73) 1px solid;
+    border-right: rgb(70, 70, 73) 1px solid;
 }
 
 .coldivider {
@@ -127,6 +127,7 @@
     margin-bottom: 15px;
     visibility: hidden;
 }
+
 .table-container {
     padding: 0;
     margin: 0;
@@ -174,8 +175,6 @@
     margin: 0px;
 }
 
-
-
 .rowdivider {
     position: absolute;
     cursor: row-resize;
@@ -216,4 +215,4 @@
     border-top: 1px solid #2f333d;
     width: 100%;
     cursor: pointer;
-  }
+}
