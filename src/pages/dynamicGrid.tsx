@@ -208,10 +208,13 @@ function DynamicGrid<T>({
       return width;
     }
 
+
     allRows.forEach((row, rowNumber: number) => {
+
       const ths = row.querySelectorAll('[class*="' + "_th" + '"]');
       const tds = row.querySelectorAll('[class*="' + "_td" + '"]');
       const cells = [...ths, ...tds];
+
 
       cells.forEach((cell) => {
         const columnId = cell.getAttribute("data-column-id");
@@ -236,10 +239,11 @@ function DynamicGrid<T>({
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
           }
-          console.log(`padding for columnId:  ${columnId}, row #${rowNumber} ${paddingDiff(cell as HTMLElement)}`);
+          // console.log(`padding for columnId:  ${columnId}, row #${rowNumber} ${paddingDiff(cell as HTMLElement)}`);
         }
       });
     });
+
 
     Object.entries(columnWidths).map((width) => {
       const [key, value] = width;
@@ -266,9 +270,9 @@ function DynamicGrid<T>({
         parseInt((col as HTMLElement).style.width) +
         paddingDiff(col as HTMLElement);
     });
-
-    (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    (table as HTMLElement).style.zIndex = "0";
+    console.log(`table width: ${tableWidth}`);
+    // (table as HTMLElement).style.width = tableWidth.toString() + "px";
+    // (table as HTMLElement).style.zIndex = "0";
     return columnWidths;
   }
 
