@@ -66,6 +66,12 @@
     background: white;
 }
 
+.tr-hoverable:hover {
+    background: #f7aaaa;
+    display: flex;
+    width: 100%;
+}
+
 .td {
     height: 30px;
 }

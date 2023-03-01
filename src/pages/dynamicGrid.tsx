@@ -70,7 +70,7 @@ function DynamicGrid<T>({
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
+  // const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
   const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const itemsPerPage = 25;
 
@@ -101,9 +101,9 @@ function DynamicGrid<T>({
 
   React.useEffect(() => {
     if (selected) {
-      console.log("React.useEffect from DynamicGrid.tsx");
-      setColumnWidths();
-      setRowHeights();
+      // console.log("React.useEffect from DynamicGrid.tsx");
+      // setColumnWidths();
+      // setRowHeights();
       function getGoodColumns(): Promise<string[]> {
         return fetch("/GoodColumns.json")
           .then((response) => response.json())
@@ -115,9 +115,10 @@ function DynamicGrid<T>({
     }
   }, [data]);
 
-  React.useEffect(() => {
-    console.log("React.useEffect dynamicGrid.tsx with empty []");
-  }, []);
+//   React.useEffect(() => {
+//     dataGridResize(itemsPerPage);
+//     setColumnWidths();
+// }, [tableRef]);
 
   // React.useEffect(() => {
   //   async function fetchData() {
@@ -499,6 +500,7 @@ function DynamicGrid<T>({
   }
 
   function handleRowClick(e) {
+    console.log("handleRowClick from dynamicGrid.tsx");
     e.preventDefault();
     const target = e.target as HTMLElement;
     const divTable = document.querySelectorAll(
