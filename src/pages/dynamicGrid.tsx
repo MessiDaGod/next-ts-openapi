@@ -7,7 +7,9 @@ import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
-import GridDropdown from "./GridDropdown";
+import vendors from "../../public/vendors.json";
+import properties from "../../public/propOptions.json";
+import accounts from "../../public/accounts.json";
 import GenericDropdown from "./GenericDropdown";
 
 async function GetDimensions(take: number | null = null) {
@@ -82,24 +84,8 @@ function DynamicGrid<T>({
         let response = [];
 
         switch (selectItem) {
-          case "GetVendors":
-            response = await getVendors(numItems ?? 1);
-            setData(response);
-            break;
-          case "GetPropOptions":
-            response = await getPropOptionsAsync(numItems ?? 1);
-            setData(response);
-            break;
-          case "GetAccounts":
-            response = await getAccounts(numItems ?? 1);
-            setData(response);
-            break;
           case "GetDimensions":
             response = await GetDimensions(numItems ?? 1);
-            setData(response);
-            break;
-          case "GetFromQuery":
-            response = await getFromQuery("total", numItems ?? 1);
             setData(response);
             break;
           case undefined:
@@ -126,9 +112,12 @@ function DynamicGrid<T>({
       goodCols.then((data) => {
         setGoodColumns(data);
       })
-      dataGridResize(itemsPerPage);
     }
   }, [data]);
+
+  React.useEffect(() => {
+    console.log("React.useEffect dynamicGrid.tsx with empty []");
+  }, []);
 
   // React.useEffect(() => {
   //   async function fetchData() {

@@ -7,7 +7,9 @@ import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
-import GridDropdown from "./GridDropdown";
+import vendors from "../../public/vendors.json";
+import properties from "../../public/propOptions.json";
+import accounts from "../../public/accounts.json";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -90,23 +92,22 @@ function GenericDropdown<T>({
 
         switch (selectItem) {
           case "GetVendors":
-            response = await getVendors(numItems);
-            setData(response);
+            setData(JSON.parse(JSON.stringify(vendors)));
             break;
           case "GetPropOptions":
-            response = await getPropOptionsAsync(numItems);
-            setData(response);
+            // response = await getPropOptionsAsync(numItems ?? 1);
+            setData(JSON.parse(JSON.stringify(properties)));
             break;
           case "GetAccounts":
-            response = await getAccounts(numItems);
-            setData(response);
+            // response = await getAccounts(numItems ?? 1);
+            setData(JSON.parse(JSON.stringify(accounts)));
             break;
           case "GetDimensions":
-            response = await GetDimensions(1);
+            response = await GetDimensions(numItems ?? 1);
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total", numItems);
+            response = await getFromQuery("total", numItems ?? 1);
             setData(response);
             break;
           case undefined:
@@ -118,6 +119,11 @@ function GenericDropdown<T>({
     }
     fetchData();
   }, [tableRef]);
+
+  React.useEffect(() => {
+      dataGridResize(itemsPerPage);
+      setColumnWidths();
+  }, [showSearchBox]);
 
   React.useEffect(() => {
     if (selected) {
@@ -745,6 +751,8 @@ function GenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setShowSearchBox(true);
+    dataGridResize(itemsPerPage);
+    setColumnWidths();
   }
 
   const handleCheckboxChange = (event: any) => {
