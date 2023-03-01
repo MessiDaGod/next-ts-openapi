@@ -203,7 +203,7 @@ function DynamicGrid<T>({
       ruler.innerText = s;
       document.body.appendChild(ruler);
       const padding = paddingDiff(ruler as HTMLElement);
-      const width = Math.round(ruler.getBoundingClientRect().width + padding);
+      const width = ruler.getBoundingClientRect().width + padding;
       document.body.removeChild(ruler);
       return width;
     }
@@ -238,6 +238,8 @@ function DynamicGrid<T>({
           }
         }
       });
+
+      console.log(columnWidths);
     });
 
     Object.entries(columnWidths).map((width) => {
@@ -249,11 +251,11 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.display = "inline-block";
           (col as HTMLElement).style.whiteSpace = "nowrap";
           (col as HTMLElement).style.textAlign = "left";
-          // (col as HTMLElement).style.padding = "0.25rem";
+          (col as HTMLElement).style.padding = "0px";
           (col as HTMLElement).style.minHeight = "0px";
           (col as HTMLElement).style.zIndex = "0";
-          (col as HTMLElement).style.minWidth = `${value}px`;
-          (col as HTMLElement).style.width = `${value}px`;
+          (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
+          (col as HTMLElement).style.width = `${Math.round(value)}px`;
         }
       });
     });
@@ -271,23 +273,8 @@ function DynamicGrid<T>({
     return columnWidths;
   }
 
-  let pageY: number | undefined,
-    curRow: HTMLElement | null,
-    nxtRow: HTMLElement | null,
-    curRowHeight: number | undefined,
-    nxtRowHeight: number | undefined;
 
-  function removeMouseDownListener(e) {
-    e.preventDefault();
-    document.addEventListener("mouseup", function (e: MouseEvent): void {
-      curRow = null;
-      nxtRow = null;
-      pageY = undefined;
-      curRowHeight = undefined;
-      nxtRowHeight = undefined;
-      console.info("removed mousedown listener");
-    });
-  }
+
 
   function setRowHeights(tableId?: string) {
     const divTable = document.querySelectorAll(
@@ -306,6 +293,12 @@ function DynamicGrid<T>({
   }
 
   function handleRowClick(e) {
+
+  let pageY: number | undefined,
+    curRow: HTMLElement | null,
+    nxtRow: HTMLElement | null,
+    curRowHeight: number | undefined,
+    nxtRowHeight: number | undefined;
     console.log("handleRowClick from dynamicGrid.tsx");
     e.preventDefault();
     const target = e.target as HTMLElement;
@@ -618,7 +611,6 @@ function DynamicGrid<T>({
               key={`${rowIndex}`}
               className={styles["rowdivider"]}
               onMouseDown={handleRowClick}
-              onMouseUp={removeMouseDownListener}
             ></div>
             {Object.entries(row).map(
               ([key, value], index: number) =>

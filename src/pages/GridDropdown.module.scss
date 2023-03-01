@@ -52,6 +52,7 @@
     overflow: hidden;
     color: black;
     background: white;
+    border-right: 1px solid blue;
 }
 
 .tr-hoverable:hover {
@@ -91,7 +92,6 @@
     cursor: col-resize;
     user-select: none;
     touch-action: none;
-    background: black;
 }
 
 @media (hover: hover) {

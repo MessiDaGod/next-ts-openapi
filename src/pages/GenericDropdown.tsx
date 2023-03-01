@@ -121,7 +121,6 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
-    autoSetListeners();
   }, [tableRef]);
 
   function autoSetListeners() {
@@ -787,7 +786,8 @@ function GenericDropdown<T>({
             id={`${selected}_label`}
             className={`${styles["rz-placeholder"]}`}
             style={{
-              width: "100%",
+              padding: "0",
+              margin: "0",
               cursor: "pointer",
               overflow: "hidden",
               borderRadius: `${hasPagination ? "6px" : "0px"}`,
