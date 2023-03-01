@@ -22,6 +22,10 @@
     vertical-align: center;
 }
 
+.tr-hoverable:hover {
+    background-color: #f7aaaa;
+}
+
 .th,
 .td {
     overflow: hidden;

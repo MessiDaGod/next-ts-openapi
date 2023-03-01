@@ -25,6 +25,7 @@ export default function Grid() {
   }
 
   React.useEffect(() => {
+    console.info("Grid useEffect ran");
     setNumItems(1);
   }, []);
 

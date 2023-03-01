@@ -13,19 +13,6 @@ import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
 import { removeAllListeners } from "process";
 
-async function GetDimensions(take: number | null = null) {
-  try {
-    let url = `https://localhost:5006/api/data/GetDimensions${
-      take ? `?take=${encodeURIComponent(take)}` : ""
-    }`;
-    const response = await fetch(url, {
-      method: "GET",
-    });
-    return JSON.parse(await response.text());
-  } catch (error) {
-    return error;
-  }
-}
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -87,16 +74,17 @@ function GenericDropdown<T>({
     setCurrentPage(page);
   }
 
+  // React.useEffect(() => {
+  //   setColumnWidths();
+  //   search();
+  // }, []);
+
+  // React.useEffect(() => {
+  //   setColumnWidths();
+  // }, [activeDropdown]);
 
   React.useEffect(() => {
-    setColumnWidths();
-  }, []);
-
-  React.useEffect(() => {
-    setColumnWidths();
-  }, [activeDropdown]);
-
-  React.useEffect(() => {
+    console.info("Generic Dropdown useEffect ran");
     async function fetchData() {
       try {
         let response = [];
@@ -129,7 +117,7 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
-  }, [tableRef]);
+  }, []);
 
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -725,8 +713,32 @@ function GenericDropdown<T>({
     }
   }
 
+  function search(): void {
+    const searchInput = document.querySelector(`#${selected}_label`);
+    searchInput?.addEventListener("input", handleSearchInput);
 
+    function handleSearchInput() {
+      const sidebarItems = document.querySelectorAll(
+        `.${cn(styles["td"])}`
+      ) as NodeListOf<HTMLElement>;
+      let input = searchInput as HTMLInputElement;
+      const query = input.value.toLowerCase();
 
+      for (const item of sidebarItems) {
+        if (item) {
+          let newItem = item as HTMLElement;
+          if (newItem && newItem.dataset.columnId) {
+            const title = newItem.dataset.columnId.toString().toLowerCase();
+            if (title.includes(query)) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          }
+        }
+      }
+    }
+  }
 
   const table = GenerateTableHtml();
 
