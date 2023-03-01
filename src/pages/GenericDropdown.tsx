@@ -1,16 +1,17 @@
 import React, { useRef } from "react";
-import { getVendors } from "./api/getVendors";
+// import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
-import { getPropOptionsAsync } from "./api/getPropOptions";
-import { getAccounts } from "./api/getAccounts";
+// import { getPropOptionsAsync } from "./api/getPropOptions";
+// import { getAccounts } from "./api/getAccounts";
 import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
-
+import dimensions from "../../public/Dimensions.json";
 import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
+import { removeAllListeners } from "process";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -105,7 +106,7 @@ function GenericDropdown<T>({
             setData(JSON.parse(JSON.stringify(accounts)));
             break;
           case "GetDimensions":
-            response = await GetDimensions(numItems ?? 1);
+            response = JSON.parse(JSON.stringify(dimensions));
             setData(response);
             break;
           case "GetFromQuery":
@@ -120,127 +121,149 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
+    autoSetListeners();
   }, [tableRef]);
 
+  function autoSetListeners() {
+    const columnDividers = document.querySelectorAll('[data-column-id*=""]');
 
-  // React.useEffect(() => {
-  //   handleResize();
-  // }, [selected]);
+    columnDividers.forEach((col) => {
+      let pageX: number | undefined,
+        curCol: HTMLElement | null,
+        nxtCol: HTMLElement | null,
+        curColWidth: number | undefined;
+      const colDivider = col as HTMLElement;
+      if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
+      const headerDiv = colDivider.parentElement;
+      const table = tableRef.current as HTMLElement;
+      colDivider.onmousedown = function (e) {
+        const target = headerDiv;
+        curCol = target ? target : null;
+        nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+        const padding = curCol ? paddingDiff(curCol) : 0;
 
-  // React.useEffect(() => {
-  //   if (selected) {
-  //     console.log("React.useEffect GenericDropdown: " + selected);
-  //     dataGridResize(itemsPerPage);
-  //     setColumnWidths();
-  //   }
-  // }, [data]);
+        pageX = e.pageX;
+        const currentColumnAllCells = [
+          ...table.querySelectorAll(
+            '[data-column-id*="' + headerDiv.dataset.columnId + '"]'
+          ),
+        ];
+        curColWidth =
+          curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+            ? curCol.offsetWidth - padding
+            : 0;
+        function onMouseMove(e) {
+          const diffX = e.pageX - (pageX ?? 0);
+
+          headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+          headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
+          headerDiv.style.zIndex = "10";
+
+          if (currentColumnAllCells)
+            currentColumnAllCells.forEach((cell) => {
+              const td = cell as HTMLElement;
+              td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+              td.style.width = (curColWidth ?? 0) + diffX + "px";
+              td.style.zIndex = "10";
+            });
+
+          /** we are on the last column, expand the width of the table */
+          if (!nxtCol) {
+            table.style.minWidth =
+              (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
+            table.style.width =
+              (parseInt(table.style.width) ?? 0) + diffX + "px";
+            table.style.zIndex = "0";
+          }
+        }
+
+        // (2) move the colDivider on mousemove
+        document.addEventListener("mousemove", onMouseMove);
+
+        // (3) drop the colDivider, remove unneeded handlers
+        colDivider.onmouseup = function () {
+          console.info("removing colDivider.onmouseup");
+          document.removeEventListener("mousemove", onMouseMove);
+          console.info("removing onmouseenter Listner");
+          removeAllListeners();
+          colDivider.onmouseup = null;
+        };
+      };
+
+      if (colDivider) {
+        colDivider.addEventListener("dblclick", function (e: MouseEvent): void {
+          setColumnWidths();
+        });
+      }
+    });
+  }
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-  const div = e.target as HTMLDivElement;
-    var pageX: number | undefined,
+    let pageX: number | undefined,
       curCol: HTMLElement | null,
       nxtCol: HTMLElement | null,
-      prevCol: HTMLElement | null,
-      curColWidth: number | undefined,
-      nxtColWidth: number | undefined;
+      curColWidth: number | undefined;
 
-    console.log("setting listeners from GenericDropdown.tsx");
+    const colDivider = e.target as HTMLElement;
+    if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
+    const headerDiv = colDivider.parentElement;
+    const table = tableRef.current as HTMLElement;
+    colDivider.onmousedown = function (e) {
+      const target = headerDiv;
+      curCol = target ? target : null;
+      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
+      const padding = curCol ? paddingDiff(curCol) : 0;
 
-    if (div) {
-      div.addEventListener("dblclick", function (e: MouseEvent): void {
+      pageX = e.pageX;
+      const currentColumnAllCells = [
+        ...table.querySelectorAll(
+          '[data-column-id*="' + headerDiv.dataset.columnId + '"]'
+        ),
+      ];
+      curColWidth =
+        curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
+          ? curCol.offsetWidth - padding
+          : 0;
+      function onMouseMove(e) {
+        const diffX = e.pageX - (pageX ?? 0);
+
+        headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+        headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
+        headerDiv.style.zIndex = "10";
+
+        if (currentColumnAllCells)
+          currentColumnAllCells.forEach((cell) => {
+            const td = cell as HTMLElement;
+            td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
+            td.style.width = (curColWidth ?? 0) + diffX + "px";
+            td.style.zIndex = "10";
+          });
+
+        /** we are on the last column, expand the width of the table */
+        if (!nxtCol) {
+          table.style.minWidth =
+            (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
+          table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
+          table.style.zIndex = "0";
+        }
+      }
+
+      // (2) move the colDivider on mousemove
+      document.addEventListener("mousemove", onMouseMove);
+
+      // (3) drop the colDivider, remove unneeded handlers
+      colDivider.onmouseup = function () {
+        console.info("removing colDivider.onmouseup");
+        document.removeEventListener("mousemove", onMouseMove);
+        console.info("removing onmouseenter Listner");
+        removeAllListeners();
+        colDivider.onmouseup = null;
+      };
+    };
+
+    if (colDivider) {
+      colDivider.addEventListener("dblclick", function (e: MouseEvent): void {
         setColumnWidths();
-      });
-
-      div.addEventListener(
-        "mousedown",
-        function (e: MouseEvent): void {
-          var target = e.target as HTMLElement;
-          curCol = target ? target : null;
-          var nextCol = curCol
-            ? (curCol.nextElementSibling as HTMLElement)
-            : null;
-          nextCol = nextCol
-            ? (nextCol?.nextElementSibling as HTMLElement)
-            : null;
-          pageX = e.pageX;
-
-          const padding = curCol ? paddingDiff(curCol) : 0;
-
-          curColWidth =
-            curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-              ? curCol.offsetWidth - padding
-              : 0;
-          if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-        },
-        { passive: true }
-      );
-
-      div.addEventListener(
-        "mousemove",
-        function (e: MouseEvent): void {
-          e.preventDefault();
-          console.log("mousemove div");
-          console.log(div);
-          const diffX = e.pageX - (pageX ?? 0);
-          const tables = [...div.querySelectorAll('[id^="' + "gridjs_" + '"]')];
-          if (curCol) {
-            curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-            curCol.style.width = (curColWidth ?? 0) + diffX + "px";
-            (curCol as HTMLElement).style.zIndex = "0";
-
-            if (tables[0]) {
-              let allCells = Array.from(
-                new Set([
-                  ...tables[0].querySelectorAll(
-                    '[data-column-id="' + curCol.dataset.columnId + '"]'
-                  ),
-                ])
-              );
-              if (allCells)
-                allCells.forEach((cell) => {
-                  (cell as HTMLElement).style.minWidth =
-                    (curColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.width =
-                    (curColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.zIndex = "0";
-                  (cell as HTMLElement).style.border = "2px solid blue";
-                });
-            }
-          }
-
-          if (nxtCol) {
-            nxtCol.style.minWidth = (nxtColWidth ?? 0) - diffX + "px";
-            nxtCol.style.width = (nxtColWidth ?? 0) - diffX + "px";
-            (nxtCol as HTMLElement).style.zIndex = "0";
-
-            if (tables[0]) {
-              let allCells = Array.from(
-                new Set([
-                  ...tables[0].querySelectorAll(
-                    '[data-column-id="' + nxtCol.dataset.columnId + '"]'
-                  ),
-                ])
-              );
-              if (allCells)
-                allCells.forEach((cell) => {
-                  (cell as HTMLElement).style.minWidth =
-                    (nxtColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.width =
-                    (nxtColWidth ?? 0) + diffX + "px";
-                  (cell as HTMLElement).style.zIndex = "0";
-                });
-            }
-          }
-        },
-        { passive: false, once: false }
-      );
-
-      document.addEventListener("mouseup", function (e: MouseEvent): void {
-        curCol = null;
-        nxtCol = null;
-        pageX = undefined;
-        nxtColWidth = undefined;
-        curColWidth = undefined;
       });
     }
   }
@@ -537,7 +560,8 @@ function GenericDropdown<T>({
           : null;
 
       if (!myType) return null;
-      const myColumns = myType && columns;
+      const myColumns = GoodColumns[myType];
+
       const columnKeys = Object.entries(myColumns).map(
         ([key, value], index: number) => {
           return { Item: myType, Index: index, Name: value["Name"] };
@@ -561,7 +585,10 @@ function GenericDropdown<T>({
           >
             {!sortState ? "expand_more" : "expand_less"}
           </span>
-          <div className={styles["coldivider"]} onClick={setListeners}></div>
+          <div
+            className={styles["coldivider"]}
+            onMouseEnter={setListeners}
+          ></div>
         </div>
       ));
 
@@ -707,7 +734,7 @@ function GenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setShowSearchBox(true);
-    setColumnWidths();
+    autoSetListeners();
   }
 
   const handleCheckboxChange = (event: any) => {

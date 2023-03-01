@@ -25,20 +25,8 @@ export default function Grid() {
   }
 
   React.useEffect(() => {
-    setNumItems(1);
+    setNumItems(5);
   }, []);
-
-  // async function handleSubmit(e) {
-  //   e.preventDefault();
-  //   setStatus("submitting");
-  //   try {
-  //     await submitForm(item);
-  //     setStatus("success");
-  //   } catch (err) {
-  //     setStatus("typing");
-  //     setError(err);
-  //   }
-  // }
 
   async function handleTextareaChange(e) {
     setNumItems(e.target.value);
@@ -95,12 +83,13 @@ export default function Grid() {
             <DynamicGrid
               style={{
                 display: "block",
-                margin: "50px",
+                marginLeft: "10px",
+                marginTop: "50px",
                 position: "absolute",
               }}
               key={item}
               selectItem={item}
-              showPagination={false}
+              showPagination={true}
               numItems={numItems}
             />
           )}
