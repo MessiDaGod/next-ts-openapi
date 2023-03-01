@@ -3,7 +3,7 @@ import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { getAccounts } from "./api/getAccounts";
-import styles from "./DataGridDropdown.module.scss";
+import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import Console from "./Console";
@@ -53,6 +53,7 @@ interface DynamicGridProps {
   style?: React.CSSProperties;
   showPagination?: boolean;
   numItems?: number;
+  activeDropdown?: boolean;
 }
 
 function DynamicGrid<T>({
@@ -60,6 +61,7 @@ function DynamicGrid<T>({
   style,
   showPagination,
   numItems,
+  activeDropdown,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -124,7 +126,7 @@ function DynamicGrid<T>({
       goodCols.then((data) => {
         setGoodColumns(data);
       })
-      // console.log(goodColumns);
+      dataGridResize(itemsPerPage);
     }
   }, [data]);
 
@@ -142,14 +144,15 @@ function DynamicGrid<T>({
   // }, []);
 
   function setListeners(div: HTMLDivElement, itemsPerPage?: number): void {
+    // console.log(div);
+    // if (!div) return;
     if (div.parentElement?.getAttribute("hidden") !== null) return;
     var pageX: number | undefined,
       curCol: HTMLElement | null,
       nxtCol: HTMLElement | null,
       prevCol: HTMLElement | null,
       curColWidth: number | undefined,
-      nxtColWidth: number | undefined,
-      prevColWidth: number | undefined;
+      nxtColWidth: number | undefined;
 
     if (div.parentElement) {
       div.addEventListener("dblclick", function (e: MouseEvent): void {
@@ -180,18 +183,16 @@ function DynamicGrid<T>({
               ? curCol.offsetWidth - padding
               : 0;
           if (nxtCol) nxtColWidth = nxtCol.offsetWidth - padding;
-
-          if (prevCol) prevColWidth = prevCol.offsetWidth - padding;
         },
         { passive: true }
       );
 
-      document.addEventListener(
+      div.addEventListener(
         "mousemove",
         function (e: MouseEvent): void {
           const diffX = e.pageX - (pageX ?? 0);
           const tables = [
-            ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+            ...div.querySelectorAll('[id^="' + "gridjs_" + '"]'),
           ];
           if (curCol) {
             curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
@@ -608,7 +609,7 @@ function DynamicGrid<T>({
                   className={`${styles["black"]} material-symbols-outlined`}
                   onClick={handleResize}
                   style={{
-                    position: "relative",
+                    // position: "relative",
                     color: "black",
                     cursor: "cell",
                   }}
@@ -684,7 +685,7 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ? (
                       <GenericDropdown
                         selectItem="GetPropOptions"
-                        style={{ position: "absolute", zIndex: 10000000 }}
+                        style={{ position: "absolute", zIndex: 1 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -694,7 +695,7 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "ACCOUNT" ? (
                       <GenericDropdown
                         selectItem="GetAccounts"
-                        style={{ position: "absolute", zIndex: 10000000 }}
+                        style={{ position: "absolute", zIndex: 1 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -704,7 +705,7 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "PERSON" ? (
                       <GenericDropdown
                         selectItem="GetVendors"
-                        style={{ position: "absolute", zIndex: 10000000 }}
+                        style={{ position: "absolute", zIndex: 1 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -730,9 +731,9 @@ function DynamicGrid<T>({
                 className={!style ? cn(styles["table-container"]) : ""}
               >
                 <div
-                  id={"gridjs_0"}
+                  id={"gridjs_"}
                   ref={tableRef}
-                  key={"gridjs_0"}
+                  // key={"gridjs_0"}
                   className={styles["ddTable"]}
                 >
                   <div className={styles["tr"]} data-row-id="0">

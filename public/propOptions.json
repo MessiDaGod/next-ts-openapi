@@ -1,0 +1,788 @@
+[
+  {
+    "Id": 19,
+    "Property_Code": "_condo4 ",
+    "Property_Name": "Coop 345",
+    "Type": "dtAP",
+    "StringValue": "05/01/2020",
+    "HandleValue": ""
+  },
+  {
+    "Id": 117,
+    "Property_Code": "1       ",
+    "Property_Name": "The Plaza Group",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 140,
+    "Property_Code": "100000  ",
+    "Property_Name": "Schnitzer West, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 170,
+    "Property_Code": "100100  ",
+    "Property_Name": "SW Vendor Paymaster, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 191,
+    "Property_Code": "101000  ",
+    "Property_Name": "SW Capital Investment Management, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 212,
+    "Property_Code": "102000  ",
+    "Property_Name": "SW Property Management, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 233,
+    "Property_Code": "102100  ",
+    "Property_Name": "North Creek",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 254,
+    "Property_Code": "102101  ",
+    "Property_Name": "Centre 425",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 275,
+    "Property_Code": "102102  ",
+    "Property_Name": "Centerpoint",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 296,
+    "Property_Code": "102103  ",
+    "Property_Name": "901 Fifth",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 317,
+    "Property_Code": "102104  ",
+    "Property_Name": "Madison Centre",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 338,
+    "Property_Code": "102105  ",
+    "Property_Name": "Urbansea",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 359,
+    "Property_Code": "102106  ",
+    "Property_Name": "Civica Cherry Creek",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 380,
+    "Property_Code": "102107  ",
+    "Property_Name": "North Creek HUB",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 401,
+    "Property_Code": "102199  ",
+    "Property_Name": "SW Ops Mgmt Payroll",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 422,
+    "Property_Code": "104     ",
+    "Property_Name": "H/S Bradley, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 443,
+    "Property_Code": "105     ",
+    "Property_Name": "H/S Brokaw, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 464,
+    "Property_Code": "106     ",
+    "Property_Name": "TOD Brokaw, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 485,
+    "Property_Code": "111     ",
+    "Property_Name": "Coleman Airport Partners, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 506,
+    "Property_Code": "112     ",
+    "Property_Name": "Alfie, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 527,
+    "Property_Code": "113     ",
+    "Property_Name": "Bass Curtner, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 548,
+    "Property_Code": "114     ",
+    "Property_Name": "Hunter Curtner, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 569,
+    "Property_Code": "115     ",
+    "Property_Name": "FWSH 2, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 590,
+    "Property_Code": "117     ",
+    "Property_Name": "SHH Campbell Gateway, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 611,
+    "Property_Code": "119     ",
+    "Property_Name": "CAP VZ, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 632,
+    "Property_Code": "12      ",
+    "Property_Name": "Hunter Land Company",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 653,
+    "Property_Code": "120     ",
+    "Property_Name": "Wooden Decoy, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 674,
+    "Property_Code": "121     ",
+    "Property_Name": "HSAir, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 695,
+    "Property_Code": "122     ",
+    "Property_Name": "CAP OZ I, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 716,
+    "Property_Code": "124     ",
+    "Property_Name": "HS Airport, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 737,
+    "Property_Code": "125     ",
+    "Property_Name": "CAP Phase 1, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 758,
+    "Property_Code": "126     ",
+    "Property_Name": "CAP OZ 34, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 779,
+    "Property_Code": "127     ",
+    "Property_Name": "CAP Tranche 2",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 800,
+    "Property_Code": "128     ",
+    "Property_Name": "City Fields West 1, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 821,
+    "Property_Code": "129     ",
+    "Property_Name": "City Fields West 2, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 842,
+    "Property_Code": "132     ",
+    "Property_Name": "Bollinger-Ernest &Shirley Wong",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 863,
+    "Property_Code": "14      ",
+    "Property_Name": "Derk Hunter Properties",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 884,
+    "Property_Code": "15      ",
+    "Property_Name": "LDH, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 905,
+    "Property_Code": "151     ",
+    "Property_Name": "HSO, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 926,
+    "Property_Code": "152     ",
+    "Property_Name": "USO At First, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 947,
+    "Property_Code": "153     ",
+    "Property_Name": "Tech MLP, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 968,
+    "Property_Code": "159     ",
+    "Property_Name": "LDH MP, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 989,
+    "Property_Code": "16      ",
+    "Property_Name": "Hunter Bernal, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1010,
+    "Property_Code": "160     ",
+    "Property_Name": "H/S Middlefield, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1031,
+    "Property_Code": "161     ",
+    "Property_Name": "LDH 1460, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1052,
+    "Property_Code": "164     ",
+    "Property_Name": "H/S Sunnyvale, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1073,
+    "Property_Code": "165     ",
+    "Property_Name": "Sunnyvale Retail Owners, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1094,
+    "Property_Code": "166     ",
+    "Property_Name": "HSCL, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1115,
+    "Property_Code": "168     ",
+    "Property_Name": "BASS King Road, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1136,
+    "Property_Code": "169     ",
+    "Property_Name": "King Road Owner, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1157,
+    "Property_Code": "17      ",
+    "Property_Name": "Hunter Properties, Inc.",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1178,
+    "Property_Code": "1jvptn1 ",
+    "Property_Name": "1 JV Partner One (Ex 1)",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1200,
+    "Property_Code": "1jvptn2 ",
+    "Property_Name": "1 JV Partner Two (Ex 1)",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1222,
+    "Property_Code": "1jvptn3 ",
+    "Property_Name": "1 JV Partner Three (Ex 1)",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1243,
+    "Property_Code": "1ventur ",
+    "Property_Name": "1 Venture PR (Ex 1)",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1265,
+    "Property_Code": "200000  ",
+    "Property_Name": "North Creek Maint District",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1286,
+    "Property_Code": "200100  ",
+    "Property_Name": "North Creek Common Area",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1307,
+    "Property_Code": "200200  ",
+    "Property_Name": "Colyear Family Trust",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1328,
+    "Property_Code": "200300  ",
+    "Property_Name": "Van Dorens Landng Owners Assoc",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1349,
+    "Property_Code": "200400  ",
+    "Property_Name": "Urbansea Holding, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1370,
+    "Property_Code": "200401  ",
+    "Property_Name": "Urbansea Mezzanine, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1391,
+    "Property_Code": "200402  ",
+    "Property_Name": "Desert Passage JV, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1412,
+    "Property_Code": "200403  ",
+    "Property_Name": "Starvue Holding, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1433,
+    "Property_Code": "200404  ",
+    "Property_Name": "Starvue Mezzanine, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1454,
+    "Property_Code": "200405  ",
+    "Property_Name": "Starvue, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1475,
+    "Property_Code": "200500  ",
+    "Property_Name": "IVC LL - Bldg A",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1496,
+    "Property_Code": "200501  ",
+    "Property_Name": "IVC LL - Bldg B",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1517,
+    "Property_Code": "200502  ",
+    "Property_Name": "IVC LL - Bldg C",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1538,
+    "Property_Code": "200503  ",
+    "Property_Name": "IVC TT - Bldg A",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1559,
+    "Property_Code": "200504  ",
+    "Property_Name": "IVC TT - Building B",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1580,
+    "Property_Code": "200505  ",
+    "Property_Name": "IVC TT - Bldg C",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1601,
+    "Property_Code": "209000  ",
+    "Property_Name": "MC Holding I, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1622,
+    "Property_Code": "209001  ",
+    "Property_Name": "MC Guarantor, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1643,
+    "Property_Code": "209002  ",
+    "Property_Name": "SW Fund I Asset Surety",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1664,
+    "Property_Code": "209900  ",
+    "Property_Name": "S/I North Creek III, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1685,
+    "Property_Code": "209901  ",
+    "Property_Name": "Puyallup 5th Ave, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1706,
+    "Property_Code": "209902  ",
+    "Property_Name": "SI Lake Union III, LC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1727,
+    "Property_Code": "209903  ",
+    "Property_Name": "S/I Willows, LLC",
+    "Type": "dtAP",
+    "StringValue": "02/01/2008",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1748,
+    "Property_Code": "21      ",
+    "Property_Name": "ABC DeAnza Plaza Partners",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1769,
+    "Property_Code": "22      ",
+    "Property_Name": "Willow and Bird Partners",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1790,
+    "Property_Code": "24      ",
+    "Property_Name": "Hamilton Plaza Investors, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1811,
+    "Property_Code": "2auprop ",
+    "Property_Name": "2 Austin Properties",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1832,
+    "Property_Code": "2inva   ",
+    "Property_Name": "2 Investor A",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1854,
+    "Property_Code": "2invb   ",
+    "Property_Name": "2 Investor B",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1876,
+    "Property_Code": "2invc   ",
+    "Property_Name": "2 Investor C",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1898,
+    "Property_Code": "2invd   ",
+    "Property_Name": "2 Investor D",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1920,
+    "Property_Code": "2inve   ",
+    "Property_Name": "2 Investor E",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1942,
+    "Property_Code": "2jvptr1 ",
+    "Property_Name": "2 JV Partner 1",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1964,
+    "Property_Code": "2jvptr2 ",
+    "Property_Name": "2 JV Partner 2",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 1986,
+    "Property_Code": "2ptshp1 ",
+    "Property_Name": "2 Partnership 1",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2008,
+    "Property_Code": "2ptshp2 ",
+    "Property_Name": "2 Partnership 2",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2029,
+    "Property_Code": "2srprop ",
+    "Property_Name": "2 Sunrise Properties",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2050,
+    "Property_Code": "2tprop  ",
+    "Property_Name": "2 Trenton Properties",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2071,
+    "Property_Code": "2ventur ",
+    "Property_Name": "ABC Fund (2)",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2092,
+    "Property_Code": "3       ",
+    "Property_Name": "JJ DeAnza",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2113,
+    "Property_Code": "39      ",
+    "Property_Name": "BP 1 SPE, LLC",
+    "Type": "dtAP",
+    "StringValue": "01/01/2009",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2134,
+    "Property_Code": "3inv1   ",
+    "Property_Name": "3 Investor 1",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2155,
+    "Property_Code": "3inv2   ",
+    "Property_Name": "3 Investor 2",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2176,
+    "Property_Code": "3jvptr1 ",
+    "Property_Name": "3 JV Partner 1",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2197,
+    "Property_Code": "3jvptr2 ",
+    "Property_Name": "3 JV Partner 2",
+    "Type": "dtAP",
+    "HandleValue": ""
+  },
+  {
+    "Id": 2218,
+    "Property_Code": "3ownera ",
+    "Property_Name": "3 Owner A",
+    "Type": "dtAP",
+    "HandleValue": ""
+  }
+]

@@ -117,7 +117,6 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
-    tableRef && console.log(tableRef);
   }, [tableRef]);
 
   React.useEffect(() => {
@@ -125,7 +124,6 @@ function GenericDropdown<T>({
       console.log("React.useEffect GenericDropdown: " + selected);
       dataGridResize(itemsPerPage);
       setColumnWidths();
-      // setRowHeights();
     }
   }, [data]);
 
@@ -179,7 +177,7 @@ function GenericDropdown<T>({
         function (e: MouseEvent): void {
           const diffX = e.pageX - (pageX ?? 0);
           const tables = [
-            ...document.querySelectorAll('[id^="' + "gridjs_" + '"]'),
+            ...div.querySelectorAll('[id^="' + "gridjs_" + '"]'),
           ];
           if (curCol) {
             curCol.style.minWidth = (curColWidth ?? 0) + diffX + "px";
@@ -341,7 +339,9 @@ function GenericDropdown<T>({
   }
 
   function setColumnWidths() {
-    const tables = [...document.querySelectorAll('[id*="' + "gridjs" + '"]')];
+    if (!tableRef) return;
+    const current = tableRef.current;
+    const tables = [...current.querySelectorAll('[id*="' + "gridjs" + '"]')];
     tables.forEach((mytable) => {
       const table = mytable;
       if (!table) return;
@@ -410,9 +410,8 @@ function GenericDropdown<T>({
             (col as HTMLElement).style.display = "inline-block";
             (col as HTMLElement).style.whiteSpace = "nowrap";
             (col as HTMLElement).style.textAlign = "left";
-            (col as HTMLElement).style.padding = "0px";
             (col as HTMLElement).style.minHeight = "0px";
-            (col as HTMLElement).style.zIndex = "0";
+            (col as HTMLElement).style.zIndex = "1";
             (col as HTMLElement).style.minWidth = `${value}px`;
             (col as HTMLElement).style.width = `${value}px`;
           }
@@ -458,7 +457,6 @@ function GenericDropdown<T>({
       });
       setData(sortedData);
       setSortState(!state);
-      setCurrentPage(1);
     }
   }
 
@@ -592,18 +590,6 @@ function GenericDropdown<T>({
           data-column-id={col}
           hidden={isColumnHidden(data, col)}
         >
-          <span
-            key={"key"}
-            className={`${styles["black"]} material-symbols-outlined`}
-            onClick={handleResize}
-            style={{
-              position: "relative",
-              color: "black",
-              cursor: "cell",
-            }}
-          >
-            {"aspect_ratio"}
-          </span>
           {col}
           <span
             className={`${"material-symbols-outlined"} ${styles["black"]}`}
@@ -627,7 +613,6 @@ function GenericDropdown<T>({
           return filteredProps;
         });
 
-      // console.log(filteredData);
 
       const rows = [...filteredData]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -698,7 +683,7 @@ function GenericDropdown<T>({
                             color: "white",
                             background: "black",
                             display: "flex",
-                            position: "relative",
+                            position: "absolute",
                             transform: "translateY(-30px)",
                             float: "right",
                             marginRight: "20px",

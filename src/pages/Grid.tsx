@@ -96,7 +96,7 @@ export default function Form() {
               style={{
                 display: "block",
                 margin: "50px",
-                position: "relative",
+                position: "absolute",
               }}
               key={item}
               selectItem={item}
