@@ -1,6 +1,6 @@
 .divTable,
 .ddTable {
-    width: auto;
+    width: fit-content;
     border-collapse: collapse;
 }
 
@@ -92,11 +92,11 @@
 
 .dropdown {
     margin: 0;
-    // padding: var(--tablepadding);
     padding: 0;
     overflow: hidden;
     cursor: pointer;
-    z-index: 10;
+    height: 30px;
+    z-index: 0;
 }
 
 .rz-placeholder {
@@ -105,15 +105,12 @@
 }
 
 .dropdown-content {
-    margin-top: 15px;
     width: 100%;
     display: flex;
 }
 
 .dropdown-content-hidden {
-    margin-top: 15px;
     width: 100%;
-    margin-bottom: 15px;
     visibility: hidden;
 }
 

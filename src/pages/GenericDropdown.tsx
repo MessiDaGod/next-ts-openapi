@@ -55,7 +55,6 @@ interface DynamicGridProps {
   showPagination?: boolean;
   showCheckbox?: boolean;
   tableRef: React.RefObject<HTMLDivElement>;
-  ref: React.RefObject<HTMLDivElement>;
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
@@ -67,10 +66,8 @@ function GenericDropdown<T>({
   showPagination,
   showCheckbox,
   tableRef,
-  ref,
   itemsPerPage,
   numItems,
-  columns,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
@@ -80,7 +77,8 @@ function GenericDropdown<T>({
   const [showSearchBox, setShowSearchBox] = React.useState(false);
   const [hasPagination] = React.useState(showPagination ?? false);
   const [selectedItem, setSelectedItem] = React.useState(null);
-
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [activeDropdown, setActiveDropdown] = React.useState(null);
   itemsPerPage = itemsPerPage ?? 10;
   numItems = numItems ?? 100;
 
@@ -134,6 +132,8 @@ function GenericDropdown<T>({
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
     const headerDiv = colDivider.parentElement;
     const table = tableRef.current as HTMLElement;
+    const activeDropdown = dropdownRef.current as HTMLElement;
+    console.log(activeDropdown);
     colDivider.onmousedown = function (e) {
       const target = headerDiv;
       curCol = target ? target : null;
@@ -660,6 +660,14 @@ function GenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setShowSearchBox(true);
+    setActiveDropdown(dropdownRef.current);
+    (dropdownRef.current as HTMLElement).style.zIndex = "1000";
+  }
+
+  function handleMouseLeaveSearchBox(e) {
+    setActiveDropdown(dropdownRef.current);
+    (dropdownRef.current as HTMLElement).style.zIndex = "0";
+    setShowSearchBox(false);
   }
 
   const handleCheckboxChange = (event: any) => {
@@ -697,6 +705,9 @@ function GenericDropdown<T>({
     }
   }
 
+
+
+
   const table = GenerateTableHtml();
 
   if (table && Array.isArray(data) && data.length > 0) {
@@ -706,7 +717,8 @@ function GenericDropdown<T>({
         <div
           className={`${styles["dropdown"]}`}
           onMouseEnter={handleShowSearchBox}
-          onMouseLeave={() => setShowSearchBox(false)}
+          onMouseLeave={handleMouseLeaveSearchBox}
+          ref={dropdownRef}
         >
           <label
             id={`${selected}_label`}

@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
-// import { getPropOptionsAsync } from "./api/getPropOptions";
-// import { getAccounts } from "./api/getAccounts";
+import GoodColumns from "../../public/GoodColumns.json";
 import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classNames";
@@ -56,7 +55,6 @@ interface DynamicGridProps {
   style?: React.CSSProperties;
   showPagination?: boolean;
   numItems?: number;
-  activeDropdown?: boolean;
 }
 
 function DynamicGrid<T>({
@@ -64,37 +62,32 @@ function DynamicGrid<T>({
   style,
   showPagination,
   numItems,
-  activeDropdown,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  // const [hasPagination, setHasPagination] = React.useState(showPagination ?? false);
   const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
+  const [activeDropdown, setActiveDropdown] = React.useState(null);
   const itemsPerPage = 10;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
 
-  // React.useEffect(() => {
-  //   autoSetListeners();
-  // }, []);
+  function handleDropdownOpen(key) {
+    setActiveDropdown(key);
+  }
+
+  function handleDropdownClose() {
+    setActiveDropdown(null);
+  }
 
   React.useEffect(() => {
     if (selected) {
-      // console.log("React.useEffect from DynamicGrid.tsx");
-      // setColumnWidths();
-      // setRowHeights();
-      function getGoodColumns(): Promise<string[]> {
-        return fetch("/GoodColumns.json").then((response) => response.json());
-      }
-      const goodCols = getGoodColumns();
-      goodCols.then((data) => {
-        setGoodColumns(data);
-      });
+      setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
     }
   }, [data]);
 
@@ -208,13 +201,10 @@ function DynamicGrid<T>({
       return width;
     }
 
-
     allRows.forEach((row, rowNumber: number) => {
-
       const ths = row.querySelectorAll('[class*="' + "_th" + '"]');
       const tds = row.querySelectorAll('[class*="' + "_td" + '"]');
       const cells = [...ths, ...tds];
-
 
       cells.forEach((cell) => {
         const columnId = cell.getAttribute("data-column-id");
@@ -244,7 +234,6 @@ function DynamicGrid<T>({
       });
     });
 
-
     Object.entries(columnWidths).map((width) => {
       const [key, value] = width;
       const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -270,7 +259,7 @@ function DynamicGrid<T>({
         parseInt((col as HTMLElement).style.width) +
         paddingDiff(col as HTMLElement);
     });
-    console.log(`table width: ${tableWidth}`);
+
     // (table as HTMLElement).style.width = tableWidth.toString() + "px";
     // (table as HTMLElement).style.zIndex = "0";
     return columnWidths;
@@ -375,6 +364,8 @@ function DynamicGrid<T>({
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
     const headerDiv = colDivider.parentElement;
     const table = tableRef.current as HTMLElement;
+    const activeDropdown = dropdownRef.current as HTMLElement;
+
     colDivider.onmousedown = function (e) {
       const target = headerDiv;
       curCol = target ? target : null;
@@ -463,8 +454,6 @@ function DynamicGrid<T>({
         );
       });
 
-      console.log(header);
-
       const rows = [...data]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
@@ -486,6 +475,7 @@ function DynamicGrid<T>({
                     className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
+                    ref={dropdownRef}
                   >
                     {key.toUpperCase() === "PROPERTY" ? (
                       <GenericDropdown
@@ -494,7 +484,6 @@ function DynamicGrid<T>({
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
-                        ref={undefined}
                         columns={columns["Property"]}
                       />
                     ) : key.toUpperCase() === "ACCOUNT" ? (
@@ -504,7 +493,6 @@ function DynamicGrid<T>({
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
-                        ref={undefined}
                         columns={columns["Account"]}
                       />
                     ) : key.toUpperCase() === "PERSON" ? (
@@ -514,7 +502,6 @@ function DynamicGrid<T>({
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
-                        ref={undefined}
                         columns={columns["Vendor"]}
                       />
                     ) : (
