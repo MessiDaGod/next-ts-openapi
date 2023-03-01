@@ -81,10 +81,20 @@ function GenericDropdown<T>({
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   itemsPerPage = itemsPerPage ?? 10;
   numItems = numItems ?? 100;
+  const zIndex = 0;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
+
+
+  React.useEffect(() => {
+    setColumnWidths();
+  }, []);
+
+  React.useEffect(() => {
+    setColumnWidths();
+  }, [activeDropdown]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -155,14 +165,14 @@ function GenericDropdown<T>({
 
         headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.zIndex = "10";
+        headerDiv.style.zIndex = zIndex.toString();
 
         if (currentColumnAllCells)
           currentColumnAllCells.forEach((cell) => {
             const td = cell as HTMLElement;
             td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             td.style.width = (curColWidth ?? 0) + diffX + "px";
-            td.style.zIndex = "10";
+            td.style.zIndex = zIndex.toString();
           });
 
         /** we are on the last column, expand the width of the table */
@@ -170,7 +180,7 @@ function GenericDropdown<T>({
           table.style.minWidth =
             (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
           table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-          table.style.zIndex = "0";
+          table.style.zIndex = zIndex.toString();
         }
       }
 
@@ -244,7 +254,7 @@ function GenericDropdown<T>({
         ruler.style.position = "absolute";
         ruler.style.whiteSpace = "nowrap";
         ruler.style.padding = "0.25rem";
-        (ruler as HTMLElement).style.zIndex = "0";
+        (ruler as HTMLElement).style.zIndex = zIndex.toString();
         ruler.innerText = s;
         document.body.appendChild(ruler);
         const padding = paddingDiff(ruler as HTMLElement);
@@ -295,7 +305,7 @@ function GenericDropdown<T>({
             (col as HTMLElement).style.whiteSpace = "nowrap";
             (col as HTMLElement).style.textAlign = "left";
             (col as HTMLElement).style.minHeight = "0px";
-            (col as HTMLElement).style.zIndex = "1";
+            (col as HTMLElement).style.zIndex = zIndex.toString();
             (col as HTMLElement).style.minWidth = `${value}px`;
             (col as HTMLElement).style.width = `${value}px`;
           }
@@ -311,7 +321,7 @@ function GenericDropdown<T>({
       });
 
       (table as HTMLElement).style.width = tableWidth.toString() + "px";
-      (table as HTMLElement).style.zIndex = "0";
+      (table as HTMLElement).style.zIndex = zIndex.toString();
       return columnWidths;
     });
   }
@@ -373,7 +383,7 @@ function GenericDropdown<T>({
       allrows.forEach((row) => {
         (row as HTMLElement).style.minHeight = "0px";
         (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = "0";
+        (row as HTMLElement).style.zIndex = zIndex.toString();
       });
     }
   }
@@ -604,7 +614,7 @@ function GenericDropdown<T>({
                           className={"material-symbols-outlined"}
                           style={{
                             color: "white",
-                            background: "black",
+                            backgroundColor: "black",
                             display: "flex",
                             position: "absolute",
                             transform: "translateY(-30px)",
@@ -659,14 +669,24 @@ function GenericDropdown<T>({
   }
 
   function handleShowSearchBox(e) {
-    setShowSearchBox(true);
+
     setActiveDropdown(dropdownRef.current);
     (dropdownRef.current as HTMLElement).style.zIndex = "1000";
+    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "1000";
+    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
+    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
+    container.style.zIndex = "1000";
+    setColumnWidths();
+    setShowSearchBox(true);
   }
 
   function handleMouseLeaveSearchBox(e) {
-    setActiveDropdown(dropdownRef.current);
     (dropdownRef.current as HTMLElement).style.zIndex = "0";
+    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
+    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
+    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
+    container.style.zIndex = "0";
+    setActiveDropdown(null);
     setShowSearchBox(false);
   }
 
@@ -728,6 +748,7 @@ function GenericDropdown<T>({
               margin: "0",
               cursor: "pointer",
               overflow: "hidden",
+              zIndex: "0",
               borderRadius: `${hasPagination ? "6px" : "0px"}`,
             }}
           >

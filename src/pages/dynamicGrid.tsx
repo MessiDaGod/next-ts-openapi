@@ -72,6 +72,7 @@ function DynamicGrid<T>({
   const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const itemsPerPage = 10;
+  const zIndex = 0;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -91,10 +92,13 @@ function DynamicGrid<T>({
     }
   }, [data]);
 
-  //   React.useEffect(() => {
-  //     dataGridResize(itemsPerPage);
-  //     setColumnWidths();
-  // }, [tableRef]);
+  React.useEffect(() => {
+    setColumnWidths();
+  }, []);
+
+  React.useEffect(() => {
+    setColumnWidths();
+  }, [activeDropdown]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -192,7 +196,7 @@ function DynamicGrid<T>({
       ruler.style.position = "absolute";
       ruler.style.whiteSpace = "nowrap";
       // ruler.style.padding = "0";
-      (ruler as HTMLElement).style.zIndex = "0";
+      (ruler as HTMLElement).style.zIndex = zIndex.toString()
       ruler.innerText = s;
       document.body.appendChild(ruler);
       const padding = paddingDiff(ruler as HTMLElement);
@@ -245,7 +249,7 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.textAlign = "left";
           (col as HTMLElement).style.padding = "0px";
           (col as HTMLElement).style.minHeight = "0px";
-          (col as HTMLElement).style.zIndex = "0";
+          (col as HTMLElement).style.zIndex = zIndex.toString();
           (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
           (col as HTMLElement).style.width = `${Math.round(value)}px`;
         }
@@ -261,7 +265,7 @@ function DynamicGrid<T>({
     });
 
     // (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    // (table as HTMLElement).style.zIndex = "0";
+    // (table as HTMLElement).style.zIndex = zIndex.toString()
     return columnWidths;
   }
 
@@ -276,7 +280,7 @@ function DynamicGrid<T>({
       allrows.forEach((row) => {
         (row as HTMLElement).style.minHeight = "0px";
         (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = "0";
+        (row as HTMLElement).style.zIndex = zIndex.toString()
       });
     }
   }
@@ -364,8 +368,7 @@ function DynamicGrid<T>({
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
     const headerDiv = colDivider.parentElement;
     const table = tableRef.current as HTMLElement;
-    const activeDropdown = dropdownRef.current as HTMLElement;
-
+    setActiveDropdown(dropdownRef.current);
     colDivider.onmousedown = function (e) {
       const target = headerDiv;
       curCol = target ? target : null;
@@ -387,19 +390,19 @@ function DynamicGrid<T>({
 
         headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.zIndex = "10";
+        headerDiv.style.zIndex = zIndex.toString()
 
         if (currentColumnAllCells)
           currentColumnAllCells.forEach((cell) => {
             const td = cell as HTMLElement;
             td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             td.style.width = (curColWidth ?? 0) + diffX + "px";
-            td.style.zIndex = "10";
+            td.style.zIndex = zIndex.toString()
           });
 
         // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
         // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-        // table.style.zIndex = "0";
+        // table.style.zIndex = zIndex.toString()
       }
 
       // (2) move the colDivider on mousemove
@@ -410,7 +413,7 @@ function DynamicGrid<T>({
         console.info("removing colDivider.onmouseup");
         document.removeEventListener("mousemove", onMouseMove);
         console.info("removing onmouseenter Listner");
-        removeAllListeners();
+        // removeAllListeners();
         colDivider.onmouseup = null;
       };
     };
@@ -480,7 +483,7 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ? (
                       <GenericDropdown
                         selectItem="GetPropOptions"
-                        style={{ position: "absolute", zIndex: 1 }}
+                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -489,7 +492,7 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "ACCOUNT" ? (
                       <GenericDropdown
                         selectItem="GetAccounts"
-                        style={{ position: "absolute", zIndex: 1 }}
+                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -498,7 +501,7 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "PERSON" ? (
                       <GenericDropdown
                         selectItem="GetVendors"
-                        style={{ position: "absolute", zIndex: 1 }}
+                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}

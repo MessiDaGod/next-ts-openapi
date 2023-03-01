@@ -5,11 +5,12 @@
 }
 
 .ddTable {
-    border: 1px solid blue;
+    // border: 1px solid blue;
+    background-color: black;
 }
 
 .divTable {
-    border: 1px solid yellow;
+    // border: 1px solid yellow;
     width: fit-content;
 }
 
@@ -28,6 +29,7 @@
     font-size: 14px;
     padding: 0;
     margin: 0;
+    user-select: none;
 }
 
 .th,
@@ -48,12 +50,15 @@
     cursor: pointer;
     overflow: hidden;
     color: black;
-    background: white;
-    border-right: 1px solid blue;
+    background-color: white;
+    // border-right: 1px solid blue;
 }
 
 .td {
-    border-right: 1px solid red;
+    // border-right: 1px solid red;
+    z-index: 0;
+    background-color: black;
+    color: white;
 }
 
 .tr-hoverable:hover {
@@ -97,11 +102,13 @@
     cursor: pointer;
     height: 30px;
     z-index: 0;
+    background-color: black;
 }
 
 .rz-placeholder {
     border: 1px solid rgb(70, 70, 73);
-    padding: var(--tablepadding);
+    z-index: 1000;
+    background-color: black;
 }
 
 .dropdown-content {
@@ -117,7 +124,7 @@
 .table-container {
     padding: 0;
     margin: 0;
-    z-index: 0;
+    z-index: 1;
 }
 
 .dd-container {
