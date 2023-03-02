@@ -102,6 +102,7 @@
   margin: 0;
   padding: 0;
   border-width: 0;
+  z-index: 0;
 }
   html {
     font-family: sans-serif;
@@ -265,4 +266,8 @@ input  {
 
 .monaco-editor {
   resize: both;
+}
+
+[class$='-hidden'] {
+  z-index: 0 !important;
 }

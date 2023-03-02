@@ -2,6 +2,7 @@
 .ddTable {
     width: fit-content;
     border-collapse: collapse;
+    background-color: transparent;
 }
 
 .ddTable {
@@ -38,7 +39,7 @@
     user-select: none;
     box-sizing: content-box;
     vertical-align: middle;
-
+    display: flex;
 }
 
 .th,
@@ -104,6 +105,7 @@
 
 .dropdown-hidden {
     z-index: 0;
+    display: flex;
 }
 .dropdown {
     box-sizing: content-box;
@@ -118,19 +120,28 @@
 .rz-placeholder {
     border: 1px solid rgb(70, 70, 73);
     z-index: 0;
-    background-color: black;
-    box-sizing: content-box;
-    vertical-align: middle;
-    align-items: center;
-    display: flex;
+    background-color: transparent;
+    // box-sizing: content-box;
+    // vertical-align: middle;
+    // align-items: center;
+    // display: flex;
 }
 
+.rz-placeholder {
+    border: 1px solid rgb(70, 70, 73);
+    z-index: 0;
+    background-color :rgb(70, 70, 73);
+    // box-sizing: content-box;
+    // vertical-align: middle;
+    // align-items: center;
+    // display: flex;
+}
 .dropdown-content {
     z-index: 1000;
     position: absolute;
     box-sizing: content-box;
     align-items: center;
-    // display: flex;
+    display: flex;
 }
 
 .dropdown-content-hidden {
@@ -145,15 +156,17 @@
 
 .dd-container {
     padding: 10px;
+    position: flex;
+    z-index: 100000;
     position: absolute;
-    z-index: 1000;
+    background-color :rgb(70, 70, 73);
+    margin: 10px;
+    border: 1px solid red;
 }
 
 .dd-container-hidden {
-    background-color: #1d1d1d;
-    padding: 10px;
-    position: absolute;
     z-index: 0;
+    display: none;
 }
 
 .button {

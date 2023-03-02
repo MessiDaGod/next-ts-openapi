@@ -552,7 +552,7 @@ function GenericDropdown<T>({
                   <div
                     id={`td_${row[columnKeys[0].Name]}_${index}`}
                     key={`td_${row[columnKeys[0].Name]}_${index}`}
-                    className={styles["td"]}
+                    className={styles["td-ddTable"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
                     onClick={handleOnClick}
@@ -573,15 +573,15 @@ function GenericDropdown<T>({
                 <div
                   id={"gridjs_0"}
                   key={"gridjs_0"}
-                  className={cn(styles["ddTable"])}
+                  className={isActiveDropdown ? cn(styles["ddTable"]) : cn(styles["ddTable-hidden"])}
                 >
-                  <div className={cn(styles["thead"])}></div>
+                  <div className={isActiveDropdown ? cn(styles["thead"]) : cn(styles["thead-hidden"])}></div>
                   {
                     <>
                       <input
                         id="search-input"
                         type="search"
-                        className={styles["rz-textbox findcomponent"]}
+                        className={isActiveDropdown ? cn(styles["rz-placeholder"]) : cn(styles["rz-placeholder-hidden"])}
                         placeholder="Search ..."
                         autoComplete="on"
                         style={{
@@ -604,7 +604,6 @@ function GenericDropdown<T>({
                             backgroundColor: "black",
                             display: "flex",
                             position: "absolute",
-                            transform: "translateY(-30px)",
                             float: "right",
                             marginRight: "20px",
                             cursor: "crosshair",
@@ -752,12 +751,11 @@ function GenericDropdown<T>({
         >
           <label
             id={`${selected}_label`}
-            className={`${styles["rz-placeholder"]}`}
+            className={isActiveDropdown ? cn(styles["rz-placeholder"]) : cn(styles["rz-placeholder-hidden"])}
             style={{
               padding: "0",
               margin: "0",
               cursor: "pointer",
-              borderRadius: `${hasPagination ? "6px" : "0px"}`,
             }}
           >
             {selectedItem ? selectedItem : getHeaderValue(selected)}
@@ -766,7 +764,7 @@ function GenericDropdown<T>({
               style={{
                 color: "white",
                 display: "inline-block",
-                // transform: "translateY(25%)",
+                verticalAlign: "center",
               }}
             >
               {showSearchBox ? "expand_more" : "expand_less"}
@@ -779,7 +777,7 @@ function GenericDropdown<T>({
                 : `${styles["dropdown-content"]}`
             }
           >
-            {isActiveDropdown && <>{table}</>}
+            {isActiveDropdown && <div className={isActiveDropdown ? cn(styles["ddTable"]) : cn(styles["ddTable-hidden"])}>{table}</div>}
             {!isChecked && <div>{table}</div>}
           </div>
         </div>

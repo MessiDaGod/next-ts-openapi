@@ -38,6 +38,7 @@
     user-select: none;
     box-sizing: content-box;
     vertical-align: middle;
+    z-index: 0;
 }
 
 .th,
@@ -60,16 +61,14 @@
 }
 
 .td {
-    // border-right: 1px solid red;
+    display: flex;
     z-index: 0;
     background-color: black;
     color: white;
     padding: 2px;
 }
 
-.td:hover {
-    border: 1px solid blue;
-}
+
 .tr-hoverable:hover {
     background: #f7aaaa;
     display: flex;

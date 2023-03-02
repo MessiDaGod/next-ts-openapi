@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import GoodColumns from "../../public/GoodColumns.json";
-import styles from "./GenericDropdown.module.scss";
+import styles from "./GridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classNames";
 
@@ -534,7 +534,7 @@ function DynamicGrid<T>({
             <>
               <div
                 style={style}
-                className={!style ? cn(styles["table-container"]) : ""}
+                className={cn(styles["table-container"])}
               >
                 <div
                   id={"gridjs_"}

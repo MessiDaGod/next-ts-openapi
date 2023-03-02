@@ -74,7 +74,7 @@ export default function Grid() {
               padding: "10px",
               width: "50px",
               cursor: "pointer",
-              marginLeft: "375px",
+              marginLeft: "150px",
               top: "0px",
             }}
             className={cn(styles["rz-textbox"], styles["findcomponent"])}
@@ -89,12 +89,12 @@ export default function Grid() {
 
         {status === "success" && (
           <DynamicGrid
-            style={{
-              display: "block",
-              marginLeft: "10px",
-              marginTop: "50px",
-              position: "absolute",
-            }}
+          style={{
+            display: "block",
+            marginLeft: "10px",
+            marginTop: "50px",
+            position: "absolute",
+          }}
             key={item}
             selectItem={item}
             showPagination={true}
