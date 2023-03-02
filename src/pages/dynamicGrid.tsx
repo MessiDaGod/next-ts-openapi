@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import GoodColumns from "../../public/GoodColumns.json";
-import styles from "./GridDropdown.module.scss";
+import styles from "./GenericDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classNames";
 
