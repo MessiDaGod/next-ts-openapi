@@ -15,18 +15,12 @@
     width: fit-content;
 }
 
-.trhover {
-    background: #f7aaaa;
-}
+
 
 .tr {
     display: flex;
     vertical-align: center;
     align-items: center;
-}
-
-.tr-hoverable:hover {
-    background-color: #f7aaaa;
 }
 
 .th,
@@ -103,19 +97,6 @@
     cursor: pointer;
 }
 
-.dropdown-hidden {
-    z-index: 0;
-}
-.dropdown {
-    vertical-align: center;
-    align-items: center;
-    display: inline-block;
-    position: relative;
-    cursor: pointer;
-    z-index: 1000;
-    position: absolute;
-}
-
 .rz-placeholder {
     border: 1px solid rgb(70, 70, 73);
     z-index: 1000;
@@ -125,6 +106,7 @@
 .dropdown-content {
     width: 100%;
     z-index: 1000;
+    display: flex;
     position: absolute;
 }
 
