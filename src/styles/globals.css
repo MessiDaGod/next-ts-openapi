@@ -262,3 +262,7 @@ input  {
   border: white;
   margin: 5px;
 }
+
+.monaco-editor {
+  resize: both;
+}

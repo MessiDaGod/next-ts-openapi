@@ -4,13 +4,17 @@ import StandaloneCodeEditor from "@monaco-editor/react";
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Home.module.scss";
 
-interface CodeEditorProps {
+
+interface CodeEditorProps  {
   initialValue: string;
   language: string | undefined;
-  height: string | undefined;
+  height: number;
+  width: number;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height }) => {
+
+
+const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height, width }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
   const editorValueRef = useRef(initialValue);
   const [editorValue, seteditorValue] = useState('SELECT * FROM Property;');
@@ -21,12 +25,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
       // LogData();
     }
     fetchData();
+
   }, [editorValue]);
 
   const handleEditorDidMount = (
     editor: monaco.editor.IStandaloneCodeEditor
   ) => {
-    // @ts-ignore
     editorRef.current = editor;
     editor.onDidChangeModelContent(async () => {
       // const sql = editor.getValue();
@@ -44,22 +48,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, language, height 
     }
   };
 
-  // async function handleSetEditorValue() {
-  //   const value = await GetValue();
-  //   if (value) seteditorValue(value);
-  // }
-
-  // async function GetValue() {
-  //   if (editorRef.current) {
-  //     const newValue = editorRef.current.getValue();
-  //     return newValue;
-  //   }
-  // }
-
   return (
     <div className={styles.container}>
       <StandaloneCodeEditor
         height={height ?? "50vh"}
+        width={width ?? "50vw"}
         language={language ?? "sql"}
         defaultValue={initialValue}
         value={editorValueRef.current}

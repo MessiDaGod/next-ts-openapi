@@ -16,6 +16,10 @@
     padding: 10px;
 }
 
+.ddTable>*>.tdhover {
+    background: #f7aaaa;
+}
+
 .tr {
     display: flex;
     width: 100%;
@@ -54,6 +58,10 @@
 
 .td {
     height: 30px;
+}
+
+.trhover {
+    background: #f7aaaa;
 }
 
 .coldivider {

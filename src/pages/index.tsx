@@ -24,7 +24,6 @@ const Home: React.FC = ({}) => (
     <main className={styles["main"]}>
       <div key={"main"}>
         <Grid />
-
       </div>
     </main>
   </>

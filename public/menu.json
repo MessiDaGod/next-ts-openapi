@@ -23,6 +23,12 @@
       "Path": "/Grid",
       "Icon": "code",
       "New": true
+    },
+    {
+      "Name": "SSMS",
+      "Path": "/codeEditor",
+      "Icon": "code",
+      "New": true
     }
   ]
 }

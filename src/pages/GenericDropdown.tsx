@@ -121,6 +121,8 @@ function GenericDropdown<T>({
 
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.stopPropagation()
+    e.preventDefault();
       let pageX: number | undefined,
       curCol: HTMLElement | null,
       nxtCol: HTMLElement | null,

@@ -4,12 +4,18 @@ import styles from "./GridDropdown.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
+import DataGridDropdown from "./DataGridDropdown";
+import GenericDropdown from "./GenericDropdown";
+import GoodColumns from "../../public/GoodColumns.json";
+import dimensions from "../../public/Dimensions.json";
 
 export default function Grid() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
-  const [item, setItem] = useState('');
+  const [item, setItem] = useState("");
   const [numItems, setNumItems] = useState<number>(0);
+  const dropdownRef = React.useRef<HTMLDivElement | null>(null);
+
 
   async function handleSetItem(e) {
     setItem(e);
@@ -43,60 +49,76 @@ export default function Grid() {
   }
 
   return (
-    <div>
-      <div className={styles["table"]}>
-        <div className={styles["tr"]}>
-          <Dropdown
+    <>
+      <Dropdown
+        style={{
+          display: "block",
+          zIndex: 2,
+        }}
+        jsonFileName="GetOptions"
+        label="Choose Item to Display"
+        onChange={(e) => handleSetItem(e)}
+        showCheckbox={true}
+      />
+
+      <div ref={dropdownRef}>
+        <br />
+        <GenericDropdown
+          selectItem="GetPropOptions"
+          style={{
+            display: "block",
+            position: "absolute",
+            marginLeft: "250px",
+          }}
+          showPagination={true}
+          showCheckbox={false}
+          tableRef={dropdownRef}
+        />
+  </div>
+        <form
+          // onSubmit={handleSubmit}
+          style={{
+            display: "block",
+            zIndex: 1,
+            margin: "20px",
+          }}
+        >
+          <input
             style={{
               display: "block",
-              zIndex: 2,
+              padding: "10px",
+              width: "50px",
+              cursor: "pointer",
+              marginLeft: "375px",
+              top: "0px",
             }}
-            jsonFileName="GetOptions"
-            label="Choose Item to Display"
-            onChange={(e) => handleSetItem(e)}
-            showCheckbox={true}
+            className={cn(styles["rz-textbox"], styles["findcomponent"])}
+            type="number"
+            value={numItems}
+            onChange={handleTextareaChange}
+            disabled={false}
           />
-        </div>
-        <div className={styles["tr"]}>
-          <form
-            // onSubmit={handleSubmit}
+          <br />
+          {error !== null && <p className="Error">{error.message}</p>}
+        </form>
+
+        {status === "success" && (
+          <DynamicGrid
             style={{
               display: "block",
-              zIndex: 1,
-              margin: "20px",
+              marginLeft: "10px",
+              marginTop: "50px",
+              position: "absolute",
             }}
-          >
-            <input
-              style={{ top: "50px", display: "block", padding: "10px", width: "50px", cursor: "pointer" }}
-              className={cn(styles["rz-textbox"], styles["findcomponent"])}
-              type="number"
-              value={numItems}
-              onChange={handleTextareaChange}
-              disabled={false}
-            />
-            <br />
-            {/* <button disabled={numItems === 0}>Submit</button> */}
-            {error !== null && <p className="Error">{error.message}</p>}
-          </form>
-        </div>
-        <div className={styles["tr"]}>
-          {status === "success" && (
-            <DynamicGrid
-              style={{
-                display: "block",
-                marginLeft: "10px",
-                marginTop: "50px",
-                position: "absolute",
-              }}
-              key={item}
-              selectItem={item}
-              showPagination={true}
-              numItems={numItems}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+            key={item}
+            selectItem={item}
+            showPagination={true}
+            numItems={numItems}
+            sourceData={JSON.parse(JSON.stringify(dimensions))}
+          />
+        )}
+
+    </>
   );
 }
 

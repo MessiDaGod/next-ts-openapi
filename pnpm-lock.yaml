@@ -22,6 +22,7 @@ specifiers:
   eslint-config-next: 13.1.6
   express-session: ^1.17.3
   gh-pages: ^5.0.0
+  idb: ^7.1.1
   monaco-editor: ^0.35.0
   next: 13.1.6
   react: 18.2.0
@@ -52,6 +53,7 @@ dependencies:
   eslint: 8.34.0
   eslint-config-next: 13.1.6_7kw3g6rralp5ps6mg3uyzz6azm
   express-session: 1.17.3
+  idb: 7.1.1
   monaco-editor: 0.35.0
   next: 13.1.6_wiv434v7erz4aedd5whhdwmpv4
   react: 18.2.0
@@ -2247,6 +2249,10 @@ packages:
       safer-buffer: 2.1.2
     dev: false
     optional: true
+
+  /idb/7.1.1:
+    resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
+    dev: false
 
   /ignore/5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}

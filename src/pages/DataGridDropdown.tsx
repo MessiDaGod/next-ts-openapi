@@ -5,7 +5,7 @@ import styles from "./DataGridDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";
-
+import GoodColumns from "../../public/GoodColumns.json";
 
 
 export interface DataGridDropdownProps {
@@ -14,11 +14,6 @@ export interface DataGridDropdownProps {
   showPagination?: boolean;
 }
 
-function getGoodColumns(): Promise<string[]> {
-  return fetch("/GoodColumns.json")
-    .then((response) => response.json())
-    .then((data) => data.map((item: any) => item.Name));
-}
 
 const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   showCheckbox,
@@ -43,8 +38,6 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
         const response = await getPropOptionsAsync(20);
         const items = JSON.parse(JSON.stringify(response));
         setData(items);
-        const goodCols = await getGoodColumns();
-        setGoodColumns(goodCols);
         setHasPagination(showPagination);
       } catch (error) {
         return emptyPropOptions;
