@@ -191,11 +191,6 @@ function GenericDropdown<T>({
     }
   }
 
-  function handleResize() {
-    setColumnWidths();
-    setRowHeights();
-  }
-
   function paddingDiffY(col: HTMLElement): number {
     if (getStyleVal(col, "box-sizing") === "border-box") {
       return 0;
@@ -597,7 +592,6 @@ function GenericDropdown<T>({
                           padding: "10px",
                         }}
                       ></input>
-                      <div style={{ width: "100%" }}>
                         <span
                           className={"material-symbols-outlined"}
                           style={{
@@ -613,7 +607,6 @@ function GenericDropdown<T>({
                         >
                           {"search"}
                         </span>
-                      </div>
                     </>
                   }
 
@@ -657,7 +650,6 @@ function GenericDropdown<T>({
   }
 
   function handleShowSearchBox(e) {
-
     setActiveDropdown(dropdownRef.current);
     (dropdownRef.current as HTMLElement).style.zIndex = "1000";
     (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "1000";

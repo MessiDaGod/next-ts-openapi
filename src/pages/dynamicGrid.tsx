@@ -573,14 +573,6 @@ function DynamicGrid<T>({
 
   function handleDynamicGridMouseEnter(e) {
     setIsActiveTableRef(true);
-    //   // (2) move the colDivider on mousemove
-    //   e.target.addEventListener("onmouseenter", setColumnWidths);
-
-    //   // (3) drop the colDivider, remove unneeded handlers
-    //   e.target.onmouseleave = function () {
-    //     document.removeEventListener("mousemove", setColumnWidths);
-    //     console.info("removing onmouseenter Listner");
-    //   };
     };
 
   if (table && Array.isArray(data) && data.length > 0) {
