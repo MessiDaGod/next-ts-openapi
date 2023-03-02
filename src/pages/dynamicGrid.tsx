@@ -12,6 +12,7 @@ import cn from "classNames";
 import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners, removeListener } from "process";
+import { TableHeader } from "./TableHeader";
 
 async function GetDimensions(take: number | null = null) {
   try {
@@ -151,11 +152,6 @@ function DynamicGrid<T>({
       setSortState(!state);
       setCurrentPage(1);
     }
-  }
-  function handleResize(e) {
-    e.preventDefault();
-    setColumnWidths();
-    setRowHeights();
   }
 
   function paddingDiffY(col: HTMLElement): number {
@@ -425,48 +421,18 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      // const myType =
-      //   selectItem === "GetPropOptions"
-      //     ? "Property"
-      //     : selectItem === "GetVendors"
-      //     ? "Vendor"
-      //     : selectItem === "GetAccounts"
-      //     ? "Account"
-      //     : null;
 
-      // if (!myType) return null;
-      // const myColumns = GoodColumns[myType];
-
-      // const columnKeys = Object.entries(myColumns).map(
-      //   ([key, value], index: number) => {
-      //     return { Item: myType, Index: index, Name: value["Name"] };
-      //   }
-      // );
-
-      // console.log(columnKeys[0]);
 
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
           !isColumnHidden(data, cols) && (
-            <div
-              key={cols}
-              className={styles["th"]}
-              style={{ width: "100px" }}
-              data-column-id={cols}
-            >
-              {cols}
-              <span
-                className={`${"material-symbols-outlined"} ${styles["black"]}`}
-                onClick={() => handleSort(cols)}
-              >
-                {!sortState ? "expand_more" : "expand_less"}
-              </span>
+            <TableHeader key={cols} columnName={cols} onClick={(() => handleSort(cols))}>
               <div
                 className={styles["coldivider"]}
                 onMouseEnter={setListeners}
               ></div>
-            </div>
+            </TableHeader>
           )
         );
       });
@@ -532,10 +498,7 @@ function DynamicGrid<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div
-                style={style}
-                className={cn(styles["table-container"])}
-              >
+              <div style={style} className={cn(styles["table-container"])}>
                 <div
                   id={"gridjs_"}
                   ref={tableRef}
@@ -573,7 +536,7 @@ function DynamicGrid<T>({
 
   function handleDynamicGridMouseEnter(e) {
     setIsActiveTableRef(true);
-    };
+  }
 
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -581,7 +544,8 @@ function DynamicGrid<T>({
     return (
       <div
         id="dynamicGridId"
-        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}>
+        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
+      >
         {table}
       </div>
     );

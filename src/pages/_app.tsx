@@ -8,9 +8,9 @@ import { useRouter } from "next/router";
 import { ga } from "../utils/analytics";
 import cn from "classNames";
 import "styles/globals.css";
-import '../styles/algolia.css';
-import '../styles/index.css';
-import '../styles/sandpack.css';
+import "../styles/algolia.css";
+import "../styles/index.css";
+import "../styles/sandpack.css";
 
 // if (typeof window !== "undefined") {
 //   if (process.env.NODE_ENV === "production") {
@@ -45,6 +45,30 @@ export default function App({ Component, pageProps }: AppProps) {
   const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
+  function isMobile() {
+    if (typeof window === "undefined") {
+      return false; // or throw an error, depending on your use case
+    }
+
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const mobileKeywords = [
+      "android",
+      "iphone",
+      "ipod",
+      "ipad",
+      "mobile",
+      "tablet",
+    ];
+
+    for (let i = 0; i < mobileKeywords.length; i++) {
+      if (userAgent.indexOf(mobileKeywords[i]) !== -1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   useEffect(() => {
     async function fetchData() {
       // Taken from StackOverflow. Trying to detect both Safari desktop and mobile.
@@ -69,18 +93,6 @@ export default function App({ Component, pageProps }: AppProps) {
     }
     fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   const handleRouteChange = (url: string) => {
-  //     const cleanedUrl = url.split(/[\?\#]/)[0];
-  //     ga('set', 'page', cleanedUrl);
-  //     ga('send', 'pageview');
-  //   };
-  //   router.events.on('routeChangeComplete', handleRouteChange);
-  //   return () => {
-  //     router.events.off('routeChangeComplete', handleRouteChange);
-  //   };
-  // }, [router.events]);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -116,6 +128,12 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
   }
+
+  const type = isMobile() ? (
+    <span className="material-symbols-outlined">phone_iphone</span>
+  ) : (
+    <span className="material-symbols-outlined">computer</span>
+  );
 
   return (
     <>
@@ -223,17 +241,21 @@ export default function App({ Component, pageProps }: AppProps) {
         </a>
         <div className={styles["linksContainer"]}>
           {/* <ConnectionDropdown jsonFileName="connections" label="Connections" /> */}
-          {/* {menu?.topBar.map((item, index: number) => (
+          {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
               href={item.url}
-              style={{ display: "flex", justifyContent: "flex-end", marginRight: "1rem" }}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginRight: "1rem",
+              }}
               title={item.label}
             >
               {item.label}
             </Link>
-          ))} */}
+          )) && <>{type}</>}
         </div>
       </div>
       <div
