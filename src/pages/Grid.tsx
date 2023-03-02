@@ -114,7 +114,7 @@ export default function Grid() {
             selectItem={item}
             showPagination={true}
             numItems={numItems}
-            sourceData={JSON.parse(JSON.stringify(dimensions))}
+            // sourceData={JSON.parse(JSON.stringify(dimensions))}
           />
         )}
 
