@@ -2,6 +2,7 @@
 .ddTable {
     width: fit-content;
     border-collapse: collapse;
+    border: 1px solid blue;
 }
 
 .ddTable {
@@ -63,12 +64,10 @@
 }
 
 
-.tr-hoverable:hover {
-    background: #f7aaaa;
-    display: flex;
-    width: 100%;
+.tr:hover {
+    border: 1px solid blue;
+    cursor: pointer;
 }
-
 
 .coldivider {
     position: absolute;

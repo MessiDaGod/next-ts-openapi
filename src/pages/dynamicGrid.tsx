@@ -97,7 +97,6 @@ function DynamicGrid<T>({
   }, [data]);
 
   React.useEffect(() => {
-    console.log("handleDynamicGridMouseEnter");
     isActiveTableRef ? setColumnWidths() : null;
   }, [isActiveTableRef]);
 
@@ -421,13 +420,15 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-
-
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
           !isColumnHidden(data, cols) && (
-            <TableHeader key={cols} columnName={cols} onClick={(() => handleSort(cols))}>
+            <TableHeader
+              key={cols}
+              columnName={cols}
+              onClick={() => handleSort(cols)}
+            >
               <div
                 className={styles["coldivider"]}
                 onMouseEnter={setListeners}
@@ -436,6 +437,32 @@ function DynamicGrid<T>({
           )
         );
       });
+
+      function getSelectItem(key: string) {
+        switch (key) {
+          case "PROPERTY":
+            return "GetPropOptions";
+          case "ACCOUNT":
+            return "GetAccounts";
+          case "PERSON":
+            return "GetVendors";
+          default:
+            return "Property";
+        }
+      }
+
+      function getSelectKey(key: string) {
+        switch (key) {
+          case "PROPERTY":
+            return "Property";
+          case "ACCOUNT":
+            return "Account";
+          case "PERSON":
+            return "Vendor";
+          default:
+            return "Property";
+        }
+      }
 
       const rows = [...data]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -460,29 +487,15 @@ function DynamicGrid<T>({
                     style={{ width: "100px" }}
                     ref={dropdownRef}
                   >
-                    {key.toUpperCase() === "PROPERTY" ? (
+                    {key.toUpperCase() === "PROPERTY" ||
+                    key.toUpperCase() === "ACCOUNT" ||
+                    key.toUpperCase() === "PERSON" ? (
                       <GenericDropdown
-                        selectItem="GetPropOptions"
+                        selectItem={getSelectItem(key)}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
-                        columns={columns["Property"]}
-                      />
-                    ) : key.toUpperCase() === "ACCOUNT" ? (
-                      <GenericDropdown
-                        selectItem="GetAccounts"
-                        showPagination={true}
-                        showCheckbox={false}
-                        tableRef={tableRef}
-                        columns={columns["Account"]}
-                      />
-                    ) : key.toUpperCase() === "PERSON" ? (
-                      <GenericDropdown
-                        selectItem="GetVendors"
-                        showPagination={true}
-                        showCheckbox={false}
-                        tableRef={tableRef}
-                        columns={columns["Vendor"]}
+                        columns={columns[getSelectKey(key)]}
                       />
                     ) : (
                       parseValue(value as string, key)

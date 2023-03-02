@@ -47,7 +47,7 @@ const DataGridDropdown: React.FC<DataGridDropdownProps> = ({
   }, []);
 
   React.useEffect(() => {
-    console.log("React.useEffect DataGridDropdown.tsx");
+
     dataGridResize(itemsPerPage);
     // setColumnWidths();
     setDropdownWidth();

@@ -11,6 +11,7 @@ import "styles/globals.css";
 import "../styles/algolia.css";
 import "../styles/index.css";
 import "../styles/sandpack.css";
+import Menu from "../../public/menu.json";
 
 // if (typeof window !== "undefined") {
 //   if (process.env.NODE_ENV === "production") {
@@ -42,8 +43,8 @@ interface Menu {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [menu, setMenu] = useState<Menu>();
 
   function isMobile() {
     if (typeof window === "undefined") {
@@ -87,9 +88,7 @@ export default function App({ Component, pageProps }: AppProps) {
         // It seems to work better for Chrome and Firefox which don't animate the back swipe.
       }
       search();
-      fetch("/menu.json")
-        .then((response) => response.json())
-        .then((data) => setMenu(data));
+      setMenu(Menu);
     }
     fetchData();
   }, []);
@@ -240,7 +239,18 @@ export default function App({ Component, pageProps }: AppProps) {
           </span>
         </a>
         <div className={styles["linksContainer"]}>
-          {/* <ConnectionDropdown jsonFileName="connections" label="Connections" /> */}
+          <Link
+            key={"isMobile"}
+            children={type}
+            href=""
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "1rem",
+              alignItems: "center",
+              verticalAlign: "middle",
+            }}
+          ></Link>
           {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
@@ -255,7 +265,7 @@ export default function App({ Component, pageProps }: AppProps) {
             >
               {item.label}
             </Link>
-          )) && <>{type}</>}
+          ))}
         </div>
       </div>
       <div

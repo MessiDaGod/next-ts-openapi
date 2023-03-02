@@ -4,6 +4,7 @@ import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
 import styles from "./GridDropdown.module.scss";
+import stylesWithin from "./GenericDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
@@ -130,7 +131,7 @@ function GenericDropdown<T>({
     const headerDiv = colDivider.parentElement;
     const table = tableRef.current as HTMLElement;
     const activeDropdown = dropdownRef.current as HTMLElement;
-    console.log(activeDropdown);
+
     colDivider.onmousedown = function (e) {
       const target = headerDiv;
       curCol = target ? target : null;
@@ -215,7 +216,6 @@ function GenericDropdown<T>({
 
   function setColumnWidths() {
     if (!tableRef) return;
-    console.log("handle dropdown within dynamic grid");
     const current = tableRef.current;
 
     const tables = [...current.querySelectorAll('[id*="' + "gridjs" + '"]')];
@@ -372,7 +372,6 @@ function GenericDropdown<T>({
   }
 
   function handleRowClick(e) {
-    console.log("handleRowClick from GenericDropdown.tsx");
     e.preventDefault();
     const target = e.target as HTMLElement;
     const divTable = document.querySelectorAll(
@@ -441,7 +440,6 @@ function GenericDropdown<T>({
 
   function handleOnClick(e) {
     const div = e.target as HTMLElement;
-    console.log(div.parentElement);
     setSelectedItem(div.parentElement.children[2].textContent);
     setShowSearchBox(false);
   }
@@ -533,7 +531,7 @@ function GenericDropdown<T>({
             id={row[columnKeys[0].Name]}
             key={row[columnKeys[0].Name]}
             data-row-id={rowIndex}
-            className={cn(styles["tr"], styles["tr-hoverable"])}
+            className={cn(stylesWithin["tr"])}
             onMouseOver={handleRowMouseOver}
           >
             <div
@@ -738,7 +736,6 @@ function GenericDropdown<T>({
     setIsActiveDropdown(true);
     setShowSearchBox(true);
     setActiveDropdown(dropdownRef.current);
-    console.log("setting generic dropdown widths");
     setColumnWidths();
   }
 
