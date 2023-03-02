@@ -55,6 +55,7 @@ interface DynamicGridProps {
   style?: React.CSSProperties;
   showPagination?: boolean;
   numItems?: number;
+  isActive?: boolean;
 }
 
 function DynamicGrid<T>({
@@ -62,6 +63,7 @@ function DynamicGrid<T>({
   style,
   showPagination,
   numItems,
+  isActive,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -71,8 +73,9 @@ function DynamicGrid<T>({
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
+  const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
+  const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const itemsPerPage = 10;
-  const zIndex = 0;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -93,12 +96,9 @@ function DynamicGrid<T>({
   }, [data]);
 
   React.useEffect(() => {
-    setColumnWidths();
-  }, []);
-
-  React.useEffect(() => {
-    setColumnWidths();
-  }, [activeDropdown]);
+    console.log("handleDynamicGridMouseEnter");
+    isActiveTableRef ? setColumnWidths() : null;
+  }, [isActiveTableRef]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -195,8 +195,6 @@ function DynamicGrid<T>({
       ruler.style.visibility = "hidden";
       ruler.style.position = "absolute";
       ruler.style.whiteSpace = "nowrap";
-      // ruler.style.padding = "0";
-      (ruler as HTMLElement).style.zIndex = zIndex.toString()
       ruler.innerText = s;
       document.body.appendChild(ruler);
       const padding = paddingDiff(ruler as HTMLElement);
@@ -249,7 +247,6 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.textAlign = "left";
           (col as HTMLElement).style.padding = "0px";
           (col as HTMLElement).style.minHeight = "0px";
-          (col as HTMLElement).style.zIndex = zIndex.toString();
           (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
           (col as HTMLElement).style.width = `${Math.round(value)}px`;
         }
@@ -280,7 +277,6 @@ function DynamicGrid<T>({
       allrows.forEach((row) => {
         (row as HTMLElement).style.minHeight = "0px";
         (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = zIndex.toString()
       });
     }
   }
@@ -390,14 +386,12 @@ function DynamicGrid<T>({
 
         headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.zIndex = zIndex.toString()
 
         if (currentColumnAllCells)
           currentColumnAllCells.forEach((cell) => {
             const td = cell as HTMLElement;
             td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             td.style.width = (curColWidth ?? 0) + diffX + "px";
-            td.style.zIndex = zIndex.toString()
           });
 
         // table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
@@ -413,7 +407,7 @@ function DynamicGrid<T>({
         console.info("removing colDivider.onmouseup");
         document.removeEventListener("mousemove", onMouseMove);
         console.info("removing onmouseenter Listner");
-        // removeAllListeners();
+        removeAllListeners();
         colDivider.onmouseup = null;
       };
     };
@@ -431,6 +425,26 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
+      // const myType =
+      //   selectItem === "GetPropOptions"
+      //     ? "Property"
+      //     : selectItem === "GetVendors"
+      //     ? "Vendor"
+      //     : selectItem === "GetAccounts"
+      //     ? "Account"
+      //     : null;
+
+      // if (!myType) return null;
+      // const myColumns = GoodColumns[myType];
+
+      // const columnKeys = Object.entries(myColumns).map(
+      //   ([key, value], index: number) => {
+      //     return { Item: myType, Index: index, Name: value["Name"] };
+      //   }
+      // );
+
+      // console.log(columnKeys[0]);
+
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
@@ -483,7 +497,6 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ? (
                       <GenericDropdown
                         selectItem="GetPropOptions"
-                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -492,7 +505,6 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "ACCOUNT" ? (
                       <GenericDropdown
                         selectItem="GetAccounts"
-                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -501,7 +513,6 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "PERSON" ? (
                       <GenericDropdown
                         selectItem="GetVendors"
-                        style={{ position: "absolute", zIndex: 0 }}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
@@ -560,10 +571,28 @@ function DynamicGrid<T>({
 
   const table = GenerateTableHtml();
 
+  function handleDynamicGridMouseEnter(e) {
+    setIsActiveTableRef(true);
+    //   // (2) move the colDivider on mousemove
+    //   e.target.addEventListener("onmouseenter", setColumnWidths);
+
+    //   // (3) drop the colDivider, remove unneeded handlers
+    //   e.target.onmouseleave = function () {
+    //     document.removeEventListener("mousemove", setColumnWidths);
+    //     console.info("removing onmouseenter Listner");
+    //   };
+    };
+
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
-    return <>{table}</>;
+    return (
+      <div
+        id="dynamicGridId"
+        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}>
+        {table}
+      </div>
+    );
   }
 }
 

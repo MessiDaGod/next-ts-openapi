@@ -60,21 +60,6 @@ export default function Grid() {
         onChange={(e) => handleSetItem(e)}
         showCheckbox={true}
       />
-
-      <div ref={dropdownRef}>
-        <br />
-        <GenericDropdown
-          selectItem="GetPropOptions"
-          style={{
-            display: "block",
-            position: "absolute",
-            marginLeft: "250px",
-          }}
-          showPagination={true}
-          showCheckbox={false}
-          tableRef={dropdownRef}
-        />
-  </div>
         <form
           // onSubmit={handleSubmit}
           style={{

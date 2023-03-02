@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
-import styles from "./GridDropdown.module.scss";
+import styles from "./GenericDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
@@ -12,7 +12,6 @@ import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
 import { removeAllListeners } from "process";
-
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -36,7 +35,7 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-interface DynamicGridProps {
+interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -45,6 +44,7 @@ interface DynamicGridProps {
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
+  isActive?: boolean;
 }
 
 function GenericDropdown<T>({
@@ -55,6 +55,7 @@ function GenericDropdown<T>({
   tableRef,
   itemsPerPage,
   numItems,
+  isActive,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
@@ -66,9 +67,11 @@ function GenericDropdown<T>({
   const [selectedItem, setSelectedItem] = React.useState(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
+  const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   itemsPerPage = itemsPerPage ?? 10;
   numItems = numItems ?? 100;
   const zIndex = 0;
+  const activeZindex = 1000;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -78,10 +81,6 @@ function GenericDropdown<T>({
   //   setColumnWidths();
   //   search();
   // }, []);
-
-  // React.useEffect(() => {
-  //   setColumnWidths();
-  // }, [activeDropdown]);
 
   React.useEffect(() => {
     console.info("Generic Dropdown useEffect ran");
@@ -117,13 +116,18 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
-  }, []);
+  }, [activeDropdown]);
 
+  // React.useEffect(() => {
+  //   console.info("useEffect from isActiveDropdown");
+  //   setIsActiveDropdown(true);
+  //   setShowSearchBox(true);
+  // }, [isActiveDropdown]);
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    e.stopPropagation()
+    e.stopPropagation();
     e.preventDefault();
-      let pageX: number | undefined,
+    let pageX: number | undefined,
       curCol: HTMLElement | null,
       nxtCol: HTMLElement | null,
       curColWidth: number | undefined;
@@ -155,14 +159,12 @@ function GenericDropdown<T>({
 
         headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
         headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.zIndex = zIndex.toString();
 
         if (currentColumnAllCells)
           currentColumnAllCells.forEach((cell) => {
             const td = cell as HTMLElement;
             td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
             td.style.width = (curColWidth ?? 0) + diffX + "px";
-            td.style.zIndex = zIndex.toString();
           });
 
         /** we are on the last column, expand the width of the table */
@@ -170,7 +172,6 @@ function GenericDropdown<T>({
           table.style.minWidth =
             (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
           table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-          table.style.zIndex = zIndex.toString();
         }
       }
 
@@ -244,7 +245,6 @@ function GenericDropdown<T>({
         ruler.style.position = "absolute";
         ruler.style.whiteSpace = "nowrap";
         ruler.style.padding = "0.25rem";
-        (ruler as HTMLElement).style.zIndex = zIndex.toString();
         ruler.innerText = s;
         document.body.appendChild(ruler);
         const padding = paddingDiff(ruler as HTMLElement);
@@ -295,7 +295,6 @@ function GenericDropdown<T>({
             (col as HTMLElement).style.whiteSpace = "nowrap";
             (col as HTMLElement).style.textAlign = "left";
             (col as HTMLElement).style.minHeight = "0px";
-            (col as HTMLElement).style.zIndex = zIndex.toString();
             (col as HTMLElement).style.minWidth = `${value}px`;
             (col as HTMLElement).style.width = `${value}px`;
           }
@@ -311,7 +310,6 @@ function GenericDropdown<T>({
       });
 
       (table as HTMLElement).style.width = tableWidth.toString() + "px";
-      (table as HTMLElement).style.zIndex = zIndex.toString();
       return columnWidths;
     });
   }
@@ -373,7 +371,6 @@ function GenericDropdown<T>({
       allrows.forEach((row) => {
         (row as HTMLElement).style.minHeight = "0px";
         (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = zIndex.toString();
       });
     }
   }
@@ -540,7 +537,7 @@ function GenericDropdown<T>({
             id={row[columnKeys[0].Name]}
             key={row[columnKeys[0].Name]}
             data-row-id={rowIndex}
-            className={cn(styles["tr"], styles["tr-hoverable"])}
+            className={cn(styles["tr"])}
             onMouseOver={handleRowMouseOver}
           >
             <div
@@ -572,13 +569,13 @@ function GenericDropdown<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div className={cn(styles["dd-container"])}>
+              <div className={isActiveDropdown ? cn(styles["dd-container"]) : cn(styles["dd-container-hidden"])}>
                 <div
                   id={"gridjs_0"}
                   key={"gridjs_0"}
-                  className={styles["ddTable"]}
+                  className={cn(styles["ddTable"])}
                 >
-                  <div className={styles["thead"]}></div>
+                  <div className={cn(styles["thead"])}></div>
                   {
                     <>
                       <input
@@ -658,28 +655,6 @@ function GenericDropdown<T>({
     }
   }
 
-  function handleShowSearchBox(e) {
-
-    setActiveDropdown(dropdownRef.current);
-    (dropdownRef.current as HTMLElement).style.zIndex = "1000";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "1000";
-    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
-    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
-    container.style.zIndex = "1000";
-    setColumnWidths();
-    setShowSearchBox(true);
-  }
-
-  function handleMouseLeaveSearchBox(e) {
-    (dropdownRef.current as HTMLElement).style.zIndex = "0";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
-    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
-    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
-    container.style.zIndex = "0";
-    setActiveDropdown(null);
-    setShowSearchBox(false);
-  }
-
   const handleCheckboxChange = (event: any) => {
     setIsChecked(event.target.checked);
   };
@@ -744,14 +719,35 @@ function GenericDropdown<T>({
 
   const table = GenerateTableHtml();
 
+  function handleGenericDropdownMouseEnter(e) {
+    setIsActiveDropdown(true);
+    setShowSearchBox(true);
+    setActiveDropdown(dropdownRef.current);
+    setColumnWidths();
+  }
+
+  function handleGenericDropdownMouseLeave(e) {
+    setIsActiveDropdown(false);
+    setActiveDropdown(null);
+    setShowSearchBox(false);
+  }
+
   if (table && Array.isArray(data) && data.length > 0) {
     return (
-      <div style={style}>
+      <div
+        style={style}
+        onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
+        onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
+      >
         {showCheckbox && <Checkbox />}
         <div
-          className={`${styles["dropdown"]}`}
-          onMouseEnter={handleShowSearchBox}
-          onMouseLeave={handleMouseLeaveSearchBox}
+          className={
+            !isActiveDropdown
+              ? `${styles["dropdown-hidden"]}`
+              : `${styles["dropdown"]}`
+          }
+          // onMouseEnter={handleShowSearchBox}
+          // onMouseLeave={handleMouseLeaveSearchBox}
           ref={dropdownRef}
         >
           <label
@@ -761,8 +757,6 @@ function GenericDropdown<T>({
               padding: "0",
               margin: "0",
               cursor: "pointer",
-              overflow: "hidden",
-              zIndex: "0",
               borderRadius: `${hasPagination ? "6px" : "0px"}`,
             }}
           >
@@ -780,12 +774,12 @@ function GenericDropdown<T>({
           </label>
           <div
             className={
-              !showSearchBox && isChecked
+              !isActiveDropdown
                 ? `${styles["dropdown-content-hidden"]}`
                 : `${styles["dropdown-content"]}`
             }
           >
-            {showSearchBox && isChecked && <>{table}</>}
+            {isActiveDropdown && <>{table}</>}
             {!isChecked && <div>{table}</div>}
           </div>
         </div>
