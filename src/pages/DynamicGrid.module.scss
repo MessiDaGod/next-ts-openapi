@@ -19,7 +19,7 @@
 
 .tr {
     display: flex;
-    vertical-align: center;
+    vertical-align: middle;
     align-items: center;
     width: 100%;
 }
@@ -60,11 +60,15 @@
 
 .td {
     display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 0;
     color: white;
     text-overflow: ellipsis;
     box-sizing: border-box;
     user-select: text;
+    border-left: 2px solid rgb(148, 1, 1);
+    border-right: 2px solid rgb(148, 1, 1);
 }
 
 // .tr>.td {
@@ -111,7 +115,9 @@
 
 .rz-placeholder {
     z-index: 0;
-    // margin-bottom: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .dropdown-content {

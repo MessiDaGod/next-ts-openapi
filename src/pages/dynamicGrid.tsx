@@ -213,7 +213,7 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.whiteSpace = "nowrap";
           (col as HTMLElement).style.textAlign = "left";
           (col as HTMLElement).style.padding = "0px";
-          (col as HTMLElement).style.minHeight = "0px";
+          (col as HTMLElement).style.minHeight = "100%";
           (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
           (col as HTMLElement).style.width = `${Math.round(value)}px`;
         }

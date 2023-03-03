@@ -757,7 +757,6 @@ function GenericDropdown<T>({
               style={{
                 color: "white",
                 display: "inline-block",
-                transform: "translateY(25%)",
               }}
             >
               {showSearchBox ? "expand_more" : "expand_less"}
