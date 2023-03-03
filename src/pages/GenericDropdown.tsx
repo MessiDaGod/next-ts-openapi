@@ -441,6 +441,7 @@ function GenericDropdown<T>({
   function handleOnClick(e) {
     const div = e.target as HTMLElement;
     setSelectedItem(div.parentElement.children[2].textContent);
+    setIsActiveDropdown(false);
     setShowSearchBox(false);
   }
 
@@ -575,17 +576,12 @@ function GenericDropdown<T>({
                       <input
                         id="search-input"
                         type="search"
-                        className={styles["rz-textbox findcomponent"]}
+                        className={styles["findcomponent"]}
                         placeholder="Search ..."
                         autoComplete="on"
                       ></input>
                         <span
                           className={cn("material-symbols-outlined", styles["searchicon"])}
-                          style={{
-                            color: "white",
-                            backgroundColor: "black",
-                            display: "flex",
-                          }}
                         >
                           {"search"}
                         </span>

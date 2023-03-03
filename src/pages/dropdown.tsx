@@ -1,13 +1,13 @@
-import React, { CSSProperties, useState, useEffect } from "react";
+import React, { CSSProperties, useState, useEffect, HTMLAttributes } from "react";
 import styles from "./Home.module.scss";
 import cn from "classNames";
 
-interface DropdownProps {
+interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
   jsonFileName: string;
   label: string;
   style?: CSSProperties;
   showCheckbox?: boolean;
-  onChange?: (event: string) => void;
+  onItemChange?: (event: string) => void;
 }
 
 interface ButtonProps {
@@ -41,7 +41,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   label,
   style,
   showCheckbox,
-  onChange,
+  className,
+  onItemChange,
 }) => {
   const [selectedItem, setSelectedItem] = useState(label);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -88,13 +89,13 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   function handleItemChange(item: string) {
     // console.log("Dropdown changed to " + item);
-    onChange(item);;
+    onItemChange(item);
   }
 
   return (
     <>
       <div
-        className={styles["dropdown"]}
+        className={className}
         style={style}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

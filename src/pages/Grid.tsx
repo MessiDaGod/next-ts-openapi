@@ -1,6 +1,6 @@
 import { useState } from "react";
 import cn from "classnames";
-import styles from "./GridDropdown.module.scss";
+import styles from "./Grid.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
@@ -49,12 +49,9 @@ export default function Grid() {
   }
 
   return (
-    <>
+<div className={styles["container"]}>
       <Dropdown
-        style={{
-          display: "block",
-          zIndex: 2,
-        }}
+        className={styles["dynamicgrid-dd"]}
         jsonFileName="GetOptions"
         label="Choose Item to Display"
         onChange={(e) => handleSetItem(e)}
@@ -69,15 +66,7 @@ export default function Grid() {
           }}
         >
           <input
-            style={{
-              display: "block",
-              padding: "10px",
-              width: "50px",
-              cursor: "pointer",
-              marginLeft: "150px",
-              top: "0px",
-            }}
-            className={cn(styles["rz-textbox"], styles["findcomponent"])}
+            className={cn(styles["rz-textbox"], styles["input"])}
             type="number"
             value={numItems}
             onChange={handleTextareaChange}
@@ -89,12 +78,7 @@ export default function Grid() {
 
         {status === "success" && (
           <DynamicGrid
-          style={{
-            display: "block",
-            marginLeft: "10px",
-            marginTop: "50px",
-            position: "absolute",
-          }}
+            className={styles["dynamicgrid-dd"]}
             key={item}
             selectItem={item}
             showPagination={true}
@@ -103,7 +87,7 @@ export default function Grid() {
           />
         )}
 
-    </>
+    </div>
   );
 }
 

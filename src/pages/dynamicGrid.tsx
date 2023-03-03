@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 import GoodColumns from "../../public/GoodColumns.json";
@@ -51,7 +51,7 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-interface DynamicGridProps {
+interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -65,6 +65,7 @@ function DynamicGrid<T>({
   showPagination,
   numItems,
   isActive,
+  className,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -504,6 +505,7 @@ function DynamicGrid<T>({
                 )
             )}{" "}
             {<span className={cn("material-symbols-outlined", styles["add"])}>content_copy</span>}
+            {<span className={cn("material-symbols-outlined", styles["delete"])}>delete</span>}
           </div>
         ));
 
@@ -558,6 +560,7 @@ function DynamicGrid<T>({
     return (
       <div
         id="dynamicGridId"
+        className={className}
         onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
       >
         {table}

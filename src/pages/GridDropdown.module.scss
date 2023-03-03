@@ -13,7 +13,6 @@
 }
 
 .divTable {
-    // border: 1px solid yellow;
     width: fit-content;
     border: 1px solid blue;
 }
@@ -128,6 +127,7 @@
     position: absolute;
     z-index: 1000;
     border: 1px solid yellow;
+    resize: both;
 }
 
 .dd-container-hidden {
@@ -203,7 +203,7 @@
     white-space: nowrap;
 }
 
-.rz-textbox.findcomponent {
+.findcomponent {
 
     color: white;
     background-color: inherit;
@@ -226,6 +226,7 @@
     color: green;
     margin-left: 10px;
 }
+
 .add:hover {
     color: lime;
 }
@@ -244,14 +245,15 @@
     margin: 0;
 }
 
-// style={{
-//     color: "white",
-//     backgroundColor: "black",
-//     fontSize: "14px",
-//     borderBottom: "1px solid #2f333d",
-//     borderTop: "1px solid #2f333d",
-//     cursor: "text",
-//     display: "block",
-//     width: "100%",
-//     padding: "10px",
-//   }}
+.delete {
+    color: rgb(148, 1, 1);
+    margin-left: 10px;
+}
+
+.delete:hover {
+    color: rgb(253, 109, 109);
+}
+
+.searchicon {
+    color: white;
+}
