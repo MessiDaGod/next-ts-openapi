@@ -1,49 +1,47 @@
-.tr:hover {
-    border: 1px solid blue;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+.divTable,
+.ddTable {
+    width: fit-content;
+    border-collapse: collapse;
 }
+
+.ddTable {
+    background-color: black;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.divTable {
+    width: fit-content;
+    border: 1px solid blue;
+}
+
 
 .tr {
     display: flex;
-    vertical-align: center;
+    vertical-align: middle;
     align-items: center;
     width: 100%;
-}
-
-.th {
-    position: relative;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
-    overflow: hidden;
-    color: black;
-    border-top-width: 1;
-    border-top-style: solid;
-    background-color: white;
-    border-top-color: #CCCCCC;
-}
-
-.tr {
-    display: flex;
-    vertical-align: center;
-    align-items: center;
+    border-top: 2px solid  rgb(105, 105, 105);
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .th,
 .td {
     overflow: hidden;
     text-align: left;
-    padding: 0 5px;
+    padding: 0;
     margin: 0;
     user-select: none;
-    box-sizing: content-box;
     vertical-align: middle;
     z-index: 0;
+    box-sizing: content-box;
+    padding: 0.4em 0.6em;
 }
 
-.th {
+.th,
+.gridtd {
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
@@ -65,14 +63,220 @@
 
 .td {
     display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 0;
-    background-color: black;
     color: white;
-    border-left: rgb(204, 201, 201) 2px solid;
-    border-bottom: rgb(139, 135, 135) 2px solid;
     text-overflow: ellipsis;
-    box-sizing: border-box;
+    // box-sizing: border-box;
+    user-select: text;
+    // border-left: 2px solid rgb(105, 105, 105);
+    // border-right: 2px solid  rgb(105, 105, 105);
 }
+
+// .tr>.td {
+//     background-color: rgb(95, 92, 92);
+// }
+// .tr>.th>.td {
+//     background-color: white;
+// }
+
+.tr:hover {
+    border: 1px solid blue;
+    cursor: pointer;
+}
+
+.coldivider {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+    // border: 2px solid blue;
+    background-color: var(--bg-color);
+    opacity: 1;
+}
+
+@media (hover: hover) {
+    // .coldivider {
+    //     opacity: 0;
+    // }
+
+    *:hover>.coldivider {
+        border-right: 2px solid blue;
+        opacity: 1;
+        // transform: translateX(-2px);
+    }
+}
+
+.material-symbol-outlined {
+    cursor: pointer;
+}
+
+.rz-placeholder {
+    z-index: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dropdown-content {
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    position: absolute;
+}
+
+.dropdown-content-hidden {
+    z-index: 0;
+}
+
+.table-container {
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+}
+
+.dd-container {
+    background-color: #6b6666;
+    padding: 10px;
+    position: absolute;
+    z-index: 1000;
+    // border: 1px solid yellow;
+    resize: both;
+}
+
+.dd-container-hidden {
+    background-color: #1d1d1d;
+    padding: 10px;
+    position: absolute;
+    z-index: 0;
+}
+
+.button {
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
+}
+
+
+.active {
+    background-color: #f03a3a;
+    transition-duration: 0.2s;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    border-style: solid;
+    border-color: white;
+    cursor: pointer;
+    margin: 2px;
+    border-radius: 15px;
+    display: block;
+    transform: translateY(25%);
+    margin: 0px;
+}
+
+.rowdivider {
+    position: absolute;
+    cursor: row-resize;
+    user-select: none;
+    touch-action: none;
+    display: flex;
+}
+
+.rowdivider:hover {
+    opacity: 1;
+}
+
+@media (hover: hover) {
+    .rowdivider {
+        opacity: 0;
+        cursor: row-resize;
+    }
+}
+
+.black {
+    color: black;
+}
+
+.white {
+    color: white;
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.findcomponent {
+
+    color: white;
+    background-color: inherit;
+    font-size: 16px;
+    border-bottom: 1px solid #2f333d;
+    border-top: 1px solid #2f333d;
+    width: 100%;
+    cursor: pointer;
+}
+
+.sdd-hidden {
+    display: none;
+}
+
+.sdd {
+    z-index: 1000;
+}
+
+.add {
+    color: green;
+    margin-left: 10px;
+}
+
+.add:hover {
+    color: lime;
+}
+
+.searchicon {
+    position: absolute;
+    float: right;
+    cursor: crosshair;
+}
+
+.thead {
+    display: flex;
+    background-color: transparent;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.delete {
+    color: rgb(148, 1, 1);
+    margin-left: 10px;
+}
+
+.delete:hover {
+    color: rgb(253, 109, 109);
+}
+
+.searchicon {
+    color: white;
+}
+
 
 .search-panel {
     display: flex;

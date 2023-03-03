@@ -36,7 +36,7 @@
     user-select: none;
     vertical-align: middle;
     z-index: 0;
-    box-sizing: border-box;
+    box-sizing: content-box;
     padding: 0.4em 0.6em;
 }
 
@@ -68,10 +68,10 @@
     z-index: 0;
     color: white;
     text-overflow: ellipsis;
-    box-sizing: border-box;
+    // box-sizing: border-box;
     user-select: text;
-    border-left: 2px solid rgb(105, 105, 105);
-    border-right: 2px solid  rgb(105, 105, 105);
+    // border-left: 2px solid rgb(105, 105, 105);
+    // border-right: 2px solid  rgb(105, 105, 105);
 }
 
 // .tr>.td {

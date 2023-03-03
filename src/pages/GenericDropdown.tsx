@@ -74,12 +74,17 @@ function GenericDropdown<T>({
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
+    setColumnWidths();
   }
 
   React.useEffect(() => {
-    isActiveDropdown ? setColumnWidths() : null;
+    setColumnWidths();
   }, [isActiveDropdown]);
 
+  React.useEffect(() => {
+    console.info("setting column widths with selected, numOfItems, data...")
+    setColumnWidths();
+  }, [currentPage]);
 
   React.useEffect(() => {
     console.info("Generic Dropdown useEffect ran");
@@ -115,75 +120,15 @@ function GenericDropdown<T>({
       }
     }
     fetchData();
+    setColumnWidths();
   }, []);
 
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     e.stopPropagation()
     e.preventDefault();
-      let pageX: number | undefined,
-      curCol: HTMLElement | null,
-      nxtCol: HTMLElement | null,
-      curColWidth: number | undefined;
-
     const colDivider = e.target as HTMLElement;
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
-    const headerDiv = colDivider.parentElement;
-    const table = tableRef.current as HTMLElement;
-    const activeDropdown = dropdownRef.current as HTMLElement;
-
-    colDivider.onmousedown = function (e) {
-      const target = headerDiv;
-      curCol = target ? target : null;
-      nxtCol = curCol ? (curCol.nextElementSibling as HTMLElement) : null;
-      const padding = curCol ? paddingDiff(curCol) : 0;
-
-      pageX = e.pageX;
-      const currentColumnAllCells = [
-        ...table.querySelectorAll(
-          '[data-column-id*="' + headerDiv.dataset.columnId + '"]'
-        ),
-      ];
-      curColWidth =
-        curCol && curCol.offsetWidth > 0 && curCol.offsetWidth > padding
-          ? curCol.offsetWidth - padding
-          : 0;
-      function onMouseMove(e) {
-        const diffX = e.pageX - (pageX ?? 0);
-
-        headerDiv.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.width = (curColWidth ?? 0) + diffX + "px";
-        headerDiv.style.zIndex = zIndex.toString();
-
-        if (currentColumnAllCells)
-          currentColumnAllCells.forEach((cell) => {
-            const td = cell as HTMLElement;
-            td.style.minWidth = (curColWidth ?? 0) + diffX + "px";
-            td.style.width = (curColWidth ?? 0) + diffX + "px";
-            td.style.zIndex = zIndex.toString();
-          });
-
-        /** we are on the last column, expand the width of the table */
-        if (!nxtCol) {
-          table.style.minWidth =
-            (parseInt(table.style.minWidth) ?? 0) + diffX + "px";
-          table.style.width = (parseInt(table.style.width) ?? 0) + diffX + "px";
-          table.style.zIndex = zIndex.toString();
-        }
-      }
-
-      // (2) move the colDivider on mousemove
-      document.addEventListener("mousemove", onMouseMove);
-
-      // (3) drop the colDivider, remove unneeded handlers
-      colDivider.onmouseup = function () {
-        console.info("removing colDivider.onmouseup");
-        document.removeEventListener("mousemove", onMouseMove);
-        console.info("removing onmouseenter Listner");
-        removeAllListeners();
-        colDivider.onmouseup = null;
-      };
-    };
 
     if (colDivider) {
       colDivider.addEventListener("dblclick", function (e: MouseEvent): void {

@@ -147,6 +147,15 @@ function DynamicGrid<T>({
     return window.getComputedStyle(elm, null).getPropertyValue(css);
   }
 
+
+  interface ColumnWidths {
+    [columnId: string]: number;
+  }
+
+  interface IconWidths {
+    [columnId: string]: number;
+  }
+
   function setColumnWidths() {
     const table = tableRef.current as HTMLElement;
     if (!table) return;
@@ -157,7 +166,7 @@ function DynamicGrid<T>({
 
     function visualLength(s: string) {
       const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `content-box`;
+      (ruler as HTMLElement).style.boxSizing = `border-box`;
       ruler.style.display = "block";
       ruler.style.visibility = "hidden";
       ruler.style.position = "absolute";
@@ -198,7 +207,6 @@ function DynamicGrid<T>({
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
           }
-          // console.log(`padding for columnId:  ${columnId}, row #${rowNumber} ${paddingDiff(cell as HTMLElement)}`);
         }
       });
     });
@@ -212,7 +220,8 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.display = "inline-block";
           (col as HTMLElement).style.whiteSpace = "nowrap";
           (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.padding = "0px";
+          (col as HTMLElement).style.margin = "1px";
+          (col as HTMLElement).style.padding = "1px";
           (col as HTMLElement).style.minHeight = "100%";
           (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
           (col as HTMLElement).style.width = `${Math.round(value)}px`;

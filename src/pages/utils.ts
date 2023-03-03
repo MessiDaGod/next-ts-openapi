@@ -60,6 +60,10 @@ export interface ColumnWidths {
   [columnId: string]: number;
 }
 
+export interface IconWidths {
+  [columnId: string]: number;
+}
+
 export class CustomError extends Error {
   constructor(message: string) {
     super(message);

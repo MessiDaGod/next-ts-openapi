@@ -32,7 +32,7 @@ export default function Grid() {
 
   React.useEffect(() => {
     console.info("Grid useEffect ran");
-    setNumItems(2);
+    setNumItems(1);
   }, []);
 
   async function handleTextareaChange(e) {
