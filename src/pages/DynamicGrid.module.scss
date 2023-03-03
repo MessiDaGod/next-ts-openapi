@@ -34,7 +34,8 @@
     user-select: none;
     vertical-align: middle;
     z-index: 0;
-    // border-right: 1px solid red;
+    box-sizing: border-box;
+    border-right: 1px solid red;
 }
 
 .th,

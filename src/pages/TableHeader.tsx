@@ -4,7 +4,7 @@ import styles from "./GenericDropdown.module.scss";
 interface Props {
   children: React.ReactNode;
   columnName: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, columnName: string) => void;
   initialState?: boolean;
   initialWidth?: string | undefined;
 }
@@ -14,6 +14,7 @@ export function TableHeader({
   columnName,
   initialState,
   initialWidth,
+  onClick,
 }: Props) {
   const [sortState, setSortState] = useState<boolean>(initialState ?? true);
   const [width, setWidth] = useState<string>(initialWidth ?? "100px");
@@ -25,13 +26,15 @@ export function TableHeader({
       style={{ width: width }}
       data-column-id={columnName}
     >
-        {columnName}
+      {columnName}
+      <button onClick={((e) => onClick(e, columnName))}>
         <span
-        onClick={() => setSortState(!sortState)}
+          onClick={() => setSortState(!sortState)}
           className={`${"material-symbols-outlined"} black`}
         >
           {!sortState ? "expand_more" : "expand_less"}
         </span>
+      </button>
       {children}
     </div>
   );

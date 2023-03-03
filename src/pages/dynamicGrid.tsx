@@ -90,7 +90,7 @@ function DynamicGrid<T>({
     fetchData();
   }, []);
 
-  function handleSort(columnName: string) {
+  function handleSort(e, columnName) {
     let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
@@ -394,7 +394,7 @@ function DynamicGrid<T>({
             <TableHeader
               key={cols}
               columnName={cols}
-              onClick={() => handleSort(cols)}
+              onClick={((e) => handleSort(e, cols))}
             >
               <div
                 className={styles["coldivider"]}
@@ -431,6 +431,11 @@ function DynamicGrid<T>({
         }
       }
 
+      function handleOnChange(e) {
+        console.log("resetting column widths because value changed...");
+        setColumnWidths();
+      }
+
       function handleDeleteClick(e) {
         (tableRef.current as HTMLElement).querySelector('[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]').remove();
       }
@@ -457,6 +462,7 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                     ref={dropdownRef}
+                    onChange={handleOnChange}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
