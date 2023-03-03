@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState, useEffect, HTMLAttributes } from "react";
 import styles from "./Home.module.scss";
-import cn from "classNames";
+import cn from "classnames";
 
 interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
   jsonFileName: string;

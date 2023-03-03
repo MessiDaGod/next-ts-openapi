@@ -271,3 +271,10 @@ input  {
 [class$='-hidden'] {
   z-index: 0 !important;
 }
+.black {
+  color: black;
+}
+
+.white {
+  color: white;
+}

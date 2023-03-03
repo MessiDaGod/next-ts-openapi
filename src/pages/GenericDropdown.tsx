@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
-import styles from "./GridDropdown.module.scss";
+import styles from "./DynamicGrid.module.scss";
 import stylesWithin from "./GenericDropdown.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
@@ -547,7 +547,7 @@ function GenericDropdown<T>({
                   <div
                     id={`td_${row[columnKeys[0].Name]}_${index}`}
                     key={`td_${row[columnKeys[0].Name]}_${index}`}
-                    className={styles["td"]}
+                    className={stylesWithin["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
                     onClick={handleOnClick}

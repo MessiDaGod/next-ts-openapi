@@ -1,5 +1,7 @@
 .tr:hover {
     border: 1px solid blue;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
 }
 
@@ -8,4 +10,66 @@
     vertical-align: center;
     align-items: center;
     width: 100%;
+}
+
+.th {
+    position: relative;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    color: black;
+    border-top-width: 1;
+    border-top-style: solid;
+    background-color: white;
+    border-top-color: #CCCCCC;
+}
+
+.tr {
+    display: flex;
+    vertical-align: center;
+    align-items: center;
+}
+
+.th,
+.td {
+    overflow: hidden;
+    text-align: left;
+    padding: 0 5px;
+    margin: 0;
+    user-select: none;
+    box-sizing: content-box;
+    vertical-align: middle;
+    z-index: 0;
+}
+
+.th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    font-size: 14px;
+}
+
+.th {
+    position: relative;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    color: black;
+    border-top-width: 1;
+    border-top-style: solid;
+    background-color: white;
+    border-top-color: #CCCCCC;
+}
+
+.td {
+    display: flex;
+    z-index: 0;
+    background-color: black;
+    color: white;
+    border-left: rgb(204, 201, 201) 2px solid;
+    border-bottom: rgb(139, 135, 135) 2px solid;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
 }

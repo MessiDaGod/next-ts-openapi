@@ -1,5 +1,5 @@
 import React, { CSSProperties } from "react";
-import styles from "./DataGridDropdown.module.scss";
+import styles from "./DynamicGrid.module.scss";
 
 interface PaginationProps {
   currentPage: number;

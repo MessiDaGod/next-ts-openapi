@@ -1,61 +1,23 @@
 import React, { HTMLAttributes, useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
-import GoodColumns from "../../public/GoodColumns.json";
-import styles from "./GridDropdown.module.scss";
-import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
-import cn from "classNames";
+// import GoodColumns from "../../public/GoodColumns.json";
+import styles from "./DynamicGrid.module.scss";
+import { ColumnWidths, CustomError, getFromQuery, isColumnHidden, parseValue } from "./utils";
+import cn from "classnames";
 
 // import vendors from "../../public/vendors.json";
 // import properties from "../../public/propOptions.json";
 // import accounts from "../../public/accounts.json";
 import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
-import { removeAllListeners, removeListener } from "process";
+import { removeAllListeners } from "process";
 import { TableHeader } from "./TableHeader";
-
-async function GetDimensions(take: number | null = null) {
-  try {
-    let url = `https://localhost:5006/api/data/GetDimensions${
-      take ? `?take=${encodeURIComponent(take)}` : ""
-    }`;
-    const response = await fetch(url, {
-      method: "GET",
-    });
-    const result = await response.text();
-    return JSON.parse(result);
-  } catch (error) {
-    return error;
-  }
-}
-
-async function getFromQuery(table: string, take: number) {
-  const url = "https://localhost:5006/api/data/RunSqlQuery";
-  const params = { table, take };
-  const queryString = Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join("&");
-  const fullUrl = `${url}?${queryString}`;
-  try {
-    const response = await fetch(fullUrl, {
-      method: "GET",
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
-  numItems?: number;
+  numItems?: number | undefined;
   isActive?: boolean;
 }
 
@@ -73,46 +35,49 @@ function DynamicGrid<T>({
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
+  // const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
+  const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
   const itemsPerPage = 10;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
 
-  function handleDropdownOpen(key) {
-    setActiveDropdown(key);
-  }
+  // function handleDropdownOpen(key) {
+  //   setActiveDropdown(key);
+  // }
 
-  function handleDropdownClose() {
-    setActiveDropdown(null);
-  }
+  // function handleDropdownClose() {
+  //   setActiveDropdown(null);
+  // }
 
-  React.useEffect(() => {
-    if (selected) {
-      setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
-    }
-  }, [data]);
+  // React.useEffect(() => {
+  //   if (selected) {
+  //     setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
+  //   }
+  // }, [data]);
 
   React.useEffect(() => {
     isActiveTableRef ? setColumnWidths() : null;
   }, [isActiveTableRef]);
 
   React.useEffect(() => {
+    setNumOfItems((numItems ?? 1) + 1);
+    setSelected(selectItem);
     async function fetchData() {
       try {
         let response = [];
-
+        setNumOfItems(numItems ?? 1);
         switch (selectItem) {
           case "GetDimensions":
-            response = JSON.parse(JSON.stringify(dimensions));
+            response = JSON.parse(JSON.stringify(dimensions.slice(0, numOfItems ?? 1)));
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total", numItems ?? 1);
+            response = await getFromQuery("total", numOfItems ?? 1);
             setData(response);
             break;
           case undefined:
@@ -123,7 +88,7 @@ function DynamicGrid<T>({
       }
     }
     fetchData();
-  }, [numItems, selectItem]);
+  }, []);
 
   function handleSort(columnName: string) {
     let state = sortState;
@@ -421,6 +386,7 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
+      console.info("GenerateTableHtml from DynamicGrid...");
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
@@ -465,8 +431,12 @@ function DynamicGrid<T>({
         }
       }
 
+      function handleDeleteClick(e) {
+        (tableRef.current as HTMLElement).querySelector('[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]').remove();
+      }
+
       const rows = [...data]
-        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .slice((currentPage - 1) * itemsPerPage, numOfItems < itemsPerPage ? numOfItems : (currentPage * itemsPerPage))
         .map((row, rowIndex: number) => (
           <div
             key={`${rowIndex}`}
@@ -504,8 +474,8 @@ function DynamicGrid<T>({
                   </div>
                 )
             )}{" "}
-            {<span className={cn("material-symbols-outlined", styles["add"])}>content_copy</span>}
-            {<span className={cn("material-symbols-outlined", styles["delete"])}>delete</span>}
+            {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>}
+            {<span className={cn("material-symbols-outlined", styles["delete"])} data-row-id={rowIndex} onClick={handleDeleteClick}>delete</span>}
           </div>
         ));
 
@@ -525,7 +495,7 @@ function DynamicGrid<T>({
                   </div>
 
                   <div key={"tbody"} className={styles["tbody"]}>
-                    {rows.slice(1)}
+                    {rows}
                   </div>
                 </div>
                 <Pagination
@@ -570,3 +540,4 @@ function DynamicGrid<T>({
 }
 
 export default DynamicGrid;
+

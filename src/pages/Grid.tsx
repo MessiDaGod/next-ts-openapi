@@ -13,7 +13,7 @@ export default function Grid() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");
-  const [numItems, setNumItems] = useState<number>(0);
+  const [numItems, setNumItems] = useState<number>(1);
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
 
 
@@ -54,7 +54,7 @@ export default function Grid() {
         className={styles["dynamicgrid-dd"]}
         jsonFileName="GetOptions"
         label="Choose Item to Display"
-        onChange={(e) => handleSetItem(e)}
+        onItemChange={(e) => handleSetItem(e)}
         showCheckbox={true}
       />
         <form
@@ -78,7 +78,7 @@ export default function Grid() {
 
         {status === "success" && (
           <DynamicGrid
-            className={styles["dynamicgrid-dd"]}
+            // className={styles["dynamicgrid-dd"]}
             key={item}
             selectItem={item}
             showPagination={true}

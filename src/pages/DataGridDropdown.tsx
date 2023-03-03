@@ -1,7 +1,7 @@
 import React, { useState, useRef, CSSProperties } from "react";
 import { getPropOptionsAsync } from "./api/getPropOptions";
 import { emptyPropOptions, PropOptions } from "./api/Objects/PropOptions";
-import styles from "./DataGridDropdown.module.scss";
+import styles from "./DynamicGrid.module.scss";
 import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
 import { Pagination } from "pages/pagination";
 import cn from "classnames";

@@ -66,3 +66,40 @@ export class CustomError extends Error {
     this.name = 'CustomError';
   }
 }
+
+export async function GetDimensions(take: number | null = null) {
+  try {
+    let url = `https://localhost:5006/api/data/GetDimensions${
+      take ? `?take=${encodeURIComponent(take)}` : ""
+    }`;
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    const result = await response.text();
+    return JSON.parse(result);
+  } catch (error) {
+    return error;
+  }
+}
+
+export async function getFromQuery(table: string, take: number) {
+  const url = "https://localhost:5006/api/data/RunSqlQuery";
+  const params = { table, take };
+  const queryString = Object.entries(params)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+  const fullUrl = `${url}?${queryString}`;
+  try {
+    const response = await fetch(fullUrl, {
+      method: "GET",
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}

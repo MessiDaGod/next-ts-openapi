@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./GridDropdown.module.scss";
+import styles from "./DynamicGrid.module.scss";
 
 interface Props {
     sort: boolean;
