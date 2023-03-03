@@ -22,6 +22,9 @@
     vertical-align: middle;
     align-items: center;
     width: 100%;
+    border-top: 2px solid  rgb(105, 105, 105);
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .th,
@@ -67,8 +70,8 @@
     text-overflow: ellipsis;
     box-sizing: border-box;
     user-select: text;
-    border-left: 2px solid rgb(148, 1, 1);
-    border-right: 2px solid rgb(148, 1, 1);
+    border-left: 2px solid rgb(105, 105, 105);
+    border-right: 2px solid  rgb(105, 105, 105);
 }
 
 // .tr>.td {

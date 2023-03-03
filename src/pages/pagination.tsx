@@ -82,7 +82,7 @@ export function Pagination({
           (pageNumber) =>
             pageNumber === 1 && (
               <p key={currentPage}>
-                Page <br />{currentPage}of {totalPages}&nbsp;
+                Page <br />{currentPage}of&nbsp;{totalPages}&nbsp;
               </p>
             )
         )}
