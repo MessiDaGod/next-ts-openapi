@@ -27,7 +27,7 @@ export function TableHeader({
       data-column-id={columnName}
     >
       {columnName}
-      <button onClick={((e) => onClick(e, columnName))}>
+      <button style={{ backgroundColor: "transparent" }} onClick={((e) => onClick(e, columnName))}>
         <span
           onClick={() => setSortState(!sortState)}
           className={`${"material-symbols-outlined"} black`}

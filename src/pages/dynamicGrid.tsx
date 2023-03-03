@@ -61,8 +61,13 @@ function DynamicGrid<T>({
   // }, [data]);
 
   React.useEffect(() => {
-    isActiveTableRef ? setColumnWidths() : null;
+    setColumnWidths();
   }, [isActiveTableRef]);
+
+  React.useEffect(() => {
+    console.info("setting column widths with selected, numOfItems, data...")
+    setColumnWidths();
+  }, [selected, numOfItems, data]);
 
   React.useEffect(() => {
     setNumOfItems((numItems ?? 1) + 1);
@@ -88,9 +93,10 @@ function DynamicGrid<T>({
       }
     }
     fetchData();
+    setColumnWidths();
   }, []);
 
-  function handleSort(e, columnName) {
+  function handleSort(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
@@ -462,7 +468,6 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                     ref={dropdownRef}
-                    onChange={handleOnChange}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
@@ -475,7 +480,7 @@ function DynamicGrid<T>({
                         columns={columns[getSelectKey(key)]}
                       />
                     ) : (
-                      parseValue(value as string, key)
+                      parseValue((value as string) ? value.toString().replace("{InvoiceNumber}", " ") : "", key)
                     )}
                   </div>
                 )

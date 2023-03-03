@@ -572,12 +572,12 @@ function GenericDropdown<T>({
                 >
                   <div className={styles["thead"]}></div>
                   {
-                    <>
+                    <div className={stylesWithin["search-panel"]}>
                       <input
                         id="search-input"
                         type="search"
                         className={styles["findcomponent"]}
-                        placeholder="Search ..."
+                        placeholder="Search..."
                         autoComplete="on"
                       ></input>
                         <span
@@ -585,7 +585,7 @@ function GenericDropdown<T>({
                         >
                           {"search"}
                         </span>
-                    </>
+                    </div>
                   }
 
                   <div className={styles["tr"]} data-row-id="0">
