@@ -502,7 +502,8 @@ function DynamicGrid<T>({
                     )}
                   </div>
                 )
-            )}
+            )}{" "}
+            {<span className={cn("material-symbols-outlined", styles["add"])}>content_copy</span>}
           </div>
         ));
 

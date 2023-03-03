@@ -22,20 +22,13 @@ export function TableHeader({
       style={{ width: "100px" }}
       data-column-id={columnName}
     >
-      <button
-        onMouseDown={(evt) => {
-          evt.preventDefault();
-          evt.stopPropagation();
-        }}
-        onClick={() => setSortState(!sortState)}
-      >
         {columnName}
         <span
+        onClick={() => setSortState(!sortState)}
           className={`${"material-symbols-outlined"} ${styles["black"]}`}
         >
           {!sortState ? "expand_more" : "expand_less"}
         </span>
-      </button>
       {children}
     </div>
   );

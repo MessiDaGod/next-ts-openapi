@@ -2,20 +2,21 @@
 .ddTable {
     width: fit-content;
     border-collapse: collapse;
-    border: 1px solid blue;
 }
 
 .ddTable {
-    // border: 1px solid blue;
+    border: 1px solid red;
     background-color: black;
-    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .divTable {
     // border: 1px solid yellow;
     width: fit-content;
+    border: 1px solid blue;
 }
-
 
 
 .tr {
@@ -51,8 +52,10 @@
     cursor: pointer;
     overflow: hidden;
     color: black;
+    border-top-width: 1;
+    border-top-style: solid;
     background-color: white;
-    // border-right: 1px solid blue;
+    border-top-color: #CCCCCC;
 }
 
 .td {
@@ -60,7 +63,7 @@
     z-index: 0;
     background-color: black;
     color: white;
-    padding: 2px;
+    border-left: rgb(90, 88, 88) 1px solid;
 }
 
 
@@ -120,10 +123,11 @@
 }
 
 .dd-container {
-    background-color: #1d1d1d;
+    background-color: #6b6666;
     padding: 10px;
     position: absolute;
     z-index: 1000;
+    border: 1px solid yellow;
 }
 
 .dd-container-hidden {
@@ -217,3 +221,37 @@
 .sdd {
     z-index: 1000;
 }
+
+.add {
+    color: green;
+    margin-left: 10px;
+}
+.add:hover {
+    color: lime;
+}
+
+.searchicon {
+    position: absolute;
+    float: right;
+    cursor: crosshair;
+}
+
+.thead {
+    display: flex;
+    background-color: transparent;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+// style={{
+//     color: "white",
+//     backgroundColor: "black",
+//     fontSize: "14px",
+//     borderBottom: "1px solid #2f333d",
+//     borderTop: "1px solid #2f333d",
+//     cursor: "text",
+//     display: "block",
+//     width: "100%",
+//     padding: "10px",
+//   }}

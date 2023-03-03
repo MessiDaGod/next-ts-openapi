@@ -578,29 +578,13 @@ function GenericDropdown<T>({
                         className={styles["rz-textbox findcomponent"]}
                         placeholder="Search ..."
                         autoComplete="on"
-                        style={{
-                          color: "white",
-                          backgroundColor: "black",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #2f333d",
-                          borderTop: "1px solid #2f333d",
-                          cursor: "text",
-                          display: "block",
-                          width: "100%",
-                          padding: "10px",
-                        }}
                       ></input>
                         <span
-                          className={"material-symbols-outlined"}
+                          className={cn("material-symbols-outlined", styles["searchicon"])}
                           style={{
                             color: "white",
                             backgroundColor: "black",
                             display: "flex",
-                            position: "absolute",
-                            transform: "translateY(-30px)",
-                            float: "right",
-                            marginRight: "20px",
-                            cursor: "crosshair",
                           }}
                         >
                           {"search"}
