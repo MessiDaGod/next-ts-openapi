@@ -1,6 +1,6 @@
-export function setListeners(id: string, classNames: string): void {
+export function setListeners(id: string, classnames: string): void {
   let elem = document.getElementById(id);
-  let topbaritems = document.getElementsByClassName(classNames);
+  let topbaritems = document.getElementsByClassName(classnames);
 
   if (elem && topbaritems) {
     let items = topbaritems[0] as HTMLElement;

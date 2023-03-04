@@ -1,60 +1,32 @@
-import React, { useRef } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
-import GoodColumns from "../../public/GoodColumns.json";
-import styles from "./GridDropdown.module.scss";
-import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
-import cn from "classNames";
+// import GoodColumns from "../../public/GoodColumns.json";
+import styles from "./DynamicGrid.module.scss";
+import {
+  ColumnWidths,
+  CustomError,
+  getFromQuery,
+  isColumnHidden,
+  parseValue,
+} from "./utils";
+import cn from "classnames";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 // import vendors from "../../public/vendors.json";
 // import properties from "../../public/propOptions.json";
 // import accounts from "../../public/accounts.json";
 import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
-import { removeAllListeners, removeListener } from "process";
-
-async function GetDimensions(take: number | null = null) {
-  try {
-    let url = `https://localhost:5006/api/data/GetDimensions${
-      take ? `?take=${encodeURIComponent(take)}` : ""
-    }`;
-    const response = await fetch(url, {
-      method: "GET",
-    });
-    const result = await response.text();
-    return JSON.parse(result);
-  } catch (error) {
-    return error;
-  }
-}
-
-async function getFromQuery(table: string, take: number) {
-  const url = "https://localhost:5006/api/data/RunSqlQuery";
-  const params = { table, take };
-  const queryString = Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join("&");
-  const fullUrl = `${url}?${queryString}`;
-  try {
-    const response = await fetch(fullUrl, {
-      method: "GET",
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-interface DynamicGridProps {
+import { removeAllListeners } from "process";
+import { TableHeader } from "./TableHeader";
+interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
-  numItems?: number;
+  numItems?: number | undefined;
   isActive?: boolean;
 }
 
@@ -64,6 +36,7 @@ function DynamicGrid<T>({
   showPagination,
   numItems,
   isActive,
+  className,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -71,47 +44,59 @@ function DynamicGrid<T>({
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
+  // const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
+  const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
+
   const itemsPerPage = 10;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
 
-  function handleDropdownOpen(key) {
-    setActiveDropdown(key);
-  }
+  // function handleDropdownOpen(key) {
+  //   setActiveDropdown(key);
+  // }
 
-  function handleDropdownClose() {
-    setActiveDropdown(null);
-  }
+  // function handleDropdownClose() {
+  //   setActiveDropdown(null);
+  // }
+
+  // React.useEffect(() => {
+  //   if (selected) {
+  //     setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
+  //   }
+  // }, [data]);
 
   React.useEffect(() => {
-    if (selected) {
-      setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
-    }
-  }, [data]);
-
-  React.useEffect(() => {
-    console.log("handleDynamicGridMouseEnter");
-    isActiveTableRef ? setColumnWidths() : null;
+    setColumnWidths();
   }, [isActiveTableRef]);
 
   React.useEffect(() => {
+    console.info("setting column widths with selected, numOfItems, data...");
+    setColumnWidths();
+  }, [selected, numOfItems, data]);
+
+  React.useEffect(() => {
+    setNumOfItems((numItems ?? 1) + 1);
+    setSelected(selectItem);
     async function fetchData() {
       try {
         let response = [];
-
+        setNumOfItems(numItems ?? 1);
         switch (selectItem) {
           case "GetDimensions":
-            response = JSON.parse(JSON.stringify(dimensions));
+            response = JSON.parse(
+              JSON.stringify(dimensions.slice(0, numOfItems ?? 1))
+            );
             setData(response);
             break;
           case "GetFromQuery":
-            response = await getFromQuery("total", numItems ?? 1);
+            response = await getFromQuery("total", numOfItems ?? 1);
             setData(response);
             break;
           case undefined:
@@ -122,9 +107,13 @@ function DynamicGrid<T>({
       }
     }
     fetchData();
-  }, [numItems, selectItem]);
+    setColumnWidths();
+  }, []);
 
-  function handleSort(columnName: string) {
+  function handleSort(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    columnName: string
+  ) {
     let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
@@ -152,11 +141,6 @@ function DynamicGrid<T>({
       setCurrentPage(1);
     }
   }
-  function handleResize(e) {
-    e.preventDefault();
-    setColumnWidths();
-    setRowHeights();
-  }
 
   function paddingDiffY(col: HTMLElement): number {
     if (getStyleVal(col, "box-sizing") === "border-box") {
@@ -180,6 +164,14 @@ function DynamicGrid<T>({
     return window.getComputedStyle(elm, null).getPropertyValue(css);
   }
 
+  interface ColumnWidths {
+    [columnId: string]: number;
+  }
+
+  interface IconWidths {
+    [columnId: string]: number;
+  }
+
   function setColumnWidths() {
     const table = tableRef.current as HTMLElement;
     if (!table) return;
@@ -190,7 +182,7 @@ function DynamicGrid<T>({
 
     function visualLength(s: string) {
       const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `content-box`;
+      (ruler as HTMLElement).style.boxSizing = `border-box`;
       ruler.style.display = "block";
       ruler.style.visibility = "hidden";
       ruler.style.position = "absolute";
@@ -231,7 +223,6 @@ function DynamicGrid<T>({
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
           }
-          // console.log(`padding for columnId:  ${columnId}, row #${rowNumber} ${paddingDiff(cell as HTMLElement)}`);
         }
       });
     });
@@ -245,8 +236,9 @@ function DynamicGrid<T>({
           (col as HTMLElement).style.display = "inline-block";
           (col as HTMLElement).style.whiteSpace = "nowrap";
           (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.padding = "0px";
-          (col as HTMLElement).style.minHeight = "0px";
+          (col as HTMLElement).style.margin = "1px";
+          (col as HTMLElement).style.padding = "1px";
+          (col as HTMLElement).style.minHeight = "100%";
           (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
           (col as HTMLElement).style.width = `${Math.round(value)}px`;
         }
@@ -425,54 +417,74 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      // const myType =
-      //   selectItem === "GetPropOptions"
-      //     ? "Property"
-      //     : selectItem === "GetVendors"
-      //     ? "Vendor"
-      //     : selectItem === "GetAccounts"
-      //     ? "Account"
-      //     : null;
-
-      // if (!myType) return null;
-      // const myColumns = GoodColumns[myType];
-
-      // const columnKeys = Object.entries(myColumns).map(
-      //   ([key, value], index: number) => {
-      //     return { Item: myType, Index: index, Name: value["Name"] };
-      //   }
-      // );
-
-      // console.log(columnKeys[0]);
-
+      console.info("GenerateTableHtml from DynamicGrid...");
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
           !isColumnHidden(data, cols) && (
-            <div
+            <TableHeader
               key={cols}
-              className={styles["th"]}
-              style={{ width: "100px" }}
-              data-column-id={cols}
+              columnName={cols}
+              onClick={(e) => handleSort(e, cols)}
             >
-              {cols}
-              <span
-                className={`${"material-symbols-outlined"} ${styles["black"]}`}
-                onClick={() => handleSort(cols)}
-              >
-                {!sortState ? "expand_more" : "expand_less"}
-              </span>
               <div
                 className={styles["coldivider"]}
                 onMouseEnter={setListeners}
               ></div>
-            </div>
+            </TableHeader>
           )
         );
       });
 
+      function getSelectItem(key: string) {
+        switch (key) {
+          case "PROPERTY":
+            return "GetPropOptions";
+          case "ACCOUNT":
+            return "GetAccounts";
+          case "PERSON":
+            return "GetVendors";
+          default:
+            return "Property";
+        }
+      }
+
+      function getSelectKey(key: string) {
+        switch (key) {
+          case "PROPERTY":
+            return "Property";
+          case "ACCOUNT":
+            return "Account";
+          case "PERSON":
+            return "Vendor";
+          default:
+            return "Property";
+        }
+      }
+
+      function handleOnChange(e) {
+        console.log("resetting column widths because value changed...");
+        setColumnWidths();
+      }
+
+      function handleDeleteClick(e) {
+        (tableRef.current as HTMLElement)
+          .querySelector(
+            '[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]'
+          )
+          .remove();
+      }
+
+      function handleFocus(e) {
+        console.info("focusinig element.");
+        (e.target as HTMLElement).focus();
+      }
+
       const rows = [...data]
-        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .slice(
+          (currentPage - 1) * itemsPerPage,
+          numOfItems < itemsPerPage ? numOfItems : currentPage * itemsPerPage
+        )
         .map((row, rowIndex: number) => (
           <div
             key={`${rowIndex}`}
@@ -493,37 +505,67 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                     ref={dropdownRef}
+                    onClick={handleFocus}
+                    onChange={(e) => {
+                      (e.target as HTMLDivElement).classList.add(
+                        styles["focus"]
+                      );
+                    }}
                   >
-                    {key.toUpperCase() === "PROPERTY" ? (
+                    {key.toUpperCase() === "PROPERTY" ||
+                    key.toUpperCase() === "ACCOUNT" ||
+                    key.toUpperCase() === "PERSON" ? (
                       <GenericDropdown
-                        selectItem="GetPropOptions"
+                        selectItem={getSelectItem(key)}
                         showPagination={true}
                         showCheckbox={false}
                         tableRef={tableRef}
-                        columns={columns["Property"]}
+                        columns={columns[getSelectKey(key)]}
                       />
-                    ) : key.toUpperCase() === "ACCOUNT" ? (
-                      <GenericDropdown
-                        selectItem="GetAccounts"
-                        showPagination={true}
-                        showCheckbox={false}
-                        tableRef={tableRef}
-                        columns={columns["Account"]}
+                    ) : key.toUpperCase() === "DATE" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
                       />
-                    ) : key.toUpperCase() === "PERSON" ? (
-                      <GenericDropdown
-                        selectItem="GetVendors"
-                        showPagination={true}
-                        showCheckbox={false}
-                        tableRef={tableRef}
-                        columns={columns["Vendor"]}
+                    ) : key.toUpperCase() === "POSTMONTH" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
+                      />
+                    ) : key.toUpperCase() === "DUEDATE" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
                       />
                     ) : (
-                      parseValue(value as string, key)
+                      parseValue(
+                        (value as string)
+                          ? value.toString().replace("{InvoiceNumber}", " ")
+                          : "",
+                        key
+                      )
                     )}
                   </div>
                 )
-            )}
+            )}{" "}
+            {
+              <span
+                className={cn("material-symbols-outlined", styles["share"])}
+                data-row-id={rowIndex}
+              >
+                ios_share
+              </span>
+            }
+            {/* {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>} */}
+            {
+              <span
+                className={cn("material-symbols-outlined", styles["delete"])}
+                data-row-id={rowIndex}
+                onClick={handleDeleteClick}
+              >
+                delete
+              </span>
+            }
           </div>
         ));
 
@@ -532,10 +574,7 @@ function DynamicGrid<T>({
           const totalPages = Math.ceil(data.length / itemsPerPage);
           return (
             <>
-              <div
-                style={style}
-                className={cn(styles["table-container"])}
-              >
+              <div style={style} className={cn(styles["table-container"])}>
                 <div
                   id={"gridjs_"}
                   ref={tableRef}
@@ -546,7 +585,7 @@ function DynamicGrid<T>({
                   </div>
 
                   <div key={"tbody"} className={styles["tbody"]}>
-                    {rows.slice(1)}
+                    {rows}
                   </div>
                 </div>
                 <Pagination
@@ -573,15 +612,7 @@ function DynamicGrid<T>({
 
   function handleDynamicGridMouseEnter(e) {
     setIsActiveTableRef(true);
-    //   // (2) move the colDivider on mousemove
-    //   e.target.addEventListener("onmouseenter", setColumnWidths);
-
-    //   // (3) drop the colDivider, remove unneeded handlers
-    //   e.target.onmouseleave = function () {
-    //     document.removeEventListener("mousemove", setColumnWidths);
-    //     console.info("removing onmouseenter Listner");
-    //   };
-    };
+  }
 
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -589,7 +620,9 @@ function DynamicGrid<T>({
     return (
       <div
         id="dynamicGridId"
-        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}>
+        className={className}
+        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
+      >
         {table}
       </div>
     );

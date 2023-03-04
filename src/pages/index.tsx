@@ -3,7 +3,7 @@ import styles from "./Home.module.scss";
 import React from "react";
 import Grid from "./Grid";
 import { RouteItem } from "./getRouteMeta";
-import { Page } from "./Page";
+
 
 
 interface PageProps {

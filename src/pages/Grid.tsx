@@ -1,21 +1,29 @@
 import { useState } from "react";
 import cn from "classnames";
-import styles from "./GridDropdown.module.scss";
+import styles from "./Grid.module.scss";
+import stylesWithin from "./GenericDropdown.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
 import DataGridDropdown from "./DataGridDropdown";
 import GenericDropdown from "./GenericDropdown";
-import GoodColumns from "../../public/GoodColumns.json";
-import dimensions from "../../public/Dimensions.json";
+// import GenericDropdown from "./GenericDropdown";
+// import GoodColumns from "../../public/GoodColumns.json";
+// import dimensions from "../../public/Dimensions.json";
+// import DynamicGridProps from "./DynamicGrid";
 
-export default function Grid() {
+export default function Grid({
+  tableRef,
+  columns,
+}: {
+  tableRef: React.RefObject<HTMLDivElement>;
+  columns: string[];
+}) {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");
-  const [numItems, setNumItems] = useState<number>(0);
+  const [numItems, setNumItems] = useState<number>(1);
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
-
 
   async function handleSetItem(e) {
     setItem(e);
@@ -49,61 +57,59 @@ export default function Grid() {
   }
 
   return (
-    <>
+    <div className={styles["container"]}>
       <Dropdown
-        style={{
-          display: "block",
-          zIndex: 2,
-        }}
+        className={styles["dynamicgrid-dd"]}
         jsonFileName="GetOptions"
         label="Choose Item to Display"
-        onChange={(e) => handleSetItem(e)}
+        onItemChange={(e) => handleSetItem(e)}
         showCheckbox={true}
       />
-        <form
-          // onSubmit={handleSubmit}
-          style={{
-            display: "block",
-            zIndex: 1,
-            margin: "20px",
-          }}
-        >
-          <input
-            style={{
-              display: "block",
-              padding: "10px",
-              width: "50px",
-              cursor: "pointer",
-              marginLeft: "150px",
-              top: "0px",
-            }}
-            className={cn(styles["rz-textbox"], styles["findcomponent"])}
-            type="number"
-            value={numItems}
-            onChange={handleTextareaChange}
-            disabled={false}
-          />
-          <br />
-          {error !== null && <p className="Error">{error.message}</p>}
-        </form>
-
-        {status === "success" && (
-          <DynamicGrid
-          style={{
-            display: "block",
-            marginLeft: "10px",
-            marginTop: "50px",
-            position: "absolute",
-          }}
-            key={item}
-            selectItem={item}
-            showPagination={true}
-            numItems={numItems}
-            // sourceData={JSON.parse(JSON.stringify(dimensions))}
-          />
-        )}
-
-    </>
+      <form
+        // onSubmit={handleSubmit}
+        style={{
+          zIndex: 1,
+          margin: "20px",
+        }}
+      >
+        <input
+          className={cn(styles["rz-textbox"], styles["input"])}
+          type="number"
+          value={numItems}
+          onChange={handleTextareaChange}
+          disabled={false}
+        />
+        <br />
+        {error !== null && <p className="Error">{error.message}</p>}
+      </form>
+      <div className={stylesWithin["table-container"]}>
+        <div className={stylesWithin["divTable"]}>
+          <div>
+            <div className={stylesWithin["tr"]} data-row-id="0">
+              <div className={stylesWithin["td"]}  data-column-id="PROPERTY">
+                <div>
+                  <GenericDropdown
+                    selectItem={"GetPropOptions"}
+                    showPagination={true}
+                    showCheckbox={false}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {status === "success" && (
+        <DynamicGrid
+          // className={styles["dynamicgrid-dd"]}
+          key={item}
+          selectItem={item}
+          showPagination={true}
+          numItems={numItems}
+          // sourceData={JSON.parse(JSON.stringify(dimensions))}
+        />
+      )}
+    </div>
   );
 }
 

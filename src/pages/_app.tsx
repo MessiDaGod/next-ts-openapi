@@ -6,11 +6,12 @@ import React, { useState, useEffect } from "react";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { ga } from "../utils/analytics";
-import cn from "classNames";
+import cn from "classnames";
 import "styles/globals.css";
-import '../styles/algolia.css';
-import '../styles/index.css';
-import '../styles/sandpack.css';
+import "../styles/algolia.css";
+import "../styles/index.css";
+import "../styles/sandpack.css";
+import Menu from "../../public/menu.json";
 
 // if (typeof window !== "undefined") {
 //   if (process.env.NODE_ENV === "production") {
@@ -42,8 +43,32 @@ interface Menu {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [menu, setMenu] = useState<Menu | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [menu, setMenu] = useState<Menu>();
+
+  function isMobile() {
+    if (typeof window === "undefined") {
+      return false; // or throw an error, depending on your use case
+    }
+
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const mobileKeywords = [
+      "android",
+      "iphone",
+      "ipod",
+      "ipad",
+      "mobile",
+      "tablet",
+    ];
+
+    for (let i = 0; i < mobileKeywords.length; i++) {
+      if (userAgent.indexOf(mobileKeywords[i]) !== -1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -63,24 +88,10 @@ export default function App({ Component, pageProps }: AppProps) {
         // It seems to work better for Chrome and Firefox which don't animate the back swipe.
       }
       search();
-      fetch("/menu.json")
-        .then((response) => response.json())
-        .then((data) => setMenu(data));
+      setMenu(Menu);
     }
     fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   const handleRouteChange = (url: string) => {
-  //     const cleanedUrl = url.split(/[\?\#]/)[0];
-  //     ga('set', 'page', cleanedUrl);
-  //     ga('send', 'pageview');
-  //   };
-  //   router.events.on('routeChangeComplete', handleRouteChange);
-  //   return () => {
-  //     router.events.off('routeChangeComplete', handleRouteChange);
-  //   };
-  // }, [router.events]);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -116,6 +127,12 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
   }
+
+  const type = isMobile() ? (
+    <span className="material-symbols-outlined">phone_iphone</span>
+  ) : (
+    <span className="material-symbols-outlined">computer</span>
+  );
 
   return (
     <>
@@ -222,18 +239,33 @@ export default function App({ Component, pageProps }: AppProps) {
           </span>
         </a>
         <div className={styles["linksContainer"]}>
-          {/* <ConnectionDropdown jsonFileName="connections" label="Connections" /> */}
-          {/* {menu?.topBar.map((item, index: number) => (
+          <Link
+            key={"isMobile"}
+            children={type}
+            href=""
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "1rem",
+              alignItems: "center",
+              verticalAlign: "middle",
+            }}
+          ></Link>
+          {menu?.topBar.map((item, index: number) => (
             <Link
               key={`${item}_${index}`}
               className={styles["links"]}
               href={item.url}
-              style={{ display: "flex", justifyContent: "flex-end", marginRight: "1rem" }}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginRight: "1rem",
+              }}
               title={item.label}
             >
               {item.label}
             </Link>
-          ))} */}
+          ))}
         </div>
       </div>
       <div

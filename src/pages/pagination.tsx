@@ -1,5 +1,5 @@
 import React, { CSSProperties } from "react";
-import styles from "./DataGridDropdown.module.scss";
+import styles from "./DynamicGrid.module.scss";
 
 interface PaginationProps {
   currentPage: number;
@@ -82,7 +82,7 @@ export function Pagination({
           (pageNumber) =>
             pageNumber === 1 && (
               <p key={currentPage}>
-                Page <br />{currentPage}of {totalPages}&nbsp;
+                Page <br />{currentPage}of&nbsp;{totalPages}&nbsp;
               </p>
             )
         )}

@@ -2,7 +2,7 @@ import React, { CSSProperties, useState, useEffect, HTMLAttributes } from "react
 import styles from "./Home.module.scss";
 import cn from "classnames";
 
-interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
+interface MultiDropdownProps extends HTMLAttributes<HTMLDivElement> {
   jsonFileName: string;
   label: string;
   style?: CSSProperties;
@@ -24,19 +24,7 @@ interface Menu {
   Items: Item[];
 }
 
-const Button: React.FC<ButtonProps> = ({ children }) => {
-  return (
-    <button
-      key={"btn"}
-      className={cn(styles["button"])}
-      style={{ background: "white", color: "black", fontWeight: "bold" }}
-    >
-      {children}
-    </button>
-  );
-};
-
-const Dropdown: React.FC<DropdownProps> = ({
+const MultiDropdown: React.FC<MultiDropdownProps> = ({
   jsonFileName = {},
   label,
   style,
@@ -120,4 +108,4 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-export default Dropdown;
+export default MultiDropdown;

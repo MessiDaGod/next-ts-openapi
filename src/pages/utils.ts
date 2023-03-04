@@ -14,7 +14,11 @@ export function isRowEmpty<T>(row: T): boolean {
 
 export function isColumnHidden<T>(data: T[], columnName: string): boolean {
   if (Array.isArray(data)) {
-    if (columnName.toLowerCase() === "account" || columnName.toLowerCase() === "person") return false;
+    if (
+      columnName.toLowerCase() === "account" ||
+      columnName.toLowerCase() === "person"
+    )
+      return false;
     const columnData = data.map((row) => row[columnName]);
     return columnData.every(
       (value) =>
@@ -60,9 +64,57 @@ export interface ColumnWidths {
   [columnId: string]: number;
 }
 
+export interface IconWidths {
+  [columnId: string]: number;
+}
+
 export class CustomError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CustomError';
+    this.name = "CustomError";
+  }
+}
+
+export async function GetDimensions(take: number | null = null) {
+  try {
+    let url = `https://localhost:5006/api/data/GetDimensions${
+      take ? `?take=${encodeURIComponent(take)}` : ""
+    }`;
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    const result = await response.text();
+    return JSON.parse(result);
+  } catch (error) {
+    return error;
+  }
+}
+
+export async function getFromQuery(table: string, take: number) {
+  const url = "https://localhost:5006/api/data/RunSqlQuery";
+  const params = { table, take };
+  const queryString = Object.entries(params)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+  const fullUrl = `${url}?${queryString}`;
+  try {
+    const response = await fetch(fullUrl, {
+      method: "GET",
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+
+export function Log(message: any) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(message);
   }
 }
