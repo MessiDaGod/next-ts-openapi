@@ -3,8 +3,17 @@ import React, { HTMLAttributes, useRef } from "react";
 import { Pagination } from "./pagination";
 // import GoodColumns from "../../public/GoodColumns.json";
 import styles from "./DynamicGrid.module.scss";
-import { ColumnWidths, CustomError, getFromQuery, isColumnHidden, parseValue } from "./utils";
+import {
+  ColumnWidths,
+  CustomError,
+  getFromQuery,
+  isColumnHidden,
+  parseValue,
+} from "./utils";
 import cn from "classnames";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 // import vendors from "../../public/vendors.json";
 // import properties from "../../public/propOptions.json";
@@ -40,6 +49,9 @@ function DynamicGrid<T>({
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
+
   const itemsPerPage = 10;
 
   function handlePageChange(page: number) {
@@ -65,7 +77,7 @@ function DynamicGrid<T>({
   }, [isActiveTableRef]);
 
   React.useEffect(() => {
-    console.info("setting column widths with selected, numOfItems, data...")
+    console.info("setting column widths with selected, numOfItems, data...");
     setColumnWidths();
   }, [selected, numOfItems, data]);
 
@@ -78,7 +90,9 @@ function DynamicGrid<T>({
         setNumOfItems(numItems ?? 1);
         switch (selectItem) {
           case "GetDimensions":
-            response = JSON.parse(JSON.stringify(dimensions.slice(0, numOfItems ?? 1)));
+            response = JSON.parse(
+              JSON.stringify(dimensions.slice(0, numOfItems ?? 1))
+            );
             setData(response);
             break;
           case "GetFromQuery":
@@ -96,7 +110,10 @@ function DynamicGrid<T>({
     setColumnWidths();
   }, []);
 
-  function handleSort(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, columnName: string) {
+  function handleSort(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    columnName: string
+  ) {
     let state = sortState;
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
@@ -146,7 +163,6 @@ function DynamicGrid<T>({
   function getStyleVal(elm: HTMLElement, css: string): string {
     return window.getComputedStyle(elm, null).getPropertyValue(css);
   }
-
 
   interface ColumnWidths {
     [columnId: string]: number;
@@ -409,7 +425,7 @@ function DynamicGrid<T>({
             <TableHeader
               key={cols}
               columnName={cols}
-              onClick={((e) => handleSort(e, cols))}
+              onClick={(e) => handleSort(e, cols)}
             >
               <div
                 className={styles["coldivider"]}
@@ -452,11 +468,23 @@ function DynamicGrid<T>({
       }
 
       function handleDeleteClick(e) {
-        (tableRef.current as HTMLElement).querySelector('[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]').remove();
+        (tableRef.current as HTMLElement)
+          .querySelector(
+            '[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]'
+          )
+          .remove();
+      }
+
+      function handleFocus(e) {
+        console.info("focusinig element.");
+        (e.target as HTMLElement).focus();
       }
 
       const rows = [...data]
-        .slice((currentPage - 1) * itemsPerPage, numOfItems < itemsPerPage ? numOfItems : (currentPage * itemsPerPage))
+        .slice(
+          (currentPage - 1) * itemsPerPage,
+          numOfItems < itemsPerPage ? numOfItems : currentPage * itemsPerPage
+        )
         .map((row, rowIndex: number) => (
           <div
             key={`${rowIndex}`}
@@ -477,6 +505,12 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                     ref={dropdownRef}
+                    onClick={handleFocus}
+                    onChange={(e) => {
+                      (e.target as HTMLDivElement).classList.add(
+                        styles["focus"]
+                      );
+                    }}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
@@ -488,14 +522,50 @@ function DynamicGrid<T>({
                         tableRef={tableRef}
                         columns={columns[getSelectKey(key)]}
                       />
+                    ) : key.toUpperCase() === "DATE" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
+                      />
+                    ) : key.toUpperCase() === "POSTMONTH" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
+                      />
+                    ) : key.toUpperCase() === "DUEDATE" ? (
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => setStartDate(date)}
+                      />
                     ) : (
-                      parseValue((value as string) ? value.toString().replace("{InvoiceNumber}", " ") : "", key)
+                      parseValue(
+                        (value as string)
+                          ? value.toString().replace("{InvoiceNumber}", " ")
+                          : "",
+                        key
+                      )
                     )}
                   </div>
                 )
             )}{" "}
-            {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>}
-            {<span className={cn("material-symbols-outlined", styles["delete"])} data-row-id={rowIndex} onClick={handleDeleteClick}>delete</span>}
+            {
+              <span
+                className={cn("material-symbols-outlined", styles["share"])}
+                data-row-id={rowIndex}
+              >
+                ios_share
+              </span>
+            }
+            {/* {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>} */}
+            {
+              <span
+                className={cn("material-symbols-outlined", styles["delete"])}
+                data-row-id={rowIndex}
+                onClick={handleDeleteClick}
+              >
+                delete
+              </span>
+            }
           </div>
         ));
 
@@ -560,4 +630,3 @@ function DynamicGrid<T>({
 }
 
 export default DynamicGrid;
-

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
@@ -37,12 +37,12 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-interface DynamicGridProps {
+export interface DynamicGridProps  extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
   showCheckbox?: boolean;
-  tableRef: React.RefObject<HTMLDivElement>;
+  tableRef?: React.RefObject<HTMLDivElement>;
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
@@ -662,6 +662,8 @@ function GenericDropdown<T>({
     setShowSearchBox(true);
     setActiveDropdown(dropdownRef.current);
     setColumnWidths();
+    const searchInput = document.querySelector(`#${selected}_label`) as HTMLElement;
+    searchInput.focus();
   }
 
   function handleGenericDropdownMouseLeave(e) {

@@ -14,7 +14,11 @@ export function isRowEmpty<T>(row: T): boolean {
 
 export function isColumnHidden<T>(data: T[], columnName: string): boolean {
   if (Array.isArray(data)) {
-    if (columnName.toLowerCase() === "account" || columnName.toLowerCase() === "person") return false;
+    if (
+      columnName.toLowerCase() === "account" ||
+      columnName.toLowerCase() === "person"
+    )
+      return false;
     const columnData = data.map((row) => row[columnName]);
     return columnData.every(
       (value) =>
@@ -67,7 +71,7 @@ export interface IconWidths {
 export class CustomError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CustomError';
+    this.name = "CustomError";
   }
 }
 
