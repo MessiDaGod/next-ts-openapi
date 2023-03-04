@@ -111,3 +111,10 @@ export async function getFromQuery(table: string, take: number) {
     return null;
   }
 }
+
+
+export function Log(message: any) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(message);
+  }
+}

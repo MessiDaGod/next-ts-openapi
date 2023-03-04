@@ -5,7 +5,7 @@ import { Pagination } from "./pagination";
 // import { getAccounts } from "./api/getAccounts";
 import styles from "./DynamicGrid.module.scss";
 import stylesWithin from "./GenericDropdown.module.scss";
-import { ColumnWidths, CustomError, isColumnHidden, parseValue } from "./utils";
+import { ColumnWidths, CustomError, Log, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
 import vendors from "../../public/vendors.json";
@@ -384,8 +384,14 @@ function GenericDropdown<T>({
   }
 
   function handleOnClick(e) {
+    Log("click handled!!!!!!");
     const div = e.target as HTMLElement;
     setSelectedItem(div.parentElement.children[2].textContent);
+    const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
+    elementsWithZIndex.forEach((element) => {
+      (element as HTMLElement).style.zIndex = "0";
+    });
+
     setIsActiveDropdown(false);
     setShowSearchBox(false);
   }
