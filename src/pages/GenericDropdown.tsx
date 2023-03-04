@@ -5,7 +5,7 @@ import { Pagination } from "./pagination";
 // import { getAccounts } from "./api/getAccounts";
 import styles from "./DynamicGrid.module.scss";
 import stylesWithin from "./GenericDropdown.module.scss";
-import { ColumnWidths, CustomError, Log, isColumnHidden, parseValue } from "./utils";
+import { ColumnWidths, CustomError, Log, headerize, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
 import vendors from "../../public/vendors.json";
@@ -447,7 +447,7 @@ function GenericDropdown<T>({
           data-column-id={col}
           hidden={isColumnHidden(data, col)}
         >
-          {col}
+          {headerize(col)}
           <span
             className={`${"material-symbols-outlined"} ${styles["black"]}`}
             onClick={() => handleSort(col)}

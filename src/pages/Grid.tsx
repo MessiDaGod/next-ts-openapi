@@ -1,6 +1,6 @@
 import { useState } from "react";
 import cn from "classnames";
-import styles from "./Grid.module.scss";
+import styles from "./Home.module.scss";
 import stylesWithin from "./GenericDropdown.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
@@ -81,56 +81,60 @@ export default function Grid({
 
   return (
     <div className={styles["container"]}>
-      <div className={stylesWithin["table-container"]}>
-        <div className={stylesWithin["divTable"]}>
-          <div className={stylesWithin["tr"]} data-row-id="0">
-            <div className={stylesWithin["td"]} data-column-id="PROPERTY">
-              <GenericDropdown
-                selectItem={"GetPropOptions"}
-                showPagination={true}
-                showCheckbox={false}
-                columns={columns["Property"]}
-              />
-            </div>
-            <div className={stylesWithin["td"]} data-column-id="VENDOR">
-              <GenericDropdown
-                selectItem={"GetVendors"}
-                showPagination={true}
-                showCheckbox={false}
-                columns={columns["Vendor"]}
-              />
-            </div>
-            <div className={stylesWithin["td"]} data-column-id="DROPDOWN">
-              <Dropdown
-                jsonFileName="GetOptions"
-                label="Choose Item to Display"
-                onItemChange={(e) => handleSetItem(e)}
-                showCheckbox={true}
-              />
-            </div>
-            <div className={stylesWithin["td"]} data-column-id="FORM">
-              {" "}
-              <form
-                // onSubmit={handleSubmit}
-                style={{
-                  zIndex: 1,
-                  margin: "20px",
-                }}
-              >
-                <input
-                  className={cn(styles["rz-textbox"], styles["input"])}
-                  type="number"
-                  value={numItems}
-                  onChange={handleTextareaChange}
-                  disabled={false}
-                />
-                <br />
-                {error !== null && <p className="Error">{error.message}</p>}
-              </form>
-            </div>
-          </div>
+      {/* <div className={stylesWithin["table-container"]}> */}
+      {/* <div className={stylesWithin["ddTable"]}> */}
+      {/* <div className={stylesWithin["tr"]} data-row-id="0">
+        <div className={stylesWithin["td"]} data-column-id="DROPDOWN">
+          <Dropdown
+            jsonFileName="GetOptions"
+            label="Choose Item to Display"
+            onItemChange={(e) => handleSetItem(e)}
+            showCheckbox={true}
+          />
         </div>
-      </div>
+        <div className={stylesWithin["td"]}>
+          <GenericDropdown
+            selectItem={"GetPropOptions"}
+            showPagination={true}
+            showCheckbox={false}
+            columns={columns["Property"]}
+          />
+        </div>
+        <div className={stylesWithin["td"]} data-column-id="VENDOR">
+          <GenericDropdown
+            selectItem={"GetVendors"}
+            showPagination={true}
+            showCheckbox={false}
+            columns={columns["Vendor"]}
+          />
+        </div>{" "}
+        <form
+          // onSubmit={handleSubmit}
+          style={{
+            zIndex: 1,
+            margin: "20px",
+          }}
+        >
+          <input
+            className={cn(styles["rz-textbox"], styles["input"])}
+            type="number"
+            value={numItems}
+            onChange={handleTextareaChange}
+            disabled={false}
+          />
+          <br />
+          {error !== null && <p className="Error">{error.message}</p>}
+        </form>
+      </div> */}
+      <Dropdown
+        jsonFileName="GetOptions"
+        label="Choose Item to Display"
+        onItemChange={(e) => handleSetItem(e)}
+        showCheckbox={true}
+      />
+
+      {/* </div> */}
+      {/* </div> */}
       {status === "success" && (
         <DynamicGrid
           // className={styles["dynamicgrid-dd"]}

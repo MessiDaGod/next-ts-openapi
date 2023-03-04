@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./GenericDropdown.module.scss";
+import { headerize } from "./utils";
 
 interface Props {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ export function TableHeader({
       style={{ width: width }}
       data-column-id={columnName}
     >
-      {columnName}
+      {headerize(columnName)}
       <button style={{ backgroundColor: "transparent" }} onClick={((e) => onClick(e, columnName))}>
         <span
           onClick={() => setSortState(!sortState)}

@@ -1,6 +1,7 @@
 import React, { CSSProperties, useState, useEffect, HTMLAttributes } from "react";
 import styles from "./Home.module.scss";
 import cn from "classnames";
+import { Log } from "./utils";
 
 interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
   jsonFileName: string;
@@ -79,8 +80,16 @@ const Dropdown: React.FC<DropdownProps> = ({
     );
   }
 
-  const handleMouseEnter = () => setShowDropdown(true);
-  const handleMouseLeave = () => setShowDropdown(false);
+  function handleMouseEnter(e) {
+    Log("Mouse Enter dropdown.tsx");
+    Log((e.target as HTMLElement).querySelectorAll("span"));
+    setShowDropdown(true)
+  }
+  function handleMouseLeave(e) {
+    setShowDropdown(false);
+  }
+
+
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
     handleItemChange(item);
@@ -96,7 +105,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     <>
       <div
         className={className}
-        style={style}
+        style={{ zIndex: 10000000 }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -111,6 +120,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               onMouseEnter={() => setHoveredItem(index)}
               onMouseLeave={() => setHoveredItem(null)}
               className={styles["dropdown-item"]}
+              style={{ display: "block", zIndex: 1000000}}
             >
               {value.Value}
             </span>

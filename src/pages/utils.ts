@@ -118,3 +118,15 @@ export function Log(message: any) {
     console.log(message);
   }
 }
+
+export function headerize(text) {
+  const wordsToCapitalize = ['date', 'num', 'post', 'month', 'tran', 'type'];
+  let result = text.toLowerCase();
+  for (const word of wordsToCapitalize) {
+    const regex = new RegExp(`${word}\\w*`, 'gi');
+    result = result.replace(regex, (match) => {
+      return match.charAt(0).toUpperCase() + match.slice(1);
+    });
+  }
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
