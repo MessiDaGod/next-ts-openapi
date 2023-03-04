@@ -82,11 +82,11 @@ export default function Grid({
         <br />
         {error !== null && <p className="Error">{error.message}</p>}
       </form>
-      {/* <div className={stylesWithin["table-container"]}>
+      <div className={stylesWithin["table-container"]}>
         <div className={stylesWithin["divTable"]}>
           <div>
             <div className={stylesWithin["tr"]} data-row-id="0">
-              <div className="DynamicGrid_td__BHrbA" data-column-id="PROPERTY">
+              <div className={stylesWithin["td"]}  data-column-id="PROPERTY">
                 <div>
                   <GenericDropdown
                     selectItem={"GetPropOptions"}
@@ -98,7 +98,7 @@ export default function Grid({
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       {status === "success" && (
         <DynamicGrid
           // className={styles["dynamicgrid-dd"]}

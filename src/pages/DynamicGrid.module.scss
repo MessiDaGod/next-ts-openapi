@@ -25,6 +25,7 @@
     border-top: 2px solid  rgb(105, 105, 105);
     padding-top: 2px;
     padding-bottom: 2px;
+    z-index: 0;
 }
 
 .th,
@@ -59,6 +60,7 @@
     border-top-style: solid;
     background-color: white;
     border-top-color: #CCCCCC;
+    z-index: 0;
 }
 
 .td {
