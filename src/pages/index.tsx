@@ -2,16 +2,6 @@ import Head from "next/head";
 import styles from "./Home.module.scss";
 import React from "react";
 import Grid from "./Grid";
-import { RouteItem } from "./getRouteMeta";
-
-
-
-interface PageProps {
-  children: React.ReactNode;
-  routeTree: RouteItem;
-  meta: { title?: string; description?: string };
-  section: "learn" | "reference" | "home";
-}
 
 const Home: React.FC = ({}) => (
   <>

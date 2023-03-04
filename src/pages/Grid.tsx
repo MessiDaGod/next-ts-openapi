@@ -7,17 +7,19 @@ import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
 import DataGridDropdown from "./DataGridDropdown";
 import GenericDropdown from "./GenericDropdown";
+import { Log, isColumnHidden } from "./utils";
+import MultiDropdown from "./MultiDropdown";
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
+import properties from "../../public/propOptions.json";
+import { TableHeader } from "./TableHeader";
 
 export default function Grid({
   tableRef,
-  columns,
 }: {
-  tableRef: React.RefObject<HTMLDivElement>;
-  columns: string[];
+  tableRef?: React.RefObject<HTMLDivElement>;
 }) {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
@@ -41,6 +43,7 @@ export default function Grid({
   React.useEffect(() => {
     console.info("Grid useEffect ran");
     setNumItems(1);
+    handleOnClick();
   }, []);
 
   async function handleTextareaChange(e) {
@@ -56,45 +59,74 @@ export default function Grid({
     }
   }
 
+  function handleOnClick() {
+    Log("click handled!!!!!!");
+    const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
+    elementsWithZIndex.forEach((element) => {
+      if ((element as HTMLElement).id !== "table")
+        (element as HTMLElement).style.zIndex = "0";
+    });
+  }
+  const data = properties;
+  const columns = Object.keys(data[0]);
+  const header = columns.map((cols, idx: number) => {
+    return (
+      !isColumnHidden(data, cols) && (
+        <TableHeader key={cols} columnName={cols}>
+          <div className={styles["coldivider"]}></div>
+        </TableHeader>
+      )
+    );
+  });
+
   return (
     <div className={styles["container"]}>
-      <Dropdown
-        className={styles["dynamicgrid-dd"]}
-        jsonFileName="GetOptions"
-        label="Choose Item to Display"
-        onItemChange={(e) => handleSetItem(e)}
-        showCheckbox={true}
-      />
-      <form
-        // onSubmit={handleSubmit}
-        style={{
-          zIndex: 1,
-          margin: "20px",
-        }}
-      >
-        <input
-          className={cn(styles["rz-textbox"], styles["input"])}
-          type="number"
-          value={numItems}
-          onChange={handleTextareaChange}
-          disabled={false}
-        />
-        <br />
-        {error !== null && <p className="Error">{error.message}</p>}
-      </form>
       <div className={stylesWithin["table-container"]}>
         <div className={stylesWithin["divTable"]}>
-          <div>
-            <div className={stylesWithin["tr"]} data-row-id="0">
-              <div className={stylesWithin["td"]}  data-column-id="PROPERTY">
-                <div>
-                  <GenericDropdown
-                    selectItem={"GetPropOptions"}
-                    showPagination={true}
-                    showCheckbox={false}
-                  />
-                </div>
-              </div>
+          <div className={stylesWithin["tr"]} data-row-id="0">
+            <div className={stylesWithin["td"]} data-column-id="PROPERTY">
+              <GenericDropdown
+                selectItem={"GetPropOptions"}
+                showPagination={true}
+                showCheckbox={false}
+                columns={columns["Property"]}
+              />
+            </div>
+            <div className={stylesWithin["td"]} data-column-id="VENDOR">
+              <GenericDropdown
+                selectItem={"GetVendors"}
+                showPagination={true}
+                showCheckbox={false}
+                columns={columns["Vendor"]}
+              />
+            </div>
+            <div className={stylesWithin["td"]} data-column-id="DROPDOWN">
+              <Dropdown
+                jsonFileName="GetOptions"
+                label="Choose Item to Display"
+                onItemChange={(e) => handleSetItem(e)}
+                showCheckbox={true}
+              />
+            </div>
+            <div className={stylesWithin["td"]} data-column-id="FORM">
+              {" "}
+              <form
+                // onSubmit={handleSubmit}
+                style={{
+                  zIndex: 1,
+                  margin: "20px",
+                }}
+              >
+                <input
+                  className={cn(styles["rz-textbox"], styles["input"])}
+                  type="number"
+                  value={numItems}
+                  onChange={handleTextareaChange}
+                  disabled={false}
+                />
+                <br />
+                {error !== null && <p className="Error">{error.message}</p>}
+              </form>
             </div>
           </div>
         </div>
@@ -106,7 +138,6 @@ export default function Grid({
           selectItem={item}
           showPagination={true}
           numItems={numItems}
-          // sourceData={JSON.parse(JSON.stringify(dimensions))}
         />
       )}
     </div>

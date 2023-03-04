@@ -383,10 +383,10 @@ function GenericDropdown<T>({
     });
   }
 
-  function handleOnClick(e) {
-    Log("click handled!!!!!!");
-    const div = e.target as HTMLElement;
-    setSelectedItem(div.parentElement.children[2].textContent);
+  function handleClick(e) {
+    setSelectedItem((e.target as HTMLElement).parentElement.children[2].textContent);
+    Log((e.target as HTMLElement));
+    // ( as HTMLInputElement).value = (e.target as HTMLElement).parentElement.children[2].textContent;
     const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
     elementsWithZIndex.forEach((element) => {
       (element as HTMLElement).style.zIndex = "0";
@@ -501,7 +501,7 @@ function GenericDropdown<T>({
                     className={stylesWithin["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
-                    onClick={handleOnClick}
+                    onClick={handleClick}
                   >
                     {parseValue(value as string, key)}
                   </div>
@@ -679,6 +679,11 @@ function GenericDropdown<T>({
   }
 
   if (table && Array.isArray(data) && data.length > 0) {
+    function handleSearchInput(e: React.FormEvent<HTMLInputElement>): void {
+      Log(e);
+      (e.target as HTMLInputElement).classList.add("changed");
+    }
+
     return (
       <div
         style={style}
@@ -704,6 +709,7 @@ function GenericDropdown<T>({
               borderRadius: `${hasPagination ? "6px" : "0px"}`,
             }}
           >
+            <input id={`input_${selected}`} value={selectedItem ? selectedItem : getHeaderValue(selected)} onChange={handleSearchInput} hidden></input>
             {selectedItem ? selectedItem : getHeaderValue(selected)}
             <span
               className={"material-symbols-outlined"}

@@ -228,7 +228,7 @@
   cursor: col-resize;
   -webkit-user-select: all;
   user-select: all;
-  z-index: 99999999;
+  z-index: 0;
 }
 
 .coldivider:hover {
@@ -330,7 +330,7 @@
   background: var(--primary-glow);
   width: 240px;
   height: 180px;
-  z-index: -1;
+  z-index: 0;
 }
 
 .center::before,
@@ -365,7 +365,7 @@
 .thirteen::after {
   content: '';
   position: absolute;
-  z-index: -1;
+  z-index: 0;
 }
 
 /* Conic Gradient Animation */
@@ -483,7 +483,7 @@
       transparent 0%,
       rgb(var(--background-end-rgb)) 40%
     );
-    z-index: 1;
+    z-index: 0;
   }
 }
 
@@ -641,7 +641,7 @@
 .dropdown {
   position: absolute;
   display: inline-block;
-  z-index: 15;
+  z-index: 0;
   border-radius: 4px;
 }
 
@@ -654,7 +654,7 @@
   font-size: 14px;
   font-weight: 400;
   background-color: var(--bg-color);
-  z-index: 5;
+  z-index: 0;
   border-style: solid;
   border-color: white;
   cursor: pointer;
@@ -678,7 +678,7 @@
   height: 0;
   border-top-color: var(--bg-color);
   vertical-align: middle;
-  z-index: 5;
+  z-index: 0;
 }
 
 .dropdown-item {
@@ -687,7 +687,7 @@
   font-size: 1rem;
   color: white;
   background-color:rgb(65, 62, 62);
-  z-index: 15;
+  z-index: 0;
   display: block;
   padding: 10px;
   margin-left: 10px;
@@ -700,12 +700,12 @@
 
 .dropdown-item:hover {
   background: #f87a7a;
-  z-index: 15;
+  z-index: 0;
 }
 
 .dropdown:hover ul {
   display: block;
-  z-index: 15;
+  z-index: 0;
 }
 
 
@@ -806,7 +806,7 @@
   border-right: 10px solid red;
   position: relative;
   width: 10px;
-  z-index: 999999;
+  z-index: 0;
   cursor: col-resize;
 }
 

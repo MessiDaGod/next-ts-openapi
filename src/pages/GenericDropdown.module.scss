@@ -125,7 +125,7 @@
 
 .dropdown-content {
     width: 100%;
-    z-index: 1000;
+    z-index: 0;
     display: flex;
     position: absolute;
 }
@@ -144,7 +144,7 @@
     background-color: #6b6666;
     padding: 10px;
     position: absolute;
-    z-index: 1000;
+    z-index: 0;
     // border: 1px solid yellow;
     resize: both;
 }
@@ -238,7 +238,7 @@
 }
 
 .sdd {
-    z-index: 1000;
+    z-index: 0;
 }
 
 .add {
