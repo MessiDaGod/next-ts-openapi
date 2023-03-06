@@ -278,3 +278,7 @@ input  {
 .white {
   color: white;
 }
+
+div {
+  box-sizing: border-box;
+}
