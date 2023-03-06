@@ -13,12 +13,6 @@
   ],
   "sidebarItems": [
     {
-      "Name": "Data Grid Dropdown",
-      "Path": "/DataGridDropdown",
-      "Icon": "code",
-      "New": true
-    },
-    {
       "Name": "Grid",
       "Path": "/Grid",
       "Icon": "code",

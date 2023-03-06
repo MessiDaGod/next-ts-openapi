@@ -5,16 +5,17 @@ import stylesWithin from "./GenericDropdown.module.scss";
 import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
-import DataGridDropdown from "./DataGridDropdown";
-import GenericDropdown from "./GenericDropdown";
+// import DataGridDropdown from "./DataGridDropdown";
+// import GenericDropdown from "./GenericDropdown";
 import { Log, isColumnHidden } from "./utils";
-import MultiDropdown from "./MultiDropdown";
+// import MultiDropdown from "./MultiDropdown";
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
 import properties from "../../public/propOptions.json";
 import { TableHeader } from "./TableHeader";
+import GenericDropdown from "./GenericDropdown";
 
 export default function Grid({
   tableRef,
@@ -81,9 +82,7 @@ export default function Grid({
 
   return (
     <div className={styles["container"]}>
-      {/* <div className={stylesWithin["table-container"]}> */}
-      {/* <div className={stylesWithin["ddTable"]}> */}
-      {/* <div className={stylesWithin["tr"]} data-row-id="0">
+      <div className={stylesWithin["tr"]} data-row-id="0">
         <div className={stylesWithin["td"]} data-column-id="DROPDOWN">
           <Dropdown
             jsonFileName="GetOptions"
@@ -100,16 +99,7 @@ export default function Grid({
             columns={columns["Property"]}
           />
         </div>
-        <div className={stylesWithin["td"]} data-column-id="VENDOR">
-          <GenericDropdown
-            selectItem={"GetVendors"}
-            showPagination={true}
-            showCheckbox={false}
-            columns={columns["Vendor"]}
-          />
-        </div>{" "}
         <form
-          // onSubmit={handleSubmit}
           style={{
             zIndex: 1,
             margin: "20px",
@@ -125,19 +115,9 @@ export default function Grid({
           <br />
           {error !== null && <p className="Error">{error.message}</p>}
         </form>
-      </div> */}
-      <Dropdown
-        jsonFileName="GetOptions"
-        label="Choose Item to Display"
-        onItemChange={(e) => handleSetItem(e)}
-        showCheckbox={true}
-      />
-
-      {/* </div> */}
-      {/* </div> */}
+      </div>
       {status === "success" && (
         <DynamicGrid
-          // className={styles["dynamicgrid-dd"]}
           key={item}
           selectItem={item}
           showPagination={true}

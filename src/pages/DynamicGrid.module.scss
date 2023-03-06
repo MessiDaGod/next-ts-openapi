@@ -4,6 +4,28 @@
     border-collapse: collapse;
 }
 
+$table-header: #1976D2;
+$table-header-border: #1565C0;
+$table-border: #d9d9d9;
+
+.flex-table {
+    display: flex;
+    flex-flow: row wrap;
+    border-left: solid 1px $table-border;
+    transition: 0.5s;
+
+    &:first-of-type {
+        border-top: solid 1px $table-header-border;
+        border-left: solid 1px $table-header-border;
+    }
+
+    &:first-of-type .flex-row {
+        background: $table-header;
+        color: white;
+        border-color: $table-header-border;
+    }
+}
+
 .ddTable {
     background-color: black;
     padding: 10px;
@@ -22,7 +44,7 @@
     vertical-align: middle;
     align-items: center;
     width: 100%;
-    border-top: 2px solid  rgb(105, 105, 105);
+    border-top: 2px solid rgb(105, 105, 105);
     padding-top: 2px;
     padding-bottom: 2px;
     z-index: 0;
@@ -79,6 +101,7 @@
 .td.focus {
     border: 1px solid lime;
 }
+
 // .tr>.td {
 //     background-color: rgb(95, 92, 92);
 // }

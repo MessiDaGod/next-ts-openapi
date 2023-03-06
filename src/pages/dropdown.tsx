@@ -1,4 +1,9 @@
-import React, { CSSProperties, useState, useEffect, HTMLAttributes } from "react";
+import React, {
+  CSSProperties,
+  useState,
+  useEffect,
+  HTMLAttributes,
+} from "react";
 import styles from "./Home.module.scss";
 import cn from "classnames";
 import { Log } from "./utils";
@@ -83,12 +88,11 @@ const Dropdown: React.FC<DropdownProps> = ({
   function handleMouseEnter(e) {
     Log("Mouse Enter dropdown.tsx");
     Log((e.target as HTMLElement).querySelectorAll("span"));
-    setShowDropdown(true)
+    setShowDropdown(true);
   }
   function handleMouseLeave(e) {
     setShowDropdown(false);
   }
-
 
   const handleItemClick = (item: string) => {
     setSelectedItem(item);
@@ -112,19 +116,23 @@ const Dropdown: React.FC<DropdownProps> = ({
         <Button id="dd" label={label}>
           {selectedItem}
         </Button>
-        {showDropdown &&
-          items?.Items.map((value, index) => (
-            <span
-              key={index}
-              onClick={() => handleItemClick(value.Value)}
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className={styles["dropdown-item"]}
-              style={{ display: "block", zIndex: 1000000}}
-            >
-              {value.Value}
-            </span>
-          ))}
+        <div className={styles["dropdown-container"]}>
+          <ul style={{ listStyleType: "none", position: "absolute", zIndex: 1000001 }}>
+            {/* {showDropdown && */}
+            {
+              items?.Items.map((value, index) => (
+                <span
+                  key={index}
+                  onClick={() => handleItemClick(value.Value)}
+                  onMouseEnter={() => setHoveredItem(index)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className={styles["dropdown-item"]}
+                >
+                  {value.Value}
+                </span>
+              ))}
+          </ul>
+        </div>
       </div>
     </>
   );

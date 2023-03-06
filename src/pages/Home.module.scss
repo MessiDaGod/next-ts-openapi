@@ -194,12 +194,11 @@
   width: 100%;
   margin-bottom: 15px;
 }
+
 .container {
-  max-width: calc(100vw - var(--sb-width) - 10);
-  width: calc(100vw - var(--sb-width) - 10);
-  overflow: auto;
-  transition: var(--transform);
-  transition-duration: 0.3s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .sitelogo {
@@ -687,12 +686,13 @@
   font-size: 1rem;
   color: white;
   background-color:rgb(65, 62, 62);
-  z-index: 0;
+  z-index: 100000;
   display: block;
   padding: 10px;
   margin-left: 10px;
   border-radius: 4px;
   width: 100%;
+  flex-direction: col;
 }
 .hovered {
   display: block;
@@ -843,3 +843,7 @@
   cursor: col-resize;
 }
 
+.dropdown-container {
+  display: flex;
+  z-index: 1000000;
+}
