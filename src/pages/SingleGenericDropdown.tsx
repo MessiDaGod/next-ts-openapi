@@ -10,6 +10,8 @@ import {
   Log,
   headerize,
   isColumnHidden,
+  paddingDiff,
+  paddingDiffY,
   parseValue,
 } from "./utils";
 import cn from "classnames";
@@ -91,6 +93,11 @@ function SingleGenericDropdown<T>({
     setDropdownGridWidths();
   }, [showSearchBox]);
 
+
+  React.useEffect(() => {
+    setDropdownGridWidths();
+  }, [sortState]);
+
   React.useEffect(() => {
     // setColumnWidths();
   }, [currentPage]);
@@ -143,135 +150,6 @@ function SingleGenericDropdown<T>({
         // setColumnWidths();
       });
     }
-  }
-
-  function paddingDiffY(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padTop = getStyleVal(col, "padding-top");
-    const padBottom = getStyleVal(col, "padding-bottom");
-    return parseInt(padTop) + parseInt(padBottom);
-  }
-
-  function paddingDiff(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padLeft = getStyleVal(col, "padding-left");
-    const padRight = getStyleVal(col, "padding-right");
-    return parseInt(padLeft) + parseInt(padRight);
-  }
-
-  function getStyleVal(elm: HTMLElement, css: string): string {
-    return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
-
-  function setColumnWidths() {
-    const table = tableRef.current as HTMLElement;
-    if (!table) return;
-
-    const columnWidths: ColumnWidths = {};
-
-    // const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
-
-    function visualLength(s: string) {
-      const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `border-box`;
-      ruler.style.display = "block";
-      ruler.style.visibility = "hidden";
-      ruler.style.position = "absolute";
-      ruler.style.whiteSpace = "nowrap";
-      ruler.innerText = s;
-      document.body.appendChild(ruler);
-      const padding = paddingDiff(ruler as HTMLElement);
-      const width = ruler.offsetWidth + padding;
-      document.body.removeChild(ruler);
-      return width;
-    }
-
-    // allRows.forEach((row, rowNumber: number) => {
-      const ths = table.querySelectorAll('[class*="' + "_th" + '"]');
-      const tds = table.querySelectorAll('[class*="' + "_td" + '"]');
-      const cells = [...ths, ...tds];
-
-
-      cells.forEach((cell) => {
-        const columnId = cell.getAttribute("data-column-id");
-        if (columnId && cell.getAttribute("hidden") === null) {
-          var cellCopy = cell.cloneNode(true) as HTMLElement;
-          let iconsToRemove = cellCopy.querySelectorAll("span");
-          for (let i = 0; i < iconsToRemove.length; i++) {
-            iconsToRemove[i].remove();
-          }
-          var spanWidths = 0;
-          const icons = cell.querySelectorAll("span");
-          if (icons && icons.length > 0) {
-            for (let i = 0; i < icons.length; i++) {
-              const icon = icons[i] as HTMLElement;
-              spanWidths += icon.offsetWidth;
-            }
-          }
-
-          const input = cell.querySelector("input");
-          const inputWidth = input ? visualLength(input.value || "") ?? 0 : 0;
-          let cellWidth = input
-            ? inputWidth + spanWidths
-            : (visualLength(cellCopy.textContent || "") ?? 0) + spanWidths;
-
-          // input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} inputWidth: ${inputWidth} input.value: ${
-          //       input.value
-          //     } iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${
-          //       inputWidth + spanWidths
-          //     }`
-          //   );
-
-          // !input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} cellWidth + spanWidths: ${cellWidth} + ${spanWidths} = ${
-          //       cellWidth + spanWidths
-          //     }`
-          //   );
-
-          const existingWidth = columnWidths[columnId];
-          if (cellWidth > (existingWidth || 0)) {
-            columnWidths[columnId] = cellWidth;
-          }
-        }
-      });
-    // });
-
-    Object.entries(columnWidths).map((width) => {
-      const [key, value] = width;
-      const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
-      cols.forEach((col) => {
-        if (col) {
-          (col as HTMLElement).style.width = `auto`;
-          (col as HTMLElement).style.display = "inline-block";
-          (col as HTMLElement).style.whiteSpace = "nowrap";
-          (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.margin = "1px";
-          (col as HTMLElement).style.padding = "1px";
-          (col as HTMLElement).style.minHeight = "100%";
-          (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
-          (col as HTMLElement).style.width = `${Math.round(value)}px`;
-        }
-      });
-    });
-
-    let tableWidth = 0;
-    const columns = table.querySelectorAll('[class*="' + "th" + '"]');
-    columns.forEach((col) => {
-      tableWidth +=
-        parseInt((col as HTMLElement).style.width) +
-        paddingDiff(col as HTMLElement);
-    });
-
-    // (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    // (table as HTMLElement).style.zIndex = zIndex.toString()
-    return columnWidths;
   }
 
   function setDropdownGridWidths() {
@@ -698,7 +576,7 @@ function SingleGenericDropdown<T>({
                       </div>
                     }
                   </div>
-                  <div className={styles["tr"]} data-row-id="0">
+                  <div className={cn(styles["tr"], styles["th"])} data-row-id="0">
                     {headerRow}
                   </div>
 

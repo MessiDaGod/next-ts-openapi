@@ -9,11 +9,20 @@ import DynamicGrid from "./DynamicGrid";
 import DataGridDropdown from "./DataGridDropdown";
 import GenericDropdown from "./GenericDropdown";
 import SingleGenericDropdown from "./SingleGenericDropdown";
-import { Log } from "./utils";
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
+import {
+  ColumnWidths,
+  CustomError,
+  Log,
+  headerize,
+  isColumnHidden,
+  paddingDiff,
+  paddingDiffY,
+  parseValue,
+} from "./utils";
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -38,9 +47,10 @@ export default function Grid({}) {
   }
 
   React.useEffect(() => {
-    console.info("Grid useEffect ran");
     setNumItems(1);
   }, []);
+
+
 
   async function handleTextareaChange(e) {
     setNumItems(e.target.value);
@@ -92,6 +102,8 @@ export default function Grid({}) {
     // setIsActiveDropdown(false);
     // setShowSearchBox(false);
   }
+
+
 
   return (
     <><>

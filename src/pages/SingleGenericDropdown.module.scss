@@ -43,7 +43,6 @@
     vertical-align: middle;
     z-index: 0;
     box-sizing: content-box;
-    padding: 0.4em 0.6em;
     z-index: 1001;
 }
 
@@ -77,6 +76,7 @@
     text-overflow: ellipsis;
     // box-sizing: border-box;
     user-select: text;
+    padding: 0.4em 0.6em;
     // border-left: 2px solid rgb(105, 105, 105);
     // border-right: 2px solid  rgb(105, 105, 105);
 }
@@ -312,4 +312,9 @@
 }
 .tr.td:hover {
     background-color: #f03a3a;
+}
+
+.tr.th {
+    background-color: white;
+    // margin-right: 20px;
 }

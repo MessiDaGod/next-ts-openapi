@@ -130,3 +130,25 @@ export function headerize(text) {
   }
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
+
+export function paddingDiffY(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
+  }
+  const padTop = getStyleVal(col, "padding-top");
+  const padBottom = getStyleVal(col, "padding-bottom");
+  return parseInt(padTop) + parseInt(padBottom);
+}
+
+export function paddingDiff(col: HTMLElement): number {
+  if (getStyleVal(col, "box-sizing") === "border-box") {
+    return 0;
+  }
+  const padLeft = getStyleVal(col, "padding-left");
+  const padRight = getStyleVal(col, "padding-right");
+  return parseInt(padLeft) + parseInt(padRight);
+}
+
+export function getStyleVal(elm: HTMLElement, css: string): string {
+  return window.getComputedStyle(elm, null).getPropertyValue(css);
+}
