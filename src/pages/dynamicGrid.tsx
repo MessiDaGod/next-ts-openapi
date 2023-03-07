@@ -44,17 +44,17 @@ function DynamicGrid<T>({
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [selected, setSelected] = React.useState(null);
+  const [selected, setSelected] = React.useState("");
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   // const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
-  const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
+  // const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
   const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
-  const [inputValue, setInputValue] = React.useState("");
+  // const [endDate, setEndDate] = React.useState(new Date());
+  // const [inputValue, setInputValue] = React.useState("");
 
   const itemsPerPage = 10;
 
@@ -251,7 +251,7 @@ function DynamicGrid<T>({
       });
     // });
 
-    Log(columnWidths);
+
     Object.entries(columnWidths).map((width) => {
       const [key, value] = width;
       const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -532,7 +532,7 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
                     key.toUpperCase() === "PERSON" ? (
-                      <SingleGenericDropdown
+                      <GenericDropdown
                         selectItem={getSelectItem(key)}
                         showPagination={true}
                         showCheckbox={false}

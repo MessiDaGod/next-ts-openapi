@@ -112,7 +112,6 @@ export async function getFromQuery(table: string, take: number) {
   }
 }
 
-
 export function Log(message: any) {
   if (process.env.NODE_ENV === "development") {
     console.log(message);
@@ -120,10 +119,10 @@ export function Log(message: any) {
 }
 
 export function headerize(text) {
-  const wordsToCapitalize = ['date', 'num', 'post', 'month', 'tran', 'type'];
+  const wordsToCapitalize = ["date", "num", "post", "month", "tran", "type"];
   let result = text.toLowerCase();
   for (const word of wordsToCapitalize) {
-    const regex = new RegExp(`${word}\\w*`, 'gi');
+    const regex = new RegExp(`${word}\\w*`, "gi");
     result = result.replace(regex, (match) => {
       return match.charAt(0).toUpperCase() + match.slice(1);
     });
@@ -151,4 +150,17 @@ export function paddingDiff(col: HTMLElement): number {
 
 export function getStyleVal(elm: HTMLElement, css: string): string {
   return window.getComputedStyle(elm, null).getPropertyValue(css);
+}
+
+export function getDataColumnId(selectItem: string): string | null {
+  switch (selectItem) {
+    case "GetVendors":
+      return "Person".toUpperCase();
+    case "GetPropOptions":
+      return "Property".toUpperCase();
+    case "GetAccounts":
+      return "Account".toUpperCase();
+    default:
+      return null;
+  }
 }

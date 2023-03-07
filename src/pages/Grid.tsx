@@ -46,11 +46,9 @@ export default function Grid({}) {
     await submitForm(item);
   }
 
-  React.useEffect(() => {
-    setNumItems(1);
-  }, []);
-
-
+  // React.useEffect(() => {
+  //   setNumItems(1);
+  // }, []);
 
   async function handleTextareaChange(e) {
     setNumItems(e.target.value);
@@ -91,7 +89,6 @@ export default function Grid({}) {
         );
 
         children.forEach((child) => {
-          Log((child as HTMLElement).querySelectorAll("input")[0]);
           (child as HTMLElement).querySelectorAll("input")[0].value =
             inputValue;
           (child as HTMLElement).querySelectorAll("input")[0].textContent =
@@ -103,85 +100,135 @@ export default function Grid({}) {
     // setShowSearchBox(false);
   }
 
-
-
   return (
-    <><>
-      <section
-        className="h-full flex flex-grow p-4 gap-4 overflow-x-auto"
-        style={{
-          flexFlow: "row nowrap",
-          placeContent: "flex-start",
-          alignItems: "flex-start",
-        }}
+    <>
+      <>
+        <section
+          className="h-full flex flex-grow p-4 gap-4 overflow-x-auto"
+          style={{
+            flexFlow: "row nowrap",
+            placeContent: "flex-start",
+            alignItems: "flex-start",
+          }}
+        >
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="h-full w-full bg-white shadow flex rounded items-center">
+              <Dropdown
+                jsonFileName="GetOptions"
+                label="Choose Item"
+                onItemChange={(e) => handleSetItem(e)}
+                showCheckbox={true}
+              />
+            </div>
+          </div>
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="h-full w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative h-full flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                  <SingleGenericDropdown
+                    selectItem={"GetPropOptions"}
+                    showPagination={true}
+                    showCheckbox={false}
+                    tableRef={tableRef}
+                    value={inputValue}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="h-full w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative h-full flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                  <SingleGenericDropdown
+                    selectItem={"GetVendors"}
+                    showPagination={true}
+                    showCheckbox={false}
+                    tableRef={tableRef}
+                    value={inputValue}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="h-full w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative h-full flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                  <SingleGenericDropdown
+                    selectItem={"GetAccounts"}
+                    showPagination={true}
+                    showCheckbox={false}
+                    tableRef={tableRef}
+                    value={inputValue}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="h-full w-full shadow flex rounded items-center">
+              <div className="flex-1 relative h-full flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+                  <form
+                    style={{
+                      color: "black",
+                      borderRadius: "6px",
+                      width: "50px",
+                      alignContent: "center",
+                    }}
+                  >
+                    <input
+                      type="number"
+                      value={numItems}
+                      onChange={handleTextareaChange}
+                      disabled={false}
+                      style={{
+                        color: "black",
+                        borderRadius: "6px",
+                        width: "inherit",
+                        alignContent: "center",
+                        height: "30px",
+                      }}
+                    />
+                    <br />
+                    {error !== null && <p className="Error">{error.message}</p>}
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </>
+      <div
+        style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
+        ref={tableRef}
       >
-        <div
-          className="rounded"
-          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
-        >
-          <div className="h-full w-full bg-white shadow flex rounded items-center">
-            <Dropdown
-              // className={gridStyles["dynamicgrid-dd"]}
-              jsonFileName="GetOptions"
-              label="Choose Item"
-              onItemChange={(e) => handleSetItem(e)}
-              showCheckbox={true} />
-          </div>
-        </div>
-        <div
-          className="rounded"
-          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
-        >
-          <div className="h-full w-full bg-white shadow flex rounded items-center">
-            <div className="flex-1 relative h-full flex items-center">
-              <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
-                <SingleGenericDropdown
-                  // className={gridStyles["dynamicgrid-dd"]}
-                  selectItem={"GetPropOptions"}
-                  showPagination={true}
-                  showCheckbox={false}
-                  tableRef={tableRef}
-                  onClick={handleClick}
-                  value={inputValue} />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="rounded"
-          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
-        >
-          <div className="h-full w-full shadow flex rounded items-center">
-            <div className="flex-1 relative h-full flex items-center">
-              <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-                <form style={{ color: "black", borderRadius: "6px", width: "50px", alignContent: "center" }} >
-                  <input
-                    type="number"
-                    value={numItems}
-                    onChange={handleTextareaChange}
-                    disabled={false}
-                    style={{ color: "black", borderRadius: "6px", width: "inherit", alignContent: "center", height: "30px" }} />
-                  <br />
-                  {error !== null && <p className="Error">{error.message}</p>}
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </><div
-      style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
-      ref={tableRef}
-    >
         {status === "success" && (
           <DynamicGrid
-            // className={dynamicStyles["dynamicgrid-dd"]}
             key={item}
             selectItem={item}
             showPagination={true}
-            numItems={numItems} />
+            numItems={numItems}
+          />
         )}
-      </div></>
+      </div>
+    </>
   );
 }
 

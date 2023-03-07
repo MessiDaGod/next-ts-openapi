@@ -3,14 +3,16 @@ import React, { HTMLAttributes, useRef } from "react";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
-import styles from "./DynamicGrid.module.scss";
-import stylesWithin from "./GenericDropdown.module.scss";
+import styles from "./SingleGenericDropdown.module.scss";
 import {
   ColumnWidths,
   CustomError,
   Log,
+  getDataColumnId,
   headerize,
   isColumnHidden,
+  paddingDiff,
+  paddingDiffY,
   parseValue,
 } from "./utils";
 import cn from "classnames";
@@ -19,7 +21,6 @@ import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
-import { removeAllListeners } from "process";
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -43,7 +44,8 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
+export interface SingleGenericDropdownProps
+  extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -52,10 +54,8 @@ export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
-  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
+  value?: string | null;
 }
-
-// value={props.inputValue} onChange={props.handleInputChange}
 
 function GenericDropdown<T>({
   selectItem,
@@ -65,9 +65,8 @@ function GenericDropdown<T>({
   tableRef,
   itemsPerPage,
   numItems,
-  handleInputChange,
-}:
-DynamicGridProps) {
+  value,
+}: SingleGenericDropdownProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
@@ -75,8 +74,8 @@ DynamicGridProps) {
   const [isChecked, setIsChecked] = React.useState(true);
   const [showSearchBox, setShowSearchBox] = React.useState(false);
   const [hasPagination] = React.useState(showPagination ?? false);
-  // const [selectedItem, setSelectedItem] = React.useState(null);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [selectedItem, setSelectedItem] = React.useState(null);
+  const dropdownRef = useRef<HTMLDivElement | undefined>(undefined);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -88,18 +87,24 @@ DynamicGridProps) {
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    setColumnWidths();
+    // setColumnWidths();
   }
 
   React.useEffect(() => {
-    setColumnWidths();
-  }, [isActiveDropdown]);
+    setDropdownGridWidths();
+  }, [showSearchBox]);
+
 
   React.useEffect(() => {
-    setColumnWidths();
+    setDropdownGridWidths();
+  }, [sortState]);
+
+  React.useEffect(() => {
+    // setColumnWidths();
   }, [currentPage]);
 
   React.useEffect(() => {
+    console.info("Generic Dropdown useEffect ran");
     async function fetchData() {
       try {
         let response = [];
@@ -132,7 +137,7 @@ DynamicGridProps) {
       }
     }
     fetchData();
-    setColumnWidths();
+    // setColumnWidths();
   }, []);
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -143,35 +148,13 @@ DynamicGridProps) {
 
     if (colDivider) {
       colDivider.addEventListener("dblclick", function (e: MouseEvent): void {
-        setColumnWidths();
+        // setColumnWidths();
       });
     }
   }
 
-  function paddingDiffY(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padTop = getStyleVal(col, "padding-top");
-    const padBottom = getStyleVal(col, "padding-bottom");
-    return parseInt(padTop) + parseInt(padBottom);
-  }
-
-  function paddingDiff(col: HTMLElement): number {
-    if (getStyleVal(col, "box-sizing") === "border-box") {
-      return 0;
-    }
-    const padLeft = getStyleVal(col, "padding-left");
-    const padRight = getStyleVal(col, "padding-right");
-    return parseInt(padLeft) + parseInt(padRight);
-  }
-
-  function getStyleVal(elm: HTMLElement, css: string): string {
-    return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
-
-  function setColumnWidths() {
-    const table = tableRef.current as HTMLElement;
+  function setDropdownGridWidths() {
+    const table = dropdownRef.current as HTMLElement;
     if (!table) return;
 
     const columnWidths: ColumnWidths = {};
@@ -180,7 +163,7 @@ DynamicGridProps) {
 
     function visualLength(s: string) {
       const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `content-box`;
+      (ruler as HTMLElement).style.boxSizing = `border-box`;
       ruler.style.display = "block";
       ruler.style.visibility = "hidden";
       ruler.style.position = "absolute";
@@ -246,7 +229,6 @@ DynamicGridProps) {
       });
     // });
 
-    Log(columnWidths);
     Object.entries(columnWidths).map((width) => {
       const [key, value] = width;
       const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -277,7 +259,6 @@ DynamicGridProps) {
     // (table as HTMLElement).style.zIndex = zIndex.toString()
     return columnWidths;
   }
-
   function handleSort(columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
@@ -324,21 +305,6 @@ DynamicGridProps) {
     });
   }
 
-  function setRowHeights(tableId?: string) {
-    const divTable = document.querySelectorAll(
-      '[class*="' + cn(styles["ddTable"]) + '"]'
-    )[0] as HTMLElement;
-    if (divTable) {
-      let allrows = Array.from(
-        new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
-      );
-      allrows.forEach((row) => {
-        (row as HTMLElement).style.minHeight = "0px";
-        (row as HTMLElement).style.padding = "0px";
-        (row as HTMLElement).style.zIndex = zIndex.toString();
-      });
-    }
-  }
 
   function handleRowClick(e) {
     e.preventDefault();
@@ -407,32 +373,19 @@ DynamicGridProps) {
     });
   }
 
+
+
   function handleClick(e) {
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
     const value = (e.target as HTMLElement).parentElement.children[2]
       .textContent;
     value && setInputValue(value);
 
-    if (tableRef?.current) {
-      const allCells = Array.from(
-        new Set([
-          ...(tableRef.current as HTMLElement).querySelectorAll(
-            'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
-          ),
-        ])
-      );
-      allCells.forEach((cell) => {
-        const children = Array.from(
-          new Set([...(cell as HTMLElement).children])
-        );
-
-        children.forEach((child) => {
-          Log((child as HTMLElement).querySelectorAll("input")[0]);
-          (child as HTMLElement).querySelectorAll("input")[0].value = value;
-          (child as HTMLElement).querySelectorAll("input")[0].textContent =
-            value;
-        });
-        // (cell as HTMLElement).parentElement.children[2].textContent;
-      });
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
     }
 
     setIsActiveDropdown(false);
@@ -444,21 +397,15 @@ DynamicGridProps) {
     target.classList.add(styles["hover"]);
   }
 
-  interface IColumn {
-    Id: number;
-    Col1: string;
-    Col2: string;
-  }
-
-  function createColumnsFromJson(json) {
-    const columns = {};
-    for (const key in json) {
-      if (Object.hasOwnProperty.call(json, key)) {
-        columns[key] = json[key].map((col) => col.Name);
-      }
-    }
-    return columns;
-  }
+  // function createColumnsFromJson(json) {
+  //   const columns = {};
+  //   for (const key in json) {
+  //     if (Object.hasOwnProperty.call(json, key)) {
+  //       columns[key] = json[key].map((col) => col.Name);
+  //     }
+  //   }
+  //   return columns;
+  // }
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
@@ -526,7 +473,7 @@ DynamicGridProps) {
             id={row[columnKeys[0].Name]}
             key={row[columnKeys[0].Name]}
             data-row-id={rowIndex}
-            className={cn(stylesWithin["tr"])}
+            className={cn(styles["tr"])}
             onMouseOver={handleRowMouseOver}
           >
             <div
@@ -541,7 +488,7 @@ DynamicGridProps) {
                   <div
                     id={`td_${row[columnKeys[0].Name]}_${index}`}
                     key={`td_${row[columnKeys[0].Name]}_${index}`}
-                    className={stylesWithin["td"]}
+                    className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
                     onClick={handleClick}
@@ -556,165 +503,61 @@ DynamicGridProps) {
       try {
         if (rows.length > 0) {
           const totalPages = Math.ceil(data.length / itemsPerPage);
-
-          // const handleInputChange = (event) => {
-          //   // if (!event.type === "message") {
-          //   Log(event.target.value);
-          //   setInputValue(event.target.value);
-          //   // }
-          // };
-
           return (
-            <div
-              style={style}
-              onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
-              onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
-            >
-              {showCheckbox && <Checkbox />}
-              <div
-                className={`${styles["dropdown"]}`}
-                onMouseEnter={handleShowSearchBox}
-                onMouseLeave={handleMouseLeaveSearchBox}
-                ref={dropdownRef}
-              >
-                <label
-                  style={{
-                    padding: "0",
-                    margin: "0",
-                    overflow: "hidden",
-                    zIndex: "0",
-                    borderRadius: `${hasPagination ? "6px" : "0px"}`,
-                  }}
-                  htmlFor={propertyInputId}
-                >
-                  <input
-                    id={propertyInputId}
-                    onChange={handleInputChange}
-                    defaultValue={getHeaderValue(selectItem)}
-                  />
-                </label>
+            <>
+              <div className={cn(styles["dd-container"])}>
                 <div
-                  className={
-                    !showSearchBox && isChecked
-                      ? `${styles["dropdown-content-hidden"]}`
-                      : `${styles["dropdown-content"]}`
-                  }
+                  id={"gridjs_0"}
+                  key={"gridjs_0"}
+                  className={styles["ddTable"]}
                 >
-                  {showSearchBox && isChecked && (
-                    <>
-                      <div className={cn(styles["dd-container"])}>
-                        <div
-                          id={"gridjs_0"}
-                          key={"gridjs_0"}
-                          className={styles["ddTable"]}
-                        >
-                          <div className={styles["thead"]}>
-                            {
-                              <div className={styles["search-panel"]}>
-                                <input
-                                  id="search-input"
-                                  type="search"
-                                  className={styles["findcomponent"]}
-                                  placeholder=" Search..."
-                                  autoComplete="on"
-                                ></input>
-                                <span
-                                  className={cn(
-                                    "material-symbols-outlined",
-                                    styles["searchicon"]
-                                  )}
-                                >
-                                  {"search"}
-                                </span>
-                              </div>
-                            }
-                          </div>
-                          <div className={styles["tr"]} data-row-id="0">
-                            {headerRow}
-                          </div>
-
-                          <div key={"tbody"} className={styles["tbody"]}>
-                            {rows.slice(1)}
-                          </div>
-                          {hasPagination && (
-                            <div className={styles["tr"]}>
-                              <Pagination
-                                id="pagination"
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                                style={{
-                                  width: "100%",
-                                  verticalAlign: "center",
-                                  textAlign: "center",
-                                  backgroundColor: "black",
-                                }}
-                              />
-                            </div>
+                  <div className={styles["thead"]}>
+                    {
+                      <div className={styles["search-panel"]}>
+                        <input
+                          id="search-input"
+                          type="search"
+                          className={styles["findcomponent"]}
+                          placeholder=" Search..."
+                          autoComplete="on"
+                        ></input>
+                        <span
+                          className={cn(
+                            "material-symbols-outlined",
+                            styles["searchicon"]
                           )}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  {!isChecked && (
-                    <>
-                      <div className={cn(styles["dd-container"])}>
-                        <div
-                          id={"gridjs_0"}
-                          key={"gridjs_0"}
-                          className={styles["ddTable"]}
                         >
-                          <div className={styles["thead"]}>
-                            {
-                              <div className={styles["search-panel"]}>
-                                <input
-                                  id="search-input"
-                                  type="search"
-                                  className={styles["findcomponent"]}
-                                  placeholder=" Search..."
-                                  autoComplete="on"
-                                ></input>
-                                <span
-                                  className={cn(
-                                    "material-symbols-outlined",
-                                    styles["searchicon"]
-                                  )}
-                                >
-                                  {"search"}
-                                </span>
-                              </div>
-                            }
-                          </div>
-                          <div className={styles["tr"]} data-row-id="0">
-                            {headerRow}
-                          </div>
-
-                          <div key={"tbody"} className={styles["tbody"]}>
-                            {rows.slice(1)}
-                          </div>
-                          {hasPagination && (
-                            <div className={styles["tr"]}>
-                              <Pagination
-                                id="pagination"
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                                style={{
-                                  width: "100%",
-                                  verticalAlign: "center",
-                                  textAlign: "center",
-                                  backgroundColor: "black",
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
+                          {"search"}
+                        </span>
                       </div>
-                    </>
+                    }
+                  </div>
+                  <div className={cn(styles["tr"], styles["th"])} data-row-id="0">
+                    {headerRow}
+                  </div>
+
+                  <div key={"tbody"} className={styles["tbody"]}>
+                    {rows.slice(1)}
+                  </div>
+                  {hasPagination && (
+                    <div className={styles["tr"]}>
+                      <Pagination
+                        id="pagination"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        style={{
+                          width: "100%",
+                          verticalAlign: "center",
+                          textAlign: "center",
+                          backgroundColor: "black",
+                        }}
+                      />
+                    </div>
                   )}
                 </div>
               </div>
-            </div>
+            </>
           );
         }
       } catch (error) {
@@ -730,15 +573,16 @@ DynamicGridProps) {
 
   function handleShowSearchBox(e) {
     setActiveDropdown(dropdownRef.current);
-    (dropdownRef.current as HTMLElement).style.zIndex = "1000";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "1000";
+    // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
+    // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
     const container = (dropdownRef.current as HTMLElement).parentElement
       .parentElement;
     container.querySelector(
       '[class*="' + cn(styles["dd-container"]) + '"]'
     ) as HTMLElement;
-    container.style.zIndex = "1000";
-    setColumnWidths();
+    container.style.zIndex = "10";
+    // setAllZIndexesHigh();
+
     setShowSearchBox(true);
   }
 
@@ -751,6 +595,8 @@ DynamicGridProps) {
       '[class*="' + cn(styles["dd-container"]) + '"]'
     ) as HTMLElement;
     container.style.zIndex = "0";
+    container.style.border = "";
+    // setAllZIndexesLow();
     setActiveDropdown(null);
     setShowSearchBox(false);
   }
@@ -762,13 +608,13 @@ DynamicGridProps) {
   function Checkbox({}) {
     return (
       <label>
+        <br />
         <input
           id="checkbox"
           type="checkbox"
           checked={isChecked}
           onChange={(e) => handleCheckboxChange(e)}
         />
-        Dropdown with MouseEnter
       </label>
     );
   }
@@ -823,7 +669,7 @@ DynamicGridProps) {
     setIsActiveDropdown(true);
     setShowSearchBox(true);
     setActiveDropdown(dropdownRef.current);
-    setColumnWidths();
+    setDropdownGridWidths();
     // const searchInput = document.querySelector(
     //   `#${selected}_label`
     // ) as HTMLElement;
@@ -836,8 +682,63 @@ DynamicGridProps) {
     setShowSearchBox(false);
   }
 
+  const handleInputChange = (event) => {
+    // if (!event.type === "message") {
+    Log(event.target.value);
+    setInputValue(event.target.value);
+    // }
+  };
+
   if (table && Array.isArray(data) && data.length > 0) {
-    return <>{table}</>;
+    return (
+      <div
+        onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
+        onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
+      >
+        {showCheckbox && <Checkbox />}
+        <div
+          onMouseEnter={handleShowSearchBox}
+          onMouseLeave={handleMouseLeaveSearchBox}
+          ref={dropdownRef}
+        >
+          <div className="dropdown" style={{ maxWidth: "125px" }}>
+            <label
+              style={{
+                display: "inline-flex", borderRadius: `${hasPagination ? "6px" : "0px"}`,
+              }}
+              htmlFor={propertyInputId}
+            >
+              <input
+                id={propertyInputId}
+                // onChange={handleInputChange}
+                defaultValue={getHeaderValue(selectItem)}
+                style={{ width: "100%" }}
+              />
+              <span
+                className={"material-symbols-outlined"}
+                style={{
+                  color: "white",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {showSearchBox ? "expand_more" : "expand_less"}
+              </span>
+            </label>
+          </div>
+          <div
+            className={
+              !showSearchBox && isChecked
+                ? `${styles["dropdown-content-hidden"]}`
+                : `${styles["dropdown-content"]}`
+            }
+          >
+            {showSearchBox && isChecked && <>{table}</>}
+            {!isChecked && <div>{table}</div>}
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 

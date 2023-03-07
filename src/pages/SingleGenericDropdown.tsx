@@ -8,6 +8,7 @@ import {
   ColumnWidths,
   CustomError,
   Log,
+  getDataColumnId,
   headerize,
   isColumnHidden,
   paddingDiff,
@@ -300,39 +301,8 @@ function SingleGenericDropdown<T>({
       pageY = undefined;
       curRowHeight = undefined;
       nxtRowHeight = undefined;
-      console.info("removed mousedown listener");
     });
   }
-
-  function setAllZIndexesHigh() {
-    const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
-    elementsWithZIndex.forEach((element) => {
-      (element as HTMLElement).style.zIndex = "10000";
-    });
-  }
-
-  function setAllZIndexesLow() {
-    const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
-    elementsWithZIndex.forEach((element) => {
-      (element as HTMLElement).style.zIndex = "0";
-    });
-  }
-
-  // function setRowHeights(tableId?: string) {
-  //   const divTable = document.querySelectorAll(
-  //     '[class*="' + cn(styles["ddTable"]) + '"]'
-  //   )[0] as HTMLElement;
-  //   if (divTable) {
-  //     let allrows = Array.from(
-  //       new Set([...divTable.querySelectorAll('[data-row-id*=""]')])
-  //     );
-  //     allrows.forEach((row) => {
-  //       (row as HTMLElement).style.minHeight = "0px";
-  //       (row as HTMLElement).style.padding = "0px";
-  //       (row as HTMLElement).style.zIndex = zIndex.toString();
-  //     });
-  //   }
-  // }
 
   function handleRowClick(e) {
     e.preventDefault();
@@ -401,40 +371,46 @@ function SingleGenericDropdown<T>({
     });
   }
 
-  // function handleClick(e) {
-  //   setSelectedItem(
-  //     (e.target as HTMLElement).parentElement.children[2].textContent
-  //   );
-  //   const value = (e.target as HTMLElement).parentElement.children[2]
-  //     .textContent;
-  //   value && setInputValue(value);
 
-  //   if (tableRef?.current) {
-  //     const allCells = Array.from(
-  //       new Set([
-  //         ...(tableRef.current as HTMLElement).querySelectorAll(
-  //           'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
-  //         ),
-  //       ])
-  //     );
-  //     allCells.forEach((cell) => {
-  //       const children = Array.from(
-  //         new Set([...(cell as HTMLElement).children])
-  //       );
 
-  //       children.forEach((child) => {
-  //         Log((child as HTMLElement).querySelectorAll("input")[0]);
-  //         (child as HTMLElement).querySelectorAll("input")[0].value = value;
-  //         (child as HTMLElement).querySelectorAll("input")[0].textContent =
-  //           value;
-  //       });
-  //       // (cell as HTMLElement).parentElement.children[2].textContent;
-  //     });
-  //   }
 
-  //   setIsActiveDropdown(false);
-  //   setShowSearchBox(false);
-  // }
+  function handleClick(e) {
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
+    }
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' + getDataColumnId(selectItem) + '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          (child as HTMLElement).querySelectorAll("input")[0].value = value;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            value;
+        });
+        // (cell as HTMLElement).parentElement.children[2].textContent;
+      });
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+  }
 
   function handleRowMouseOver(e) {
     const target = e.target as HTMLElement;
@@ -535,7 +511,7 @@ function SingleGenericDropdown<T>({
                     className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
-                    // onClick={handleClick}
+                    onClick={handleClick}
                   >
                     {parseValue(value as string, key)}
                   </div>
