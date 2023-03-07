@@ -164,7 +164,7 @@ export default function App({ Component, pageProps }: AppProps) {
             {
               <span
                 className={cn("material-symbols-outlined")}
-                style={{ display: "flex", marginLeft: "10px", color: "white", position: "relative", zIndex: 2 }}
+                style={{ display: "flex", paddingLeft: "10px", paddingBottom: "10px", color: "white", position: "relative", zIndex: 2 }}
               >
                 menu
               </span>

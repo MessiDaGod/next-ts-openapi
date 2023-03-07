@@ -18,7 +18,6 @@ import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
-import { removeAllListeners } from "process";
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -42,7 +41,8 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
+export interface SingleGenericDropdownProps
+  extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -51,6 +51,7 @@ export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
+  value?: string | null;
 }
 
 function SingleGenericDropdown<T>({
@@ -61,7 +62,8 @@ function SingleGenericDropdown<T>({
   tableRef,
   itemsPerPage,
   numItems,
-}: DynamicGridProps) {
+  value,
+}: SingleGenericDropdownProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
@@ -404,40 +406,40 @@ function SingleGenericDropdown<T>({
     });
   }
 
-  function handleClick(e) {
-    setSelectedItem(
-      (e.target as HTMLElement).parentElement.children[2].textContent
-    );
-    const value = (e.target as HTMLElement).parentElement.children[2]
-      .textContent;
-    value && setInputValue(value);
+  // function handleClick(e) {
+  //   setSelectedItem(
+  //     (e.target as HTMLElement).parentElement.children[2].textContent
+  //   );
+  //   const value = (e.target as HTMLElement).parentElement.children[2]
+  //     .textContent;
+  //   value && setInputValue(value);
 
-    if (tableRef?.current) {
-      const allCells = Array.from(
-        new Set([
-          ...(tableRef.current as HTMLElement).querySelectorAll(
-            'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
-          ),
-        ])
-      );
-      allCells.forEach((cell) => {
-        const children = Array.from(
-          new Set([...(cell as HTMLElement).children])
-        );
+  //   if (tableRef?.current) {
+  //     const allCells = Array.from(
+  //       new Set([
+  //         ...(tableRef.current as HTMLElement).querySelectorAll(
+  //           'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
+  //         ),
+  //       ])
+  //     );
+  //     allCells.forEach((cell) => {
+  //       const children = Array.from(
+  //         new Set([...(cell as HTMLElement).children])
+  //       );
 
-        children.forEach((child) => {
-          Log((child as HTMLElement).querySelectorAll("input")[0]);
-          (child as HTMLElement).querySelectorAll("input")[0].value = value;
-          (child as HTMLElement).querySelectorAll("input")[0].textContent =
-            value;
-        });
-        // (cell as HTMLElement).parentElement.children[2].textContent;
-      });
-    }
+  //       children.forEach((child) => {
+  //         Log((child as HTMLElement).querySelectorAll("input")[0]);
+  //         (child as HTMLElement).querySelectorAll("input")[0].value = value;
+  //         (child as HTMLElement).querySelectorAll("input")[0].textContent =
+  //           value;
+  //       });
+  //       // (cell as HTMLElement).parentElement.children[2].textContent;
+  //     });
+  //   }
 
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-  }
+  //   setIsActiveDropdown(false);
+  //   setShowSearchBox(false);
+  // }
 
   function handleRowMouseOver(e) {
     const target = e.target as HTMLElement;
@@ -538,7 +540,7 @@ function SingleGenericDropdown<T>({
                     className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
-                    onClick={handleClick}
+                    // onClick={handleClick}
                   >
                     {parseValue(value as string, key)}
                   </div>
@@ -628,7 +630,6 @@ function SingleGenericDropdown<T>({
       '[class*="' + cn(styles["dd-container"]) + '"]'
     ) as HTMLElement;
     container.style.zIndex = "10";
-    container.style.border = "1px solid red";
     // setAllZIndexesHigh();
     setColumnWidths();
     setShowSearchBox(true);
@@ -663,7 +664,6 @@ function SingleGenericDropdown<T>({
           checked={isChecked}
           onChange={(e) => handleCheckboxChange(e)}
         />
-        Dropdown
       </label>
     );
   }
@@ -741,42 +741,34 @@ function SingleGenericDropdown<T>({
   if (table && Array.isArray(data) && data.length > 0) {
     return (
       <div
-        style={style}
         onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
         onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
       >
         {showCheckbox && <Checkbox />}
         <div
-          className={`${styles["dropdown"]}`}
           onMouseEnter={handleShowSearchBox}
           onMouseLeave={handleMouseLeaveSearchBox}
           ref={dropdownRef}
         >
-          <label
-            style={{
-              padding: "0",
-              margin: "0",
-              overflow: "hidden",
-              zIndex: "0",
-              borderRadius: `${hasPagination ? "6px" : "0px"}`,
-            }}
-            htmlFor={propertyInputId}
-          >
-            <input
-              id={propertyInputId}
-              // onChange={handleInputChange}
-              defaultValue={getHeaderValue(selectItem)}
-            />
-            <span
-              className={"material-symbols-outlined"}
+          <div className='dropdown'>
+            <label
               style={{
-                color: "white",
-                display: "inline-block",
+                borderRadius: `${hasPagination ? "6px" : "0px"}`,
               }}
+              htmlFor={propertyInputId}
             >
-              {showSearchBox ? "expand_more" : "expand_less"}
-            </span>
-          </label>
+              <input
+                id={propertyInputId}
+                // onChange={handleInputChange}
+                defaultValue={getHeaderValue(selectItem)}
+              />
+              <span
+                className={"material-symbols-outlined"}
+                style={{ color: "white", display: "inline-flex", alignContent: "flex-end" }}>
+                {showSearchBox ? "expand_more" : "expand_less"}
+              </span>
+            </label>
+          </div>
           <div
             className={
               !showSearchBox && isChecked

@@ -53,84 +53,6 @@
   table {table-layout: auto;}
   table>tbody>td:nth-child(2){font-weight: bolder;}
 
-  .rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
-    box-shadow: var(--rz-input-hover-shadow);
-    border: var(--rz-input-hover-border);
-  }
-
-  .rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
-    box-shadow: var(--rz-input-hover-shadow);
-    border: var(--rz-input-hover-border);
-}
-
-.rz-textbox:not(:disabled):not(.rz-state-disabled):hover, .rz-textarea:not(:disabled):not(.rz-state-disabled):hover, .mask:not(:disabled):not(.rz-state-disabled):hover, .rz-dropdown:not(:disabled):not(.rz-state-disabled):hover, .rz-multiselect:not(:disabled):not(.rz-state-disabled):hover, .rz-calendar .rz-inputtext:not(:disabled):not(.rz-state-disabled):hover, .rz-spinner:not(:disabled):not(.rz-state-disabled):hover, .rz-lookup-search input:not(:disabled):not(.rz-state-disabled):hover, .rz-colorpicker:not(:disabled):not(.rz-state-disabled):hover, .rz-chkbox-box:hover:not(.rz-state-disabled), .rz-radiobutton-box:hover:not(.rz-state-disabled), .rz-autocomplete:hover:not(.rz-state-disabled) {
-    box-shadow: var(--rz-input-hover-shadow);
-    border: var(--rz-input-hover-border);
-}
-.rz-dropdown, .rz-multiselect {
-    display: inline-block;
-    position: relative;
-    cursor: pointer;
-    position: sticky;
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-    /* height: var(--rz-input-height); */
-    line-height: var(--rz-input-line-height);
-    color: var(--rz-input-value-color);
-    font-size: var(--rz-input-font-size);
-    transition: var(--rz-input-transition);
-    outline: none;
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-    border: var(--rz-input-border);
-    border-radius: var(--rz-input-border-radius);
-    box-shadow: var(--rz-input-shadow);
-    background-color: var(--rz-input-background-color);
-}
-
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  /* height: var(--rz-input-height); */
-  line-height: var(--rz-input-line-height);
-  color: var(--rz-input-value-color);
-  font-size: var(--rz-input-font-size);
-  transition: var(--rz-input-transition);
-  outline: none;
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  border: var(--rz-input-border);
-  border-radius: var(--rz-input-border-radius);
-  box-shadow: var(--rz-input-shadow);
-  background-color: var(--rz-input-background-color);
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  padding: var(--rz-input-padding);
-}
-.rz-dropdown, .rz-multiselect {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  position: sticky;
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  /* height: var(--rz-input-height); */
-  line-height: var(--rz-input-line-height);
-  color: var(--rz-input-value-color);
-  font-size: var(--rz-input-font-size);
-  transition: var(--rz-input-transition);
-  outline: none;
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  border: var(--rz-input-border);
-  border-radius: var(--rz-input-border-radius);
-  box-shadow: var(--rz-input-shadow);
-  background-color: var(--rz-input-background-color);
-}
-.rz-textbox, .rz-textarea, .mask, .rz-dropdown, .rz-multiselect, .rz-calendar .rz-inputtext, .rz-spinner, .rz-lookup-search input, .rz-colorpicker {
-  padding: var(--rz-input-padding);
-}
-.dropdown {
-  margin-right: 10px;
-}
 
 .material-symbols-outlined {
   cursor: pointer;
@@ -187,15 +109,95 @@ input  {
 .white {
   color: white;
 }
-
+/*
 div {
   box-sizing: border-box;
-}
+} */
 input {
   position: relative;
   z-index: 0;
+  background-color: transparent;
+  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 [class$='react-datepicker_'] {
   z-index: 1;
+}
+
+.container {
+	display: flex;
+}
+
+[class*='item'] {
+  color: white;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(243,244,246,var(--tw-bg-opacity));
+}
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.h-full {
+  height: 100%;
+}
+.flex {
+  display: flex;
+}
+
+form {
+  height: 100%;
+  background-color: white;
+  color: black;
+}
+
+.input-wrapper {
+  display: inline-block;
+  user-select: none;
+  align-items: center;
+}
+
+.input-wrapper .icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* .input-wrapper .icon {
+  margin-left: 10px;
+} */
+
+.dropdown {
+  border: 1px solid grey;
+  border-radius: 4px;
+  box-shadow: none;
+  background-color: #1e1e1e;
+  height: 100%;
+  user-select: none;
+}
+.dropdown:hover {
+  border: 1px solid white;
+}
+
+label {
+  display: block;
+  height: 30px;
+  cursor: pointer;
+}
+
+input {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

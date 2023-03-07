@@ -1,7 +1,6 @@
 .container {
-    // display: flex;
-    // flex-wrap: wrap;
-    // align-items: flex-start;
+    position: absolute;
+    align-content: flex-end;
     flex-direction: column;
     width: 100%;
 }

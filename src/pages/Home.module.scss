@@ -786,25 +786,6 @@
   box-sizing: border-box;
 }
 
-// .dataGridth {
-//   border-bottom: 1px solid black;
-//   border-right: 1px solid black;
-//   white-space: nowrap;
-//   margin: auto;
-//   box-sizing: content-box;
-//   position: relative;
-//   text-align: left;
-//   padding-right: 15px;
-//   background-color: white;
-//   color: black;
-// }
-.divider:hover {
-  border-right: 10px solid red;
-  position: relative;
-  width: 10px;
-  z-index: 0;
-  cursor: col-resize;
-}
 
 .dataGridth {
   padding: 10px;

@@ -9,6 +9,7 @@ import DynamicGrid from "./DynamicGrid";
 import DataGridDropdown from "./DataGridDropdown";
 import GenericDropdown from "./GenericDropdown";
 import SingleGenericDropdown from "./SingleGenericDropdown";
+import { Log } from "./utils";
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
@@ -54,64 +55,121 @@ export default function Grid({}) {
     }
   }
 
-  // const handleInputChange = (event) => {
-  //   setInputValue(event.target.value);
-  // }
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  function handleClick(e) {
+    setInputValue(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    // const value = (e.target as HTMLElement).parentElement.children[2]
+    //   .textContent;
+    // value && setInputValue(value);
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          Log((child as HTMLElement).querySelectorAll("input")[0]);
+          (child as HTMLElement).querySelectorAll("input")[0].value =
+            inputValue;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            inputValue;
+        });
+      });
+    }
+    // setIsActiveDropdown(false);
+    // setShowSearchBox(false);
+  }
 
   return (
-    <>
-      <div className={gridStyles["container"]}>
-        <Dropdown
-          className={gridStyles["dynamicgrid-dd"]}
-          jsonFileName="GetOptions"
-          label="Choose Item"
-          onItemChange={(e) => handleSetItem(e)}
-          showCheckbox={true}
-        />
-      </div>
-      <div
+    <><>
+      <section
+        className="h-full flex flex-grow p-4 gap-4 overflow-x-auto"
         style={{
-          display: "flex",
-          flexDirection: "column",
-          position: "absolute",
-          alignContent: "flex-end",
-          left: "300px",
+          flexFlow: "row nowrap",
+          placeContent: "flex-start",
+          alignItems: "flex-start",
         }}
       >
-        <SingleGenericDropdown
-          className={gridStyles["dynamicgrid-dd"]}
-          selectItem={"GetPropOptions"}
-          showPagination={true}
-          showCheckbox={false}
-          tableRef={tableRef}
-          // onChange={handleInputChange}
-        />
-      </div>
-      <div className={gridStyles["container"]}>
-        <form>
-          <input
-            className={cn(gridStyles["rz-textbox"], gridStyles["input"])}
-            type="number"
-            value={numItems}
-            onChange={handleTextareaChange}
-            disabled={false}
-          />
-          <br />
-          {error !== null && <p className="Error">{error.message}</p>}
-        </form>
-        {status === "success" && (
-          <div ref={tableRef}>
-            <DynamicGrid
-              className={dynamicStyles["dynamicgrid-dd"]}
-              key={item}
-              selectItem={item}
-              showPagination={true}
-              numItems={numItems}
-            />{" "}
+        <div
+          className="rounded"
+          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+        >
+          <div className="h-full w-full bg-white shadow flex rounded items-center">
+            <Dropdown
+              // className={gridStyles["dynamicgrid-dd"]}
+              jsonFileName="GetOptions"
+              label="Choose Item"
+              onItemChange={(e) => handleSetItem(e)}
+              showCheckbox={true} />
           </div>
+        </div>
+        <div
+          className="rounded"
+          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+        >
+          <div className="h-full w-full bg-white shadow flex rounded items-center">
+            <div className="flex-1 relative h-full flex items-center">
+              <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                <SingleGenericDropdown
+                  // className={gridStyles["dynamicgrid-dd"]}
+                  selectItem={"GetPropOptions"}
+                  showPagination={true}
+                  showCheckbox={false}
+                  tableRef={tableRef}
+                  onClick={handleClick}
+                  value={inputValue} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="rounded"
+          style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+        >
+          <div className="h-full w-full shadow flex rounded items-center">
+            <div className="flex-1 relative h-full flex items-center">
+              <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+                <form style={{ color: "black", borderRadius: "6px", width: "50px", alignContent: "center" }} >
+                  <input
+                    type="number"
+                    value={numItems}
+                    onChange={handleTextareaChange}
+                    disabled={false}
+                    style={{ color: "black", borderRadius: "6px", width: "inherit", alignContent: "center", height: "inherit" }} />
+                  <br />
+                  {error !== null && <p className="Error">{error.message}</p>}
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </><div
+      style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
+      ref={tableRef}
+    >
+        {status === "success" && (
+          <DynamicGrid
+            // className={dynamicStyles["dynamicgrid-dd"]}
+            key={item}
+            selectItem={item}
+            showPagination={true}
+            numItems={numItems} />
         )}
-      </div>
-    </>
+      </div></>
   );
 }
 

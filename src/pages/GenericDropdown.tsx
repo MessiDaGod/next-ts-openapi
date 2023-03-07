@@ -52,9 +52,8 @@ export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
-  // handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
+  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
-
 
 // value={props.inputValue} onChange={props.handleInputChange}
 
@@ -66,8 +65,9 @@ function GenericDropdown<T>({
   tableRef,
   itemsPerPage,
   numItems,
-  // handleInputChange,
-}: DynamicGridProps) {
+  handleInputChange,
+}:
+DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
@@ -395,16 +395,32 @@ function GenericDropdown<T>({
   }
 
   function handleClick(e) {
-    setInputValue(e.target.value);
-    // setSelectedItem(
-    //   (e.target as HTMLElement).parentElement.children[2].textContent
-    // );
-    // Log(e.target as HTMLElement);
-    // // ( as HTMLInputElement).value = (e.target as HTMLElement).parentElement.children[2].textContent;
-    // const elementsWithZIndex = document.querySelectorAll('[style*="z-index"]');
-    // elementsWithZIndex.forEach((element) => {
-    //   (element as HTMLElement).style.zIndex = "0";
-    // });
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          Log((child as HTMLElement).querySelectorAll("input")[0]);
+          (child as HTMLElement).querySelectorAll("input")[0].value = value;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            value;
+        });
+        // (cell as HTMLElement).parentElement.children[2].textContent;
+      });
+    }
 
     setIsActiveDropdown(false);
     setShowSearchBox(false);
@@ -527,61 +543,165 @@ function GenericDropdown<T>({
       try {
         if (rows.length > 0) {
           const totalPages = Math.ceil(data.length / itemsPerPage);
-          return (
-            <>
-              <div className={cn(styles["dd-container"])}>
-                <div
-                  id={"gridjs_0"}
-                  key={"gridjs_0"}
-                  className={styles["ddTable"]}
-                >
-                  <div className={styles["thead"]}>
-                    {
-                      <div className={styles["search-panel"]}>
-                        <input
-                          id="search-input"
-                          type="search"
-                          className={styles["findcomponent"]}
-                          placeholder=" Search..."
-                          autoComplete="on"
-                        ></input>
-                        <span
-                          className={cn(
-                            "material-symbols-outlined",
-                            styles["searchicon"]
-                          )}
-                        >
-                          {"search"}
-                        </span>
-                      </div>
-                    }
-                  </div>
-                  <div className={styles["tr"]} data-row-id="0">
-                    {headerRow}
-                  </div>
 
-                  <div key={"tbody"} className={styles["tbody"]}>
-                    {rows.slice(1)}
-                  </div>
-                  {hasPagination && (
-                    <div className={styles["tr"]}>
-                      <Pagination
-                        id="pagination"
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                        style={{
-                          width: "100%",
-                          verticalAlign: "center",
-                          textAlign: "center",
-                          backgroundColor: "black",
-                        }}
-                      />
-                    </div>
+          // const handleInputChange = (event) => {
+          //   // if (!event.type === "message") {
+          //   Log(event.target.value);
+          //   setInputValue(event.target.value);
+          //   // }
+          // };
+
+          return (
+            <div
+              style={style}
+              onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
+              onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
+            >
+              {showCheckbox && <Checkbox />}
+              <div
+                className={`${styles["dropdown"]}`}
+                onMouseEnter={handleShowSearchBox}
+                onMouseLeave={handleMouseLeaveSearchBox}
+                ref={dropdownRef}
+              >
+                <label
+                  style={{
+                    padding: "0",
+                    margin: "0",
+                    overflow: "hidden",
+                    zIndex: "0",
+                    borderRadius: `${hasPagination ? "6px" : "0px"}`,
+                  }}
+                  htmlFor={propertyInputId}
+                >
+                  <input
+                    id={propertyInputId}
+                    onChange={handleInputChange}
+                    defaultValue={getHeaderValue(selectItem)}
+                  />
+                </label>
+                <div
+                  className={
+                    !showSearchBox && isChecked
+                      ? `${styles["dropdown-content-hidden"]}`
+                      : `${styles["dropdown-content"]}`
+                  }
+                >
+                  {showSearchBox && isChecked && (
+                    <>
+                      <div className={cn(styles["dd-container"])}>
+                        <div
+                          id={"gridjs_0"}
+                          key={"gridjs_0"}
+                          className={styles["ddTable"]}
+                        >
+                          <div className={styles["thead"]}>
+                            {
+                              <div className={styles["search-panel"]}>
+                                <input
+                                  id="search-input"
+                                  type="search"
+                                  className={styles["findcomponent"]}
+                                  placeholder=" Search..."
+                                  autoComplete="on"
+                                ></input>
+                                <span
+                                  className={cn(
+                                    "material-symbols-outlined",
+                                    styles["searchicon"]
+                                  )}
+                                >
+                                  {"search"}
+                                </span>
+                              </div>
+                            }
+                          </div>
+                          <div className={styles["tr"]} data-row-id="0">
+                            {headerRow}
+                          </div>
+
+                          <div key={"tbody"} className={styles["tbody"]}>
+                            {rows.slice(1)}
+                          </div>
+                          {hasPagination && (
+                            <div className={styles["tr"]}>
+                              <Pagination
+                                id="pagination"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                style={{
+                                  width: "100%",
+                                  verticalAlign: "center",
+                                  textAlign: "center",
+                                  backgroundColor: "black",
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {!isChecked && (
+                    <>
+                      <div className={cn(styles["dd-container"])}>
+                        <div
+                          id={"gridjs_0"}
+                          key={"gridjs_0"}
+                          className={styles["ddTable"]}
+                        >
+                          <div className={styles["thead"]}>
+                            {
+                              <div className={styles["search-panel"]}>
+                                <input
+                                  id="search-input"
+                                  type="search"
+                                  className={styles["findcomponent"]}
+                                  placeholder=" Search..."
+                                  autoComplete="on"
+                                ></input>
+                                <span
+                                  className={cn(
+                                    "material-symbols-outlined",
+                                    styles["searchicon"]
+                                  )}
+                                >
+                                  {"search"}
+                                </span>
+                              </div>
+                            }
+                          </div>
+                          <div className={styles["tr"]} data-row-id="0">
+                            {headerRow}
+                          </div>
+
+                          <div key={"tbody"} className={styles["tbody"]}>
+                            {rows.slice(1)}
+                          </div>
+                          {hasPagination && (
+                            <div className={styles["tr"]}>
+                              <Pagination
+                                id="pagination"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                style={{
+                                  width: "100%",
+                                  verticalAlign: "center",
+                                  textAlign: "center",
+                                  backgroundColor: "black",
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
-            </>
+            </div>
           );
         }
       } catch (error) {
@@ -703,67 +823,8 @@ function GenericDropdown<T>({
     setShowSearchBox(false);
   }
 
-  const handleInputChange = (event) => {
-    // if (!event.type === "message") {
-    Log(event.target.value);
-    setInputValue(event.target.value);
-    // }
-  };
-
   if (table && Array.isArray(data) && data.length > 0) {
-
-
-    return (
-      <div
-        style={style}
-        onMouseEnter={(e) => handleGenericDropdownMouseEnter(e)}
-        onMouseLeave={(e) => handleGenericDropdownMouseLeave(e)}
-      >
-        {showCheckbox && <Checkbox />}
-        <div
-          className={`${styles["dropdown"]}`}
-          onMouseEnter={handleShowSearchBox}
-          onMouseLeave={handleMouseLeaveSearchBox}
-          ref={dropdownRef}
-        >
-          <label
-            style={{
-              padding: "0",
-              margin: "0",
-              overflow: "hidden",
-              zIndex: "0",
-              borderRadius: `${hasPagination ? "6px" : "0px"}`,
-            }}
-            htmlFor={propertyInputId}
-          >
-            <input
-              id={propertyInputId}
-              onChange={handleInputChange}
-              defaultValue={getHeaderValue(selectItem)}
-            />
-            <span
-              className={"material-symbols-outlined"}
-              style={{
-                color: "white",
-                display: "inline-block",
-              }}
-            >
-              {showSearchBox ? "expand_more" : "expand_less"}
-            </span>
-          </label>
-          <div
-            className={
-              !showSearchBox && isChecked
-                ? `${styles["dropdown-content-hidden"]}`
-                : `${styles["dropdown-content"]}`
-            }
-          >
-            {showSearchBox && isChecked && <>{table}</>}
-            {!isChecked && <div>{table}</div>}
-          </div>
-        </div>
-      </div>
-    );
+    return <>{table}</>;
   }
 }
 
