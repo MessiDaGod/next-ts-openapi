@@ -23,7 +23,6 @@ import { removeAllListeners } from "process";
 import { TableHeader } from "./TableHeader";
 import SingleGenericDropdown from "./SingleGenericDropdown";
 
-
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
@@ -82,7 +81,6 @@ function DynamicGrid<T>({
   }, [isActiveTableRef]);
 
   React.useEffect(() => {
-    console.info("setting column widths with selected, numOfItems, data...");
     setColumnWidths();
   }, [selected, numOfItems, data]);
 
@@ -183,7 +181,7 @@ function DynamicGrid<T>({
 
     const columnWidths: ColumnWidths = {};
 
-    const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
+    // const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
 
     function visualLength(s: string) {
       const ruler = document.createElement("div");
@@ -195,20 +193,25 @@ function DynamicGrid<T>({
       ruler.innerText = s;
       document.body.appendChild(ruler);
       const padding = paddingDiff(ruler as HTMLElement);
-      const width = ruler.getBoundingClientRect().width + padding;
+      const width = ruler.offsetWidth + padding;
       document.body.removeChild(ruler);
       return width;
     }
 
-    allRows.forEach((row, rowNumber: number) => {
-      const ths = row.querySelectorAll('[class*="' + "_th" + '"]');
-      const tds = row.querySelectorAll('[class*="' + "_td" + '"]');
+    // allRows.forEach((row, rowNumber: number) => {
+      const ths = table.querySelectorAll('[class*="' + "_th" + '"]');
+      const tds = table.querySelectorAll('[class*="' + "_td" + '"]');
       const cells = [...ths, ...tds];
+
 
       cells.forEach((cell) => {
         const columnId = cell.getAttribute("data-column-id");
         if (columnId && cell.getAttribute("hidden") === null) {
           var cellCopy = cell.cloneNode(true) as HTMLElement;
+          let iconsToRemove = cellCopy.querySelectorAll("span");
+          for (let i = 0; i < iconsToRemove.length; i++) {
+            iconsToRemove[i].remove();
+          }
           var spanWidths = 0;
           const icons = cell.querySelectorAll("span");
           if (icons && icons.length > 0) {
@@ -217,22 +220,38 @@ function DynamicGrid<T>({
               spanWidths += icon.offsetWidth;
             }
           }
-          let iconsToRemove = cellCopy.querySelectorAll("span");
-          for (let i = 0; i < iconsToRemove.length; i++) {
-            iconsToRemove[i].remove();
-          }
+
           const input = cell.querySelector("input");
-          const inputWidth = (input ? visualLength(input.value || "") ?? 0 : 0);
-          input && Log(`inputWidth: ${inputWidth} input.value: ${input.value} iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${inputWidth + spanWidths}`);
-          let cellWidth = input ? inputWidth + spanWidths : visualLength(cellCopy.textContent || "") ?? 0 + spanWidths;
+          const inputWidth = input ? visualLength(input.value || "") ?? 0 : 0;
+          let cellWidth = input
+            ? inputWidth + spanWidths
+            : (visualLength(cellCopy.textContent || "") ?? 0) + spanWidths;
+
+          // input &&
+          //   Log(
+          //     `rowNumber: ${rowNumber}, columnId ${columnId} inputWidth: ${inputWidth} input.value: ${
+          //       input.value
+          //     } iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${
+          //       inputWidth + spanWidths
+          //     }`
+          //   );
+
+          // !input &&
+          //   Log(
+          //     `rowNumber: ${rowNumber}, columnId ${columnId} cellWidth + spanWidths: ${cellWidth} + ${spanWidths} = ${
+          //       cellWidth + spanWidths
+          //     }`
+          //   );
+
           const existingWidth = columnWidths[columnId];
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
           }
         }
       });
-    });
+    // });
 
+    Log(columnWidths);
     Object.entries(columnWidths).map((width) => {
       const [key, value] = width;
       const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
@@ -402,9 +421,8 @@ function DynamicGrid<T>({
 
       // (3) drop the colDivider, remove unneeded handlers
       colDivider.onmouseup = function () {
-        console.info("removing colDivider.onmouseup");
         document.removeEventListener("mousemove", onMouseMove);
-        console.info("removing onmouseenter Listner");
+
         removeAllListeners();
         colDivider.onmouseup = null;
       };
@@ -423,7 +441,6 @@ function DynamicGrid<T>({
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
-      console.info("GenerateTableHtml from DynamicGrid...");
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
         return (
@@ -466,10 +483,6 @@ function DynamicGrid<T>({
           default:
             return "Property";
         }
-      }
-
-      function handleOnChange(e) {
-        setColumnWidths();
       }
 
       function handleDeleteClick(e) {
@@ -519,7 +532,7 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
                     key.toUpperCase() === "PERSON" ? (
-                      <SingleGenericDropdown
+                      <GenericDropdown
                         selectItem={getSelectItem(key)}
                         showPagination={true}
                         showCheckbox={false}
