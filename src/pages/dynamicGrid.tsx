@@ -6,6 +6,7 @@ import styles from "./DynamicGrid.module.scss";
 import {
   ColumnWidths,
   CustomError,
+  Log,
   getFromQuery,
   isColumnHidden,
   parseValue,
@@ -220,9 +221,10 @@ function DynamicGrid<T>({
           for (let i = 0; i < iconsToRemove.length; i++) {
             iconsToRemove[i].remove();
           }
-          let cellWidth = visualLength(cellCopy.textContent || "");
-          cellWidth += spanWidths;
-          spanWidths = 0;
+          const input = cell.querySelector("input");
+          const inputWidth = (input ? visualLength(input.value || "") ?? 0 : 0);
+          input && Log(`inputWidth: ${inputWidth} input.value: ${input.value} iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${inputWidth + spanWidths}`);
+          let cellWidth = input ? inputWidth + spanWidths : visualLength(cellCopy.textContent || "") ?? 0 + spanWidths;
           const existingWidth = columnWidths[columnId];
           if (cellWidth > (existingWidth || 0)) {
             columnWidths[columnId] = cellWidth;
