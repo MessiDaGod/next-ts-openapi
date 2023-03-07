@@ -148,7 +148,7 @@ export default function Grid({}) {
                     value={numItems}
                     onChange={handleTextareaChange}
                     disabled={false}
-                    style={{ color: "black", borderRadius: "6px", width: "inherit", alignContent: "center", height: "inherit" }} />
+                    style={{ color: "black", borderRadius: "6px", width: "inherit", alignContent: "center", height: "30px" }} />
                   <br />
                   {error !== null && <p className="Error">{error.message}</p>}
                 </form>

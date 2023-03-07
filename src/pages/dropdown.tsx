@@ -108,8 +108,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <>
       <div
-        className={className}
-        style={{ zIndex: 10000000 }}
+        // className={className}
+        style={{ zIndex: 10000000, top: "0" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

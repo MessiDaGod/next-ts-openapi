@@ -129,9 +129,9 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   const type = isMobile() ? (
-    <span className="material-symbols-outlined">phone_iphone</span>
+    <span className="material-symbols-outlined white">phone_iphone</span>
   ) : (
-    <span className="material-symbols-outlined">computer</span>
+    <span className="material-symbols-outlined white">computer</span>
   );
 
   return (
