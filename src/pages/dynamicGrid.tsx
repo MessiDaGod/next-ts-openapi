@@ -12,9 +12,7 @@ import {
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
-
 // import vendors from "../../public/vendors.json";
 // import properties from "../../public/propOptions.json";
 // import accounts from "../../public/accounts.json";
@@ -22,12 +20,15 @@ import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
 import { TableHeader } from "./TableHeader";
+
+
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
   numItems?: number | undefined;
   isActive?: boolean;
+  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 function DynamicGrid<T>({
@@ -37,6 +38,7 @@ function DynamicGrid<T>({
   numItems,
   isActive,
   className,
+  handleInputChange,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -51,6 +53,7 @@ function DynamicGrid<T>({
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
+  const [inputValue, setInputValue] = React.useState("");
 
   const itemsPerPage = 10;
 
@@ -463,7 +466,6 @@ function DynamicGrid<T>({
       }
 
       function handleOnChange(e) {
-        console.log("resetting column widths because value changed...");
         setColumnWidths();
       }
 
@@ -479,6 +481,10 @@ function DynamicGrid<T>({
         console.info("focusinig element.");
         (e.target as HTMLElement).focus();
       }
+
+      // const handleInputChange = (event) => {
+      //   setInputValue(event.target.value);
+      // }
 
       const rows = [...data]
         .slice(
@@ -506,11 +512,6 @@ function DynamicGrid<T>({
                     style={{ width: "100px" }}
                     ref={dropdownRef}
                     onClick={handleFocus}
-                    onChange={(e) => {
-                      (e.target as HTMLDivElement).classList.add(
-                        styles["focus"]
-                      );
-                    }}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
@@ -521,6 +522,7 @@ function DynamicGrid<T>({
                         showCheckbox={false}
                         tableRef={tableRef}
                         columns={columns[getSelectKey(key)]}
+                        onChange={handleInputChange}
                       />
                     ) : key.toUpperCase() === "DATE" ? (
                       <DatePicker

@@ -301,3 +301,14 @@ $table-border: #d9d9d9;
 .share:hover {
     color: lime;
 }
+
+.search-panel {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.1rem;
+    margin-top: 0rem;
+    padding: 5px;
+    height: 45px;
+    width: 100%;
+    cursor: text;
+}

@@ -163,8 +163,8 @@ export default function App({ Component, pageProps }: AppProps) {
           >
             {
               <span
-                className={cn("material-symbols-outlined", "white")}
-                style={{ marginLeft: "10px" }}
+                className={cn("material-symbols-outlined")}
+                style={{ display: "flex", marginLeft: "10px", color: "white", position: "relative", zIndex: 2 }}
               >
                 menu
               </span>

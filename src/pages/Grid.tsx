@@ -14,18 +14,14 @@ import SingleGenericDropdown from "./SingleGenericDropdown";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
 
-export default function Grid({
-  tableRef,
-  columns,
-}: {
-  tableRef: React.RefObject<HTMLDivElement>;
-  columns: string[];
-}) {
+export default function Grid({}) {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");
   const [numItems, setNumItems] = useState<number>(1);
-  const dropdownRef = React.useRef<HTMLDivElement | null>(null);
+  const tableRef = React.useRef<HTMLDivElement | null>(null);
+  const [inputValue, setInputValue] = React.useState("");
+  const propertyInputId = React.useId();
 
   async function handleSetItem(e) {
     setItem(e);
@@ -58,6 +54,10 @@ export default function Grid({
     }
   }
 
+  // const handleInputChange = (event) => {
+  //   setInputValue(event.target.value);
+  // }
+
   return (
     <>
       <div className={gridStyles["container"]}>
@@ -69,12 +69,22 @@ export default function Grid({
           showCheckbox={true}
         />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", position: "absolute", alignContent: "flex-end", left: "300px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          position: "absolute",
+          alignContent: "flex-end",
+          left: "300px",
+        }}
+      >
         <SingleGenericDropdown
           className={gridStyles["dynamicgrid-dd"]}
           selectItem={"GetPropOptions"}
           showPagination={true}
           showCheckbox={false}
+          tableRef={tableRef}
+          // onChange={handleInputChange}
         />
       </div>
       <div className={gridStyles["container"]}>
@@ -90,13 +100,15 @@ export default function Grid({
           {error !== null && <p className="Error">{error.message}</p>}
         </form>
         {status === "success" && (
-          <DynamicGrid
-            className={dynamicStyles["dynamicgrid-dd"]}
-            key={item}
-            selectItem={item}
-            showPagination={true}
-            numItems={numItems}
-          />
+          <div ref={tableRef}>
+            <DynamicGrid
+              className={dynamicStyles["dynamicgrid-dd"]}
+              key={item}
+              selectItem={item}
+              showPagination={true}
+              numItems={numItems}
+            />{" "}
+          </div>
         )}
       </div>
     </>

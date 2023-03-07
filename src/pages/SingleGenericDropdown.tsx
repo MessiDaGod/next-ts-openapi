@@ -4,7 +4,14 @@ import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
 import styles from "./SingleGenericDropdown.module.scss";
-import { ColumnWidths, CustomError, Log, headerize, isColumnHidden, parseValue } from "./utils";
+import {
+  ColumnWidths,
+  CustomError,
+  Log,
+  headerize,
+  isColumnHidden,
+  parseValue,
+} from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
 import vendors from "../../public/vendors.json";
@@ -12,7 +19,6 @@ import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
 import { removeAllListeners } from "process";
-
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -36,7 +42,7 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-export interface DynamicGridProps  extends HTMLAttributes<HTMLDivElement> {
+export interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -67,6 +73,9 @@ function SingleGenericDropdown<T>({
   const dropdownRef = useRef<HTMLDivElement | undefined>(undefined);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
+  const propertyInputId = React.useId();
+
   itemsPerPage = itemsPerPage ?? 10;
   numItems = numItems ?? 100;
   const zIndex = 0;
@@ -81,7 +90,7 @@ function SingleGenericDropdown<T>({
   }, [isActiveDropdown]);
 
   React.useEffect(() => {
-    console.info("setting column widths with selected, numOfItems, data...")
+    console.info("setting column widths with selected, numOfItems, data...");
     setColumnWidths();
   }, [currentPage]);
 
@@ -122,9 +131,8 @@ function SingleGenericDropdown<T>({
     setColumnWidths();
   }, []);
 
-
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    e.stopPropagation()
+    e.stopPropagation();
     e.preventDefault();
     const colDivider = e.target as HTMLElement;
     if (!colDivider.classList.contains(cn(styles["coldivider"]))) return;
@@ -397,9 +405,36 @@ function SingleGenericDropdown<T>({
   }
 
   function handleClick(e) {
-    setSelectedItem((e.target as HTMLElement).parentElement.children[2].textContent);
-    Log((e.target as HTMLElement));
-    // ( as HTMLInputElement).value = (e.target as HTMLElement).parentElement.children[2].textContent;
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' + "PROPERTY" + '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          Log((child as HTMLElement).querySelectorAll("input")[0]);
+          (child as HTMLElement).querySelectorAll("input")[0].value = value;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            value;
+        });
+        // (cell as HTMLElement).parentElement.children[2].textContent;
+      });
+    }
+
     setIsActiveDropdown(false);
     setShowSearchBox(false);
   }
@@ -524,22 +559,25 @@ function SingleGenericDropdown<T>({
                   className={styles["ddTable"]}
                 >
                   <div className={styles["thead"]}>
-                  {
-                    <div className={styles["search-panel"]}>
-                      <input
-                        id="search-input"
-                        type="search"
-                        className={styles["findcomponent"]}
-                        placeholder=" Search..."
-                        autoComplete="on"
-                      ></input>
+                    {
+                      <div className={styles["search-panel"]}>
+                        <input
+                          id="search-input"
+                          type="search"
+                          className={styles["findcomponent"]}
+                          placeholder=" Search..."
+                          autoComplete="on"
+                        ></input>
                         <span
-                          className={cn("material-symbols-outlined", styles["searchicon"])}
+                          className={cn(
+                            "material-symbols-outlined",
+                            styles["searchicon"]
+                          )}
                         >
                           {"search"}
                         </span>
-                    </div>
-                  }
+                      </div>
+                    }
                   </div>
                   <div className={styles["tr"]} data-row-id="0">
                     {headerRow}
@@ -584,8 +622,11 @@ function SingleGenericDropdown<T>({
     setActiveDropdown(dropdownRef.current);
     // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
     // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
-    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
-    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
+    const container = (dropdownRef.current as HTMLElement).parentElement
+      .parentElement;
+    container.querySelector(
+      '[class*="' + cn(styles["dd-container"]) + '"]'
+    ) as HTMLElement;
     container.style.zIndex = "10";
     container.style.border = "1px solid red";
     // setAllZIndexesHigh();
@@ -596,8 +637,11 @@ function SingleGenericDropdown<T>({
   function handleMouseLeaveSearchBox(e) {
     (dropdownRef.current as HTMLElement).style.zIndex = "0";
     (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
-    const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
-    container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
+    const container = (dropdownRef.current as HTMLElement).parentElement
+      .parentElement;
+    container.querySelector(
+      '[class*="' + cn(styles["dd-container"]) + '"]'
+    ) as HTMLElement;
     container.style.zIndex = "0";
     container.style.border = "";
     // setAllZIndexesLow();
@@ -611,7 +655,8 @@ function SingleGenericDropdown<T>({
 
   function Checkbox({}) {
     return (
-      <label><br />
+      <label>
+        <br />
         <input
           id="checkbox"
           type="checkbox"
@@ -669,14 +714,15 @@ function SingleGenericDropdown<T>({
 
   const table = GenerateTableHtml();
 
-
   function handleGenericDropdownMouseEnter(e) {
     setIsActiveDropdown(true);
     setShowSearchBox(true);
     setActiveDropdown(dropdownRef.current);
     setColumnWidths();
-    const searchInput = document.querySelector(`#${selected}_label`) as HTMLElement;
-    searchInput.focus();
+    // const searchInput = document.querySelector(
+    //   `#${selected}_label`
+    // ) as HTMLElement;
+    // searchInput.focus();
   }
 
   function handleGenericDropdownMouseLeave(e) {
@@ -685,12 +731,14 @@ function SingleGenericDropdown<T>({
     setShowSearchBox(false);
   }
 
-  if (table && Array.isArray(data) && data.length > 0) {
-    function handleSearchInput(e: React.FormEvent<HTMLInputElement>): void {
-      Log(e);
-      (e.target as HTMLInputElement).classList.add("changed");
-    }
+  const handleInputChange = (event) => {
+    // if (!event.type === "message") {
+    Log(event.target.value);
+    setInputValue(event.target.value);
+    // }
+  };
 
+  if (table && Array.isArray(data) && data.length > 0) {
     return (
       <div
         style={style}
@@ -705,8 +753,6 @@ function SingleGenericDropdown<T>({
           ref={dropdownRef}
         >
           <label
-            id={`${selected}_label`}
-            // className={`${styles["rz-placeholder"]}`}
             style={{
               padding: "0",
               margin: "0",
@@ -714,9 +760,13 @@ function SingleGenericDropdown<T>({
               zIndex: "0",
               borderRadius: `${hasPagination ? "6px" : "0px"}`,
             }}
+            htmlFor={propertyInputId}
           >
-            <input id={`input_${selected}`} value={selectedItem ? selectedItem : getHeaderValue(selected)} onChange={handleSearchInput} hidden></input>
-            {selectedItem ? selectedItem : getHeaderValue(selected)}
+            <input
+              id={propertyInputId}
+              // onChange={handleInputChange}
+              defaultValue={getHeaderValue(selectItem)}
+            />
             <span
               className={"material-symbols-outlined"}
               style={{
