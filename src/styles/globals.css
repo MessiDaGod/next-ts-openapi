@@ -191,3 +191,11 @@ input  {
 div {
   box-sizing: border-box;
 }
+input {
+  position: relative;
+  z-index: 0;
+}
+
+[class$='react-datepicker_'] {
+  z-index: 1;
+}

@@ -4,7 +4,6 @@ import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
 import styles from "./SingleGenericDropdown.module.scss";
-import stylesWithin from "./SingleGenericDropdown.module.scss";
 import { ColumnWidths, CustomError, Log, headerize, isColumnHidden, parseValue } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
@@ -65,7 +64,7 @@ function SingleGenericDropdown<T>({
   const [showSearchBox, setShowSearchBox] = React.useState(false);
   const [hasPagination] = React.useState(showPagination ?? false);
   const [selectedItem, setSelectedItem] = React.useState(null);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | undefined>(undefined);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   itemsPerPage = itemsPerPage ?? 10;
@@ -160,8 +159,8 @@ function SingleGenericDropdown<T>({
   }
 
   function setColumnWidths() {
-    if (!tableRef) return;
-    const current = tableRef.current;
+    if (!dropdownRef?.current) return;
+    const current = dropdownRef.current;
 
     const tables = [...current.querySelectorAll('[id*="' + "gridjs" + '"]')];
     tables.forEach((mytable) => {
@@ -486,7 +485,7 @@ function SingleGenericDropdown<T>({
             id={row[columnKeys[0].Name]}
             key={row[columnKeys[0].Name]}
             data-row-id={rowIndex}
-            className={cn(stylesWithin["tr"])}
+            className={cn(styles["tr"])}
             onMouseOver={handleRowMouseOver}
           >
             <div
@@ -501,7 +500,7 @@ function SingleGenericDropdown<T>({
                   <div
                     id={`td_${row[columnKeys[0].Name]}_${index}`}
                     key={`td_${row[columnKeys[0].Name]}_${index}`}
-                    className={stylesWithin["td"]}
+                    className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
                     onClick={handleClick}
@@ -524,14 +523,14 @@ function SingleGenericDropdown<T>({
                   key={"gridjs_0"}
                   className={styles["ddTable"]}
                 >
-                  <div className={styles["thead"]}></div>
+                  <div className={styles["thead"]}>
                   {
-                    <div className={stylesWithin["search-panel"]}>
+                    <div className={styles["search-panel"]}>
                       <input
                         id="search-input"
                         type="search"
                         className={styles["findcomponent"]}
-                        placeholder="Search..."
+                        placeholder=" Search..."
                         autoComplete="on"
                       ></input>
                         <span
@@ -541,7 +540,7 @@ function SingleGenericDropdown<T>({
                         </span>
                     </div>
                   }
-
+                  </div>
                   <div className={styles["tr"]} data-row-id="0">
                     {headerRow}
                   </div>
@@ -583,11 +582,11 @@ function SingleGenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setActiveDropdown(dropdownRef.current);
-    (dropdownRef.current as HTMLElement).style.zIndex = "10001";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
+    // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
+    // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
     const container = (dropdownRef.current as HTMLElement).parentElement.parentElement;
     container.querySelector('[class*="' + cn(styles["dd-container"]) + '"]') as HTMLElement;
-    container.style.zIndex = "10001";
+    container.style.zIndex = "10";
     container.style.border = "1px solid red";
     // setAllZIndexesHigh();
     setColumnWidths();
@@ -612,14 +611,14 @@ function SingleGenericDropdown<T>({
 
   function Checkbox({}) {
     return (
-      <label>
+      <label><br />
         <input
           id="checkbox"
           type="checkbox"
           checked={isChecked}
           onChange={(e) => handleCheckboxChange(e)}
         />
-        Dropdown with MouseEnter
+        Dropdown
       </label>
     );
   }
@@ -670,6 +669,7 @@ function SingleGenericDropdown<T>({
 
   const table = GenerateTableHtml();
 
+
   function handleGenericDropdownMouseEnter(e) {
     setIsActiveDropdown(true);
     setShowSearchBox(true);
@@ -706,11 +706,10 @@ function SingleGenericDropdown<T>({
         >
           <label
             id={`${selected}_label`}
-            className={`${styles["rz-placeholder"]}`}
+            // className={`${styles["rz-placeholder"]}`}
             style={{
               padding: "0",
               margin: "0",
-              cursor: "pointer",
               overflow: "hidden",
               zIndex: "0",
               borderRadius: `${hasPagination ? "6px" : "0px"}`,

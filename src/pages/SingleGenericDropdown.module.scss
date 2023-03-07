@@ -2,7 +2,7 @@
 .ddTable {
     width: fit-content;
     border-collapse: collapse;
-    z-index: 1001;
+    // z-index: 1001;
 }
 
 .ddTable {
@@ -10,7 +10,7 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
-    z-index: 1001;
+    // z-index: 1001;
 }
 
 .divTable {
@@ -18,15 +18,16 @@
     border: 1px solid blue;
 }
 
-.th {
-    z-index: 1001;
-}
+// .th {
+//     z-index: 1001;
+// }
+
 .tr {
     display: flex;
     vertical-align: middle;
     align-items: center;
     width: 100%;
-    border-top: 2px solid  rgb(105, 105, 105);
+    border-top: 2px solid rgb(105, 105, 105);
     padding-top: 2px;
     padding-bottom: 2px;
     z-index: 1001;
@@ -147,6 +148,7 @@
 }
 
 .dd-container {
+    display: flex;
     background-color: #6b6666;
     padding: 10px;
     position: absolute;
@@ -256,11 +258,6 @@
     color: lime;
 }
 
-.searchicon {
-    position: absolute;
-    float: right;
-    cursor: crosshair;
-}
 
 .thead {
     display: flex;
@@ -280,8 +277,19 @@
 }
 
 .searchicon {
+    display: flex;
     color: white;
+    align-content: flex-end;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    cursor: crosshair;
 }
+
+// .searchicon {
+//     position: absolute;
+//     float: right;
+//     cursor: crosshair;
+// }
 
 
 .search-panel {
@@ -290,7 +298,9 @@
     margin-bottom: 0.1rem;
     margin-top: 0rem;
     padding: 5px;
-    height: 30px;
+    height: 45px;
+    width: 100%;
+    cursor: text;
 }
 
 .search-panel:hover {

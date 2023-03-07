@@ -8,6 +8,7 @@ import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
 import DataGridDropdown from "./DataGridDropdown";
 import GenericDropdown from "./GenericDropdown";
+import SingleGenericDropdown from "./SingleGenericDropdown";
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
@@ -68,8 +69,8 @@ export default function Grid({
           showCheckbox={true}
         />
       </div>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <GenericDropdown
+      <div style={{ display: "flex", flexDirection: "column", position: "absolute", alignContent: "flex-end", left: "300px" }}>
+        <SingleGenericDropdown
           className={gridStyles["dynamicgrid-dd"]}
           selectItem={"GetPropOptions"}
           showPagination={true}
