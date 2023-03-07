@@ -117,9 +117,8 @@ const Dropdown: React.FC<DropdownProps> = ({
           {selectedItem}
         </Button>
         <div className={styles["dropdown-container"]}>
-          <ul style={{ listStyleType: "none", position: "absolute", zIndex: 1000001 }}>
-            {/* {showDropdown && */}
-            {
+          <ul style={{ listStyleType: "none", position: "absolute", zIndex: 10000000 }}>
+            {showDropdown &&
               items?.Items.map((value, index) => (
                 <span
                   key={index}

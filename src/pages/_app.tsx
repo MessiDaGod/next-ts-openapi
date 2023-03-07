@@ -11,7 +11,6 @@ import "styles/globals.css";
 import "../styles/algolia.css";
 import "../styles/index.css";
 import "../styles/sandpack.css";
-import './dropdown.css';
 import Menu from "../../public/menu.json";
 
 // if (typeof window !== "undefined") {

@@ -99,12 +99,7 @@ export default function Grid({
             columns={columns["Property"]}
           />
         </div>
-        <form
-          style={{
-            zIndex: 1,
-            margin: "20px",
-          }}
-        >
+        <form>
           <input
             className={cn(styles["rz-textbox"], styles["input"])}
             type="number"
