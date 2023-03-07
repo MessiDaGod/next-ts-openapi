@@ -24,6 +24,7 @@
   overflow: auto;
   transition: var(--transform);
   transition-duration: 0.3s;
+  overflow-x: hidden;
 }
 .rz-body.rz-body-collapsed {
   max-width: 100%;

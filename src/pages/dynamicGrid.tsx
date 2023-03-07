@@ -20,6 +20,7 @@ import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
 import { TableHeader } from "./TableHeader";
+import SingleGenericDropdown from "./SingleGenericDropdown";
 
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
@@ -516,7 +517,7 @@ function DynamicGrid<T>({
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
                     key.toUpperCase() === "PERSON" ? (
-                      <GenericDropdown
+                      <SingleGenericDropdown
                         selectItem={getSelectItem(key)}
                         showPagination={true}
                         showCheckbox={false}

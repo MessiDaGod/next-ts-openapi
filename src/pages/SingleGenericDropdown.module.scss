@@ -306,3 +306,10 @@
 .search-panel:hover {
     border: white;
 }
+
+.tr:hover {
+    border: 1px solid white;
+}
+.tr.td:hover {
+    background-color: #f03a3a;
+}

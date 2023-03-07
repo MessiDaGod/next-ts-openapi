@@ -163,7 +163,7 @@ form {
   color: black;
 }
 
-.input-wrapper {
+/* .input-wrapper {
   display: inline-block;
   user-select: none;
   align-items: center;
@@ -172,7 +172,7 @@ form {
 .input-wrapper .icon {
   display: inline-block;
   vertical-align: middle;
-}
+} */
 
 /* .input-wrapper .icon {
   margin-left: 10px;
@@ -183,7 +183,10 @@ form {
   border-radius: 4px;
   box-shadow: none;
   background-color: #1e1e1e;
-  height: 100%;
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: flex-start;
   user-select: none;
 }
 .dropdown:hover {
@@ -191,13 +194,19 @@ form {
 }
 
 label {
-  display: block;
-  height: 30px;
+  display: inline-block;
   cursor: pointer;
+  align-items: center;
+  justify-content: flex-start;
+  user-select: none;
 }
 
 input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.rz-body {
+  overflow-x: hidden;
 }

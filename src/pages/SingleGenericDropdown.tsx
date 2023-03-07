@@ -750,10 +750,10 @@ function SingleGenericDropdown<T>({
           onMouseLeave={handleMouseLeaveSearchBox}
           ref={dropdownRef}
         >
-          <div className='dropdown'>
+          <div className="dropdown" style={{ maxWidth: "125px" }}>
             <label
               style={{
-                borderRadius: `${hasPagination ? "6px" : "0px"}`,
+                display: "inline-flex", borderRadius: `${hasPagination ? "6px" : "0px"}`,
               }}
               htmlFor={propertyInputId}
             >
@@ -761,10 +761,16 @@ function SingleGenericDropdown<T>({
                 id={propertyInputId}
                 // onChange={handleInputChange}
                 defaultValue={getHeaderValue(selectItem)}
+                style={{ width: "100%" }}
               />
               <span
                 className={"material-symbols-outlined"}
-                style={{ color: "white", display: "inline-flex", alignContent: "flex-end" }}>
+                style={{
+                  color: "white",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 {showSearchBox ? "expand_more" : "expand_less"}
               </span>
             </label>
