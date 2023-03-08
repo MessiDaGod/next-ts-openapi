@@ -3,7 +3,7 @@
   --sb-bg: #252525;
   --tb-bg: #252525;
   --tb-height: 5vh;
-  --sb-width: 10vw;
+  --sb-width: 15vw;
   --ddwidth: 800px;
   --tablepadding: 10px;
 }
@@ -137,7 +137,7 @@ input {
 }
 
 .p-4 {
-  padding: 1rem;
+  padding-top: 2rem;
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1;

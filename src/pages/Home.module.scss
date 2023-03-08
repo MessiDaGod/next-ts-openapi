@@ -16,8 +16,8 @@
   position: fixed;;
   padding: 0;;
   border-style: solid;;
-  max-width: 90vw;;
-  width: 90vw;
+  // max-width: 90vw;;
+  // width: 90vw;
   left: var(--sb-width);
   // top: var(--tb-height);
   height: 95vh;
@@ -114,6 +114,7 @@
 }
 
 .sidebar__item {
+  box-sizing: border-box;
   border-style: none;
   list-style: none;
   text-decoration: none;
@@ -126,6 +127,7 @@
 }
 .sidebar__item,
 .sidebar__item a {
+  box-sizing: border-box;
   border-style: none;
   list-style: none;
   text-decoration: none;
