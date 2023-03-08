@@ -14,6 +14,8 @@ import {
   paddingDiff,
   paddingDiffY,
   parseValue,
+  setColumnWidths,
+  setDropdownGridWidths,
 } from "./utils";
 import cn from "classnames";
 import dimensions from "../../public/Dimensions.json";
@@ -87,20 +89,18 @@ function GenericDropdown<T>({
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    // setColumnWidths();
   }
 
   React.useEffect(() => {
-    setDropdownGridWidths();
+    setDropdownGridWidths(dropdownRef.current as HTMLElement);
   }, [showSearchBox]);
 
-
   React.useEffect(() => {
-    setDropdownGridWidths();
+    setDropdownGridWidths(dropdownRef.current as HTMLElement);
   }, [sortState]);
 
   React.useEffect(() => {
-    // setColumnWidths();
+    setDropdownGridWidths(dropdownRef.current as HTMLElement);
   }, [currentPage]);
 
   React.useEffect(() => {
@@ -153,112 +153,6 @@ function GenericDropdown<T>({
     }
   }
 
-  function setDropdownGridWidths() {
-    const table = dropdownRef.current as HTMLElement;
-    if (!table) return;
-
-    const columnWidths: ColumnWidths = {};
-
-    // const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
-
-    function visualLength(s: string) {
-      const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `border-box`;
-      ruler.style.display = "block";
-      ruler.style.visibility = "hidden";
-      ruler.style.position = "absolute";
-      ruler.style.whiteSpace = "nowrap";
-      ruler.innerText = s;
-      document.body.appendChild(ruler);
-      const padding = paddingDiff(ruler as HTMLElement);
-      const width = ruler.offsetWidth + padding;
-      document.body.removeChild(ruler);
-      return width;
-    }
-
-    // allRows.forEach((row, rowNumber: number) => {
-      const ths = table.querySelectorAll('[class*="' + "_th" + '"]');
-      const tds = table.querySelectorAll('[class*="' + "_td" + '"]');
-      const cells = [...ths, ...tds];
-
-
-      cells.forEach((cell) => {
-        const columnId = cell.getAttribute("data-column-id");
-        if (columnId && cell.getAttribute("hidden") === null) {
-          var cellCopy = cell.cloneNode(true) as HTMLElement;
-          let iconsToRemove = cellCopy.querySelectorAll("span");
-          for (let i = 0; i < iconsToRemove.length; i++) {
-            iconsToRemove[i].remove();
-          }
-          var spanWidths = 0;
-          const icons = cell.querySelectorAll("span");
-          if (icons && icons.length > 0) {
-            for (let i = 0; i < icons.length; i++) {
-              const icon = icons[i] as HTMLElement;
-              spanWidths += icon.offsetWidth;
-            }
-          }
-
-          const input = cell.querySelector("input");
-          const inputWidth = input ? visualLength(input.value || "") ?? 0 : 0;
-          let cellWidth = input
-            ? inputWidth + spanWidths
-            : (visualLength(cellCopy.textContent || "") ?? 0) + spanWidths;
-
-          // input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} inputWidth: ${inputWidth} input.value: ${
-          //       input.value
-          //     } iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${
-          //       inputWidth + spanWidths
-          //     }`
-          //   );
-
-          // !input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} cellWidth + spanWidths: ${cellWidth} + ${spanWidths} = ${
-          //       cellWidth + spanWidths
-          //     }`
-          //   );
-
-          const existingWidth = columnWidths[columnId];
-          if (cellWidth > (existingWidth || 0)) {
-            columnWidths[columnId] = cellWidth;
-          }
-        }
-      });
-    // });
-
-    Object.entries(columnWidths).map((width) => {
-      const [key, value] = width;
-      const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
-      cols.forEach((col) => {
-        if (col) {
-          (col as HTMLElement).style.width = `auto`;
-          (col as HTMLElement).style.display = "inline-block";
-          (col as HTMLElement).style.whiteSpace = "nowrap";
-          (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.margin = "1px";
-          (col as HTMLElement).style.padding = "1px";
-          (col as HTMLElement).style.minHeight = "100%";
-          (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
-          (col as HTMLElement).style.width = `${Math.round(value)}px`;
-        }
-      });
-    });
-
-    let tableWidth = 0;
-    const columns = table.querySelectorAll('[class*="' + "th" + '"]');
-    columns.forEach((col) => {
-      tableWidth +=
-        parseInt((col as HTMLElement).style.width) +
-        paddingDiff(col as HTMLElement);
-    });
-
-    // (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    // (table as HTMLElement).style.zIndex = zIndex.toString()
-    return columnWidths;
-  }
   function handleSort(columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
@@ -304,7 +198,6 @@ function GenericDropdown<T>({
       console.info("removed mousedown listener");
     });
   }
-
 
   function handleRowClick(e) {
     e.preventDefault();
@@ -372,8 +265,6 @@ function GenericDropdown<T>({
       }
     });
   }
-
-
 
   function handleClick(e) {
     setSelectedItem(
@@ -532,7 +423,10 @@ function GenericDropdown<T>({
                       </div>
                     }
                   </div>
-                  <div className={cn(styles["tr"], styles["th"])} data-row-id="0">
+                  <div
+                    className={cn(styles["tr"], styles["th"])}
+                    data-row-id="0"
+                  >
                     {headerRow}
                   </div>
 
@@ -669,7 +563,7 @@ function GenericDropdown<T>({
     setIsActiveDropdown(true);
     setShowSearchBox(true);
     setActiveDropdown(dropdownRef.current);
-    setDropdownGridWidths();
+    setDropdownGridWidths(dropdownRef.current as HTMLElement);
     // const searchInput = document.querySelector(
     //   `#${selected}_label`
     // ) as HTMLElement;
@@ -704,7 +598,8 @@ function GenericDropdown<T>({
           <div className="dropdown" style={{ maxWidth: "125px" }}>
             <label
               style={{
-                display: "inline-flex", borderRadius: `${hasPagination ? "6px" : "0px"}`,
+                display: "inline-flex",
+                borderRadius: `${hasPagination ? "6px" : "0px"}`,
               }}
               htmlFor={propertyInputId}
             >
@@ -715,7 +610,7 @@ function GenericDropdown<T>({
                 style={{ width: "100%" }}
               />
               <span
-                className={"material-symbols-outlined"}
+                className={cn("material-symbols-outlined", "white")}
                 style={{
                   color: "white",
                   alignItems: "center",

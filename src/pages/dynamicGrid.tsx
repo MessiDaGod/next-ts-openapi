@@ -10,6 +10,7 @@ import {
   getFromQuery,
   isColumnHidden,
   parseValue,
+  setColumnWidths,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -20,8 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
-import { TableHeader } from "./TableHeader";
-import SingleGenericDropdown from "./SingleGenericDropdown";
+import { TableHeaderCell } from "./TableHeaderCell";
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -108,9 +108,8 @@ function DynamicGrid<T>({
     fetchData();
   }, []);
 
-
   React.useEffect(() => {
-    setColumnWidths();
+    setColumnWidths(tableRef.current as HTMLElement);
   }, [selected]);
 
   function handleSort(
@@ -165,122 +164,6 @@ function DynamicGrid<T>({
 
   function getStyleVal(elm: HTMLElement, css: string): string {
     return window.getComputedStyle(elm, null).getPropertyValue(css);
-  }
-
-  interface ColumnWidths {
-    [columnId: string]: number;
-  }
-
-  interface IconWidths {
-    [columnId: string]: number;
-  }
-
-  function setColumnWidths() {
-    const table = tableRef.current as HTMLElement;
-    if (!table) return;
-
-    const columnWidths: ColumnWidths = {};
-
-    // const allRows = [...table.querySelectorAll('[class*="' + "tr" + '"]')];
-
-    function visualLength(s: string) {
-      const ruler = document.createElement("div");
-      (ruler as HTMLElement).style.boxSizing = `border-box`;
-      ruler.style.display = "block";
-      ruler.style.visibility = "hidden";
-      ruler.style.position = "absolute";
-      ruler.style.whiteSpace = "nowrap";
-      ruler.innerText = s;
-      document.body.appendChild(ruler);
-      const padding = paddingDiff(ruler as HTMLElement);
-      const width = ruler.offsetWidth + padding;
-      document.body.removeChild(ruler);
-      return width;
-    }
-
-    // allRows.forEach((row, rowNumber: number) => {
-      const ths = table.querySelectorAll('[class*="' + "_th" + '"]');
-      const tds = table.querySelectorAll('[class*="' + "_td" + '"]');
-      const cells = [...ths, ...tds];
-
-
-      cells.forEach((cell) => {
-        const columnId = cell.getAttribute("data-column-id");
-        if (columnId && cell.getAttribute("hidden") === null) {
-          var cellCopy = cell.cloneNode(true) as HTMLElement;
-          let iconsToRemove = cellCopy.querySelectorAll("span");
-          for (let i = 0; i < iconsToRemove.length; i++) {
-            iconsToRemove[i].remove();
-          }
-          var spanWidths = 0;
-          const icons = cell.querySelectorAll("span");
-          if (icons && icons.length > 0) {
-            for (let i = 0; i < icons.length; i++) {
-              const icon = icons[i] as HTMLElement;
-              spanWidths += icon.offsetWidth;
-            }
-          }
-
-          const input = cell.querySelector("input");
-          const inputWidth = input ? visualLength(input.value || "") ?? 0 : 0;
-          let cellWidth = input
-            ? inputWidth + spanWidths
-            : (visualLength(cellCopy.textContent || "") ?? 0) + spanWidths;
-
-          // input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} inputWidth: ${inputWidth} input.value: ${
-          //       input.value
-          //     } iconWidth: ${spanWidths}, ${inputWidth} + ${spanWidths} = ${
-          //       inputWidth + spanWidths
-          //     }`
-          //   );
-
-          // !input &&
-          //   Log(
-          //     `rowNumber: ${rowNumber}, columnId ${columnId} cellWidth + spanWidths: ${cellWidth} + ${spanWidths} = ${
-          //       cellWidth + spanWidths
-          //     }`
-          //   );
-
-          const existingWidth = columnWidths[columnId];
-          if (cellWidth > (existingWidth || 0)) {
-            columnWidths[columnId] = cellWidth;
-          }
-        }
-      });
-    // });
-
-
-    Object.entries(columnWidths).map((width) => {
-      const [key, value] = width;
-      const cols = table.querySelectorAll(`[data-column-id="${key}"]`);
-      cols.forEach((col) => {
-        if (col) {
-          (col as HTMLElement).style.width = `auto`;
-          (col as HTMLElement).style.display = "inline-block";
-          (col as HTMLElement).style.whiteSpace = "nowrap";
-          (col as HTMLElement).style.textAlign = "left";
-          (col as HTMLElement).style.margin = "1px";
-          (col as HTMLElement).style.padding = "1px";
-          (col as HTMLElement).style.minHeight = "100%";
-          (col as HTMLElement).style.minWidth = `${Math.round(value)}px`;
-          (col as HTMLElement).style.width = `${Math.round(value)}px`;
-        }
-      });
-    });
-
-    let tableWidth = 0;
-    const columns = table.querySelectorAll('[class*="' + "th" + '"]');
-    columns.forEach((col) => {
-      tableWidth +=
-        parseInt((col as HTMLElement).style.width) +
-        paddingDiff(col as HTMLElement);
-    });
-
-    // (table as HTMLElement).style.width = tableWidth.toString() + "px";
-    // (table as HTMLElement).style.zIndex = zIndex.toString()
-    return columnWidths;
   }
 
   function setRowHeights(tableId?: string) {
@@ -434,7 +317,7 @@ function DynamicGrid<T>({
 
     if (colDivider) {
       colDivider.addEventListener("dblclick", function (e: MouseEvent): void {
-        setColumnWidths();
+        setColumnWidths(tableRef.current as HTMLElement);
       });
     }
   }
@@ -445,7 +328,7 @@ function DynamicGrid<T>({
       const header = columns.map((cols, idx: number) => {
         return (
           !isColumnHidden(data, cols) && (
-            <TableHeader
+            <TableHeaderCell
               key={cols}
               columnName={cols}
               onClick={(e) => handleSort(e, cols)}
@@ -454,7 +337,7 @@ function DynamicGrid<T>({
                 className={styles["coldivider"]}
                 onMouseEnter={setListeners}
               ></div>
-            </TableHeader>
+            </TableHeaderCell>
           )
         );
       });
@@ -598,20 +481,23 @@ function DynamicGrid<T>({
                   ref={tableRef}
                   className={styles["divTable"]}
                 >
-                  <div className={styles["tr"]} data-row-id="0">
-                    {header}
+                  <div className={styles["thead"]}>
+                    <div className={styles["tr"]} data-row-id="0">
+                      {header}
+                    </div>
                   </div>
-
                   <div key={"tbody"} className={styles["tbody"]}>
                     {rows}
                   </div>
                 </div>
-                <Pagination
-                  id="pagination1"
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+
+                  <Pagination
+                    id="pagination1"
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+
               </div>
             </>
           );

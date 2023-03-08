@@ -65,64 +65,63 @@ export function Pagination({
   }
 
   return totalPages > 1 ? (
-    <div
-    id={id}
-      className={styles["paginationDiv"]}
-      style={style}
-    >
-      <div
-        className={styles["tr"]}
-        style={{
-          height: "50px",
-          textAlign: "center",
-          justifyContent: "center",
-        }}
-      >
-        {pageNumbers.map(
-          (pageNumber) =>
-            pageNumber === 1 && (
-              <p key={currentPage}>
-                Page <br />{currentPage}&nbsp;of {totalPages}
-              </p>
-            )
-        )}
-        {showChevrons && (
-          <div
-            className={styles["td"]}
-            style={{ height: "100%", borderColor: "transparent" }}
-          >
-            <span
-              className={`material-symbols-outlined ${styles["page-button"]}`}
-              onClick={() => handlePageChange(currentPage - 1)}
+    <div id={id} className={styles["paginationDiv"]} style={style}>
+      <div className="tfoot">
+        <div
+          className="tr"
+          style={{
+            height: "50px",
+            textAlign: "center",
+            justifyContent: "center",
+          }}
+        >
+          {pageNumbers.map(
+            (pageNumber) =>
+              pageNumber === 1 && (
+                <p key={currentPage}>
+                  Page <br />
+                  {currentPage}&nbsp;of {totalPages}
+                </p>
+              )
+          )}
+          {showChevrons && (
+            <div
+              className="td"
+              style={{ height: "100%", borderColor: "transparent" }}
             >
-              chevron_left
-            </span>
-          </div>
-        )}
-        {pageNumbers.map((pageNumber) => (
-          <button
-            id={`button${pageNumber}`}
-            key={pageNumber}
-            onClick={() => handlePageChange(pageNumber)}
-            className={`${
-              pageNumber === currentPage ? styles.active : styles.button
-            } ${styles["td"]}`}
-            style={{ color: "white", width: "auto", display: "flex" }}
-          >
-            {pageNumber}
-          </button>
-        ))}
+              <span
+                className={`material-symbols-outlined ${styles["page-button"]}`}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                chevron_left
+              </span>
+            </div>
+          )}
+          {pageNumbers.map((pageNumber) => (
+            <button
+              id={`button${pageNumber}`}
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`${
+                pageNumber === currentPage ? styles.active : styles.button
+              } ${"td"}`}
+              style={{ color: "white", width: "auto", display: "flex" }}
+            >
+              {pageNumber}
+            </button>
+          ))}
 
-        {showChevrons && (
-          <div className={styles["td"]} style={{ height: "100%" }}>
-            <span
-              className={`material-symbols-outlined ${styles["page-button"]}`}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              chevron_right
-            </span>
-          </div>
-        )}
+          {showChevrons && (
+            <div className={styles["td"]} style={{ height: "100%" }}>
+              <span
+                className={`material-symbols-outlined ${"page-button"}`}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                chevron_right
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   ) : null;

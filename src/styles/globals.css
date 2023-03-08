@@ -104,10 +104,12 @@ input  {
 }
 .black {
   color: black;
+  background-color: transparent;
 }
 
 .white {
   color: white;
+  background-color: transparent;
 }
 /*
 div {
@@ -209,4 +211,19 @@ input {
 
 .rz-body {
   overflow-x: hidden;
+}
+.react-datepicker__month-container>*  {
+  z-index: 2;
+  opacity: 1;
+}
+
+.tfoot>.tr {
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+  flex-direction: row;
+}
+
+.page-button {
+  color: black;
 }

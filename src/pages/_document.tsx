@@ -1,11 +1,11 @@
 import { Html, Head, Main, NextScript } from "next/document";
 import Link from "next/link";
+import Script from "next/script";
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
       </Head>
       <body className="font-sans antialiased text-lg bg-wash dark:bg-wash-dark text-secondary dark:text-secondary-dark leading-base">
@@ -55,6 +55,9 @@ export default function Document() {
         <Main />
         <NextScript />
       </body>
+      {/* <>
+        <Script src="./custom.js" />
+      </> */}
     </Html>
   );
 }

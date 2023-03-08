@@ -87,7 +87,6 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   function handleMouseEnter(e) {
     Log("Mouse Enter dropdown.tsx");
-    Log((e.target as HTMLElement).querySelectorAll("span"));
     setShowDropdown(true);
   }
   function handleMouseLeave(e) {

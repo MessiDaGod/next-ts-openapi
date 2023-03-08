@@ -10,7 +10,7 @@ interface Props {
   initialWidth?: string | undefined;
 }
 
-export function TableHeader({
+export function TableHeaderCell({
   children,
   columnName,
   initialState,

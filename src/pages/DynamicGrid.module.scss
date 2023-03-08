@@ -33,7 +33,7 @@ $table-border: #d9d9d9;
 }
 
 
-.tr {
+.thead>.tr {
     display: flex;
     vertical-align: middle;
     align-items: center;
@@ -69,6 +69,8 @@ $table-border: #d9d9d9;
     background-color: white;
     border-top-color: #CCCCCC;
     z-index: 0;
+    // box-sizing: border-box;
+    // border: 1px solid transparent;
 }
 
 .td {
@@ -78,10 +80,9 @@ $table-border: #d9d9d9;
     z-index: 0;
     color: white;
     text-overflow: ellipsis;
-    // box-sizing: border-box;
     user-select: text;
-    // border-left: 2px solid rgb(105, 105, 105);
-    // border-right: 2px solid  rgb(105, 105, 105);
+    // border: 1px solid red;
+    // box-sizing: border-box;
 }
 
 .td.focus {
@@ -312,4 +313,14 @@ $table-border: #d9d9d9;
     height: 45px;
     width: 100%;
     cursor: text;
+}
+
+.thead>.tr {
+    background-color: white;
+}
+
+.tfoot {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
 }
