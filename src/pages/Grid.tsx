@@ -100,7 +100,7 @@ export default function Grid({}) {
     <>
       <>
         <section
-          className="h-full flex flex-grow p-4 gap-4 overflow-x-auto"
+          className="flex flex-grow p-4 gap-4 overflow-x-auto"
           style={{
             flexFlow: "row nowrap",
             placeContent: "flex-start",
@@ -111,7 +111,7 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="h-full w-full bg-white shadow flex rounded items-center">
+            <div className="w-full bg-white shadow flex rounded items-center">
               <Dropdown
                 jsonFileName="GetOptions"
                 label="Choose Item"
@@ -124,8 +124,8 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="h-full w-full bg-white shadow flex rounded items-center">
-              <div className="flex-1 relative h-full flex items-center">
+            <div className="w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
                   <SingleGenericDropdown
                     selectItem={"GetPropOptions"}
@@ -142,8 +142,8 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="h-full w-full bg-white shadow flex rounded items-center">
-              <div className="flex-1 relative h-full flex items-center">
+            <div className="w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
                   <SingleGenericDropdown
                     selectItem={"GetVendors"}
@@ -160,8 +160,8 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="h-full w-full bg-white shadow flex rounded items-center">
-              <div className="flex-1 relative h-full flex items-center">
+            <div className="w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
                   <SingleGenericDropdown
                     selectItem={"GetAccounts"}
@@ -178,8 +178,8 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="h-full w-full shadow flex rounded items-center">
-              <div className="flex-1 relative h-full flex items-center">
+            <div className="w-full shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
                   <form
                     style={{

@@ -150,123 +150,73 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <>
-        <div
-          className={styles["dropdown"]}
-          style={{ position: "relative", display: "inline-block" }}
-        >
-          <button
-            className={`${styles["expandButton"]} ${
-              collapsed ? styles.collapsed : styles.expanded
-            }`}
-            onClick={handleCollapse}
-          >
-            {
-              <span
-                className={cn("material-symbols-outlined")}
-                style={{ display: "flex", paddingLeft: "10px", paddingBottom: "10px", color: "white", position: "relative", zIndex: 2 }}
-              >
-                menu
-              </span>
-            }
-          </button>
-        </div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <nav
           className={`${styles["sidebar"]} ${
             collapsed ? styles.collapsed : styles.expanded
           }`}
         >
-          <div>
+          <div style={{ flexDirection: "row" }}>
+            <button
+              className={`${styles["expandButton"]} ${
+                collapsed ? styles.collapsed : styles.expanded
+              }`}
+              onClick={handleCollapse}
+              style={{ marginBottom: "10px" }}
+            >
+              {
+                <span
+                  className={cn("material-symbols-outlined", collapsed && "collapsed")}
+                  style={{
+                    color: "white",
+                  }}
+                >
+                  menu
+                </span>
+              }
+            </button>
+
             <input
               id="search-input"
               type="search"
-              className="rz-textbox findcomponent"
               placeholder="Find component ..."
               autoComplete="on"
               style={{
                 padding: "1rem",
                 color: "white",
+                marginTop: "20px",
                 backgroundColor: "inherit",
                 fontSize: "16px",
                 borderBottom: "1px solid #2f333d",
                 borderTop: "1px solid #2f333d",
                 width: "100%",
                 cursor: "pointer",
+                order: 1,
               }}
             ></input>
           </div>
-          <div className={styles["ul"]}>
-            {menu?.sidebarItems.map((item, index: number) => (
-              <a
-                key={index}
-                className={styles["sidebar__item"]}
-                href={item.Path}
-                data-column-id={item.Name}
-                style={{
-                  fontSize: "16px",
-                  borderBottom: "1px solid #2f333d",
-                  borderTop: "1px solid #2f333d",
-                  width: "100%",
-                }}
-              >
-                <span className="material-symbols-outlined">{item.Icon}</span>
-                {item.Name}
-              </a>
-            ))}
+          <div style={{ flexDirection: "row" }}>
+            <div className={styles["ul"]}>
+              {menu?.sidebarItems.map((item, index: number) => (
+                <a
+                  key={index}
+                  className={styles["sidebar__item"]}
+                  href={item.Path}
+                  data-column-id={item.Name}
+                  style={{
+                    fontSize: "16px",
+                    borderBottom: "1px solid #2f333d",
+                    borderTop: "1px solid #2f333d",
+                    width: "100%",
+                  }}
+                >
+                  <span className="material-symbols-outlined">{item.Icon}</span>
+                  {item.Name}
+                </a>
+              ))}
+            </div>
           </div>
         </nav>
-      </>
-      <div className={styles["topbar"]}>
-        <a
-          type="button"
-          className={styles.sitelogo}
-          onClick={() => goHome()}
-          style={{
-            borderStyle: "none",
-            borderColor: "transparent",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "24px",
-              userSelect: "none",
-              cursor: "pointer",
-              marginLeft: "10px",
-              marginTop: "10px",
-            }}
-          >
-            Shakely Consulting
-          </span>
-        </a>
-        <div className={styles["linksContainer"]}>
-          <Link
-            key={"isMobile"}
-            children={type}
-            href=""
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginRight: "1rem",
-              alignItems: "center",
-              verticalAlign: "middle",
-            }}
-          ></Link>
-          {menu?.topBar.map((item, index: number) => (
-            <Link
-              key={`${item}_${index}`}
-              className={styles["links"]}
-              href={item.url}
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginRight: "1rem",
-              }}
-              title={item.label}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
       </div>
       <div
         className={cn(

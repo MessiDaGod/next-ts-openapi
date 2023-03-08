@@ -280,3 +280,9 @@ p {
 .red:hover {
   color: red;
 }
+
+.collapsed {
+  position: absolute;
+  z-index: 10;
+  background-color: transparent;
+}
