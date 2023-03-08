@@ -150,51 +150,44 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <span
+        className={cn("material-symbols-outlined")}
+        style={{
+          paddingLeft: "10px",
+          color: "white",
+          zIndex: 1000,
+          order: 0,
+          position: "fixed",
+        }}
+        onClick={handleCollapse}
+      >
+        menu
+      </span>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <nav
           className={`${styles["sidebar"]} ${
             collapsed ? styles.collapsed : styles.expanded
           }`}
         >
-          <div style={{ flexDirection: "row" }}>
-            <button
-              className={`${styles["expandButton"]} ${
-                collapsed ? styles.collapsed : styles.expanded
-              }`}
-              onClick={handleCollapse}
-              style={{ marginBottom: "10px" }}
-            >
-              {
-                <span
-                  className={cn("material-symbols-outlined", collapsed && "collapsed")}
-                  style={{
-                    color: "white",
-                  }}
-                >
-                  menu
-                </span>
-              }
-            </button>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Find component ..."
+            autoComplete="on"
+            style={{
+              padding: "1rem",
+              color: "white",
+              backgroundColor: "inherit",
+              fontSize: "16px",
+              borderBottom: "1px solid #2f333d",
+              borderTop: "1px solid #2f333d",
+              width: "100%",
+              cursor: "pointer",
+              marginTop: "20px",
+              order: 1,
+            }}
+          ></input>
 
-            <input
-              id="search-input"
-              type="search"
-              placeholder="Find component ..."
-              autoComplete="on"
-              style={{
-                padding: "1rem",
-                color: "white",
-                marginTop: "20px",
-                backgroundColor: "inherit",
-                fontSize: "16px",
-                borderBottom: "1px solid #2f333d",
-                borderTop: "1px solid #2f333d",
-                width: "100%",
-                cursor: "pointer",
-                order: 1,
-              }}
-            ></input>
-          </div>
           <div style={{ flexDirection: "row" }}>
             <div className={styles["ul"]}>
               {menu?.sidebarItems.map((item, index: number) => (
