@@ -78,24 +78,20 @@ export function Pagination({
           {pageNumbers.map(
             (pageNumber) =>
               pageNumber === 1 && (
-                <p key={currentPage}>
+                <p key={currentPage} style={{ color: "" }}>
                   Page <br />
-                  {currentPage}&nbsp;of {totalPages}
+                  {currentPage}&nbsp;of {totalPages}<br />
+                  ({totalPages} items)
                 </p>
               )
           )}
           {showChevrons && (
-            <div
-              className="td"
-              style={{ height: "100%", borderColor: "transparent" }}
+            <span
+              className={`material-symbols-outlined ${"white"}`}
+              onClick={() => handlePageChange(currentPage - 1)}
             >
-              <span
-                className={`material-symbols-outlined ${styles["page-button"]}`}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                chevron_left
-              </span>
-            </div>
+              chevron_left
+            </span>
           )}
           {pageNumbers.map((pageNumber) => (
             <button
@@ -103,23 +99,20 @@ export function Pagination({
               key={pageNumber}
               onClick={() => handlePageChange(pageNumber)}
               className={`${
-                pageNumber === currentPage ? styles.active : styles.button
+                pageNumber === currentPage ? "active-button" : "button"
               } ${"td"}`}
-              style={{ color: "white", width: "auto", display: "flex" }}
             >
               {pageNumber}
             </button>
           ))}
 
           {showChevrons && (
-            <div className={styles["td"]} style={{ height: "100%" }}>
-              <span
-                className={`material-symbols-outlined ${"page-button"}`}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                chevron_right
-              </span>
-            </div>
+            <span
+              className={`material-symbols-outlined ${"white"}`}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              chevron_right
+            </span>
           )}
         </div>
       </div>

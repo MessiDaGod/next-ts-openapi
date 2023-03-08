@@ -24,6 +24,7 @@
     border-top: 2px solid  rgb(105, 105, 105);
     padding-top: 2px;
     padding-bottom: 2px;
+    z-index: 0;
 }
 
 .th,
@@ -34,9 +35,9 @@
     margin: 0;
     user-select: none;
     vertical-align: middle;
-    z-index: 0;
     box-sizing: content-box;
     padding: 0.4em 0.6em;
+    z-index: 0;
 }
 
 .th,

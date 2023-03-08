@@ -44,6 +44,16 @@ $table-border: #d9d9d9;
     z-index: 0;
 }
 
+.tr {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    width: 100%;
+    border-top: 2px solid rgb(105, 105, 105);
+    padding-top: 2px;
+    padding-bottom: 2px;
+    z-index: 0;
+}
 .th,
 .td {
     overflow: hidden;

@@ -67,7 +67,6 @@ export function parseValue(value: string, columnName: string): string {
   }
 }
 
-
 export class CustomError extends Error {
   constructor(message: string) {
     super(message);
@@ -376,4 +375,25 @@ export function setDropdownGridWidths(dropdownRef: HTMLElement | null) {
   // (table as HTMLElement).style.width = tableWidth.toString() + "px";
   // (table as HTMLElement).style.zIndex = zIndex.toString()
   return columnWidths;
+}
+
+export function setAllZIndicesToZero() {
+  // Get all elements on the page
+  const allElements = document.querySelectorAll("*");
+
+  // Loop through each element and set its z-index to 0
+  allElements.forEach((element) => {
+    (element as HTMLElement).style.zIndex = "0";
+  });
+}
+
+export function setAllZIndicesTo1000(doc: HTMLElement) {
+
+  if (!doc) return;
+  const allElements = doc.querySelectorAll("*");
+
+  // Loop through each element and set its z-index to 0
+  allElements.forEach((element, index: number) => {
+    (element as HTMLElement).style.zIndex = "1000";
+  });
 }

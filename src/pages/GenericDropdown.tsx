@@ -474,7 +474,7 @@ function GenericDropdown<T>({
     container.querySelector(
       '[class*="' + cn(styles["dd-container"]) + '"]'
     ) as HTMLElement;
-    container.style.zIndex = "10";
+    container.style.zIndex = "1001";
     // setAllZIndexesHigh();
 
     setShowSearchBox(true);
