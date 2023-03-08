@@ -57,6 +57,7 @@ export interface SingleGenericDropdownProps
   numItems?: number | null;
   columns?: string[] | null;
   value?: string | null;
+  getHasValue?: boolean | null;
 }
 
 function GenericDropdown<T>({
@@ -68,6 +69,7 @@ function GenericDropdown<T>({
   itemsPerPage,
   numItems,
   value,
+  getHasValue,
 }: SingleGenericDropdownProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
@@ -82,7 +84,7 @@ function GenericDropdown<T>({
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isTableRefActive, setIsTableRefActive] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
-  const [hasValue, setHasValue] = React.useState(false);
+  const [hasValue, setHasValue] = React.useState(getHasValue || false);
   const [resetDefaultValue, setResetDefaultValue] = React.useState(getHeaderValue(selectItem));
 
   const propertyInputId = React.useId();

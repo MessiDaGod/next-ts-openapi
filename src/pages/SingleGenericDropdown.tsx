@@ -81,6 +81,10 @@ function SingleGenericDropdown<T>({
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
+  const [hasValue, setHasValue] = React.useState(false);
+  const [isTableRefActive, setIsTableRefActive] = React.useState(false);
+  const [resetDefaultValue, setResetDefaultValue] = React.useState(getHeaderValue(selectItem));
+
   const propertyInputId = React.useId();
 
   itemsPerPage = itemsPerPage ?? 10;
@@ -604,6 +608,25 @@ function SingleGenericDropdown<T>({
     // }
   };
 
+  const handleResetDefaultValue = (e) => {
+
+    setResetDefaultValue(getHeaderValue(selectItem));
+    setSelectedItem(selectItem);
+    setHasValue(false);
+    setInputValue(getHeaderValue(selectItem));
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = getHeaderValue(selectItem);
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
+
+
   if (table && Array.isArray(data) && data.length > 0) {
     return (
       <div
@@ -639,6 +662,14 @@ function SingleGenericDropdown<T>({
                 }}
               >
                 {showSearchBox ? "expand_more" : "expand_less"}
+                {hasValue && (
+                      <span className={cn("material-symbols-outlined", "red")}
+                      onClick={handleResetDefaultValue}
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>close</span>
+                    )}
               </span>
             </label>
           </div>

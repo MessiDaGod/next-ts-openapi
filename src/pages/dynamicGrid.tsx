@@ -30,6 +30,7 @@ interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   numItems?: number | undefined;
   isActive?: boolean;
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
+  getHasValue?: boolean | null;
 }
 
 function DynamicGrid<T>({
@@ -40,6 +41,7 @@ function DynamicGrid<T>({
   isActive,
   className,
   handleInputChange,
+  getHasValue,
 }: DynamicGridProps) {
   const [data, setData] = React.useState<T[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -53,6 +55,7 @@ function DynamicGrid<T>({
   const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
   const [startDate, setStartDate] = React.useState(new Date());
+  const [hasValue, setHasValue] = React.useState(getHasValue || false);
   // const [endDate, setEndDate] = React.useState(new Date());
   // const [inputValue, setInputValue] = React.useState("");
 
@@ -423,6 +426,7 @@ function DynamicGrid<T>({
                         tableRef={tableRef}
                         columns={columns[getSelectKey(key)]}
                         onChange={handleInputChange}
+                        getHasValue={hasValue}
                       />
                     ) : key.toUpperCase() === "DATE" ? (
                       <DatePicker
