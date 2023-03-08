@@ -77,8 +77,8 @@ function DynamicGrid<T>({
   // }, [data]);
 
   // React.useEffect(() => {
-  //   setColumnWidths();
-  // }, [isActiveTableRef]);
+  //   setColumnWidths(tableRef.current)
+  // }, [activeDropdown, isActiveTableRef]);
 
   React.useEffect(() => {
     setNumOfItems((numItems ?? 1) + 1);
@@ -108,9 +108,10 @@ function DynamicGrid<T>({
     fetchData();
   }, []);
 
-  React.useEffect(() => {
-    setColumnWidths(tableRef.current as HTMLElement);
-  }, [selected]);
+
+  // React.useEffect(() => {
+  //   setColumnWidths(tableRef.current as HTMLElement);
+  // }, [selected]);
 
   function handleSort(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -410,7 +411,7 @@ function DynamicGrid<T>({
                     data-column-id={key}
                     style={{ width: "100px" }}
                     ref={dropdownRef}
-                    onClick={handleFocus}
+                    // onClick={handleFocus}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
@@ -515,7 +516,9 @@ function DynamicGrid<T>({
   const table = GenerateTableHtml();
 
   function handleDynamicGridMouseEnter(e) {
-    setIsActiveTableRef(true);
+    // setActiveDropdown(tableRef.current);
+    // setIsActiveTableRef(!isActiveTableRef);
+    setColumnWidths(tableRef.current as HTMLElement);
   }
 
   if (table && Array.isArray(data) && data.length > 0) {

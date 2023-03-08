@@ -14,7 +14,7 @@ import SingleGenericDropdown from "./SingleGenericDropdown";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
 import {
-  ColumnWidths,
+  setColumnWidths,
   CustomError,
   Log,
   headerize,
@@ -45,10 +45,6 @@ export default function Grid({}) {
     }
     await submitForm(item);
   }
-
-  // React.useEffect(() => {
-  //   setNumItems(1);
-  // }, []);
 
   async function handleTextareaChange(e) {
     setNumItems(e.target.value);

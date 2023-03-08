@@ -80,7 +80,11 @@ function GenericDropdown<T>({
   const dropdownRef = useRef<HTMLDivElement | undefined>(undefined);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
+  const [isTableRefActive, setIsTableRefActive] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
+  const [hasValue, setHasValue] = React.useState(false);
+  const [resetDefaultValue, setResetDefaultValue] = React.useState(getHeaderValue(selectItem));
+
   const propertyInputId = React.useId();
 
   itemsPerPage = itemsPerPage ?? 10;
@@ -94,6 +98,11 @@ function GenericDropdown<T>({
   React.useEffect(() => {
     setDropdownGridWidths(dropdownRef.current as HTMLElement);
   }, [showSearchBox]);
+
+  React.useEffect(() => {
+    // activeDropdown === null && setColumnWidths(tableRef.current as HTMLElement);
+    isTableRefActive && !showSearchBox && activeDropdown === tableRef.current && setColumnWidths(tableRef.current as HTMLElement);
+  }, [activeDropdown, isTableRefActive, showSearchBox]);
 
   React.useEffect(() => {
     setDropdownGridWidths(dropdownRef.current as HTMLElement);
@@ -264,28 +273,6 @@ function GenericDropdown<T>({
         });
       }
     });
-  }
-
-  function handleClick(e) {
-    setSelectedItem(
-      (e.target as HTMLElement).parentElement.children[2].textContent
-    );
-    const value = (e.target as HTMLElement).parentElement.children[2]
-      .textContent;
-    value && setInputValue(value);
-
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = value;
-    }
-
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-  }
-
-  function handleRowMouseOver(e) {
-    const target = e.target as HTMLElement;
-    target.classList.add(styles["hover"]);
   }
 
   // function createColumnsFromJson(json) {
@@ -562,6 +549,7 @@ function GenericDropdown<T>({
   function handleGenericDropdownMouseEnter(e) {
     setIsActiveDropdown(true);
     setShowSearchBox(true);
+    setIsTableRefActive(false);
     setActiveDropdown(dropdownRef.current);
     setDropdownGridWidths(dropdownRef.current as HTMLElement);
     // const searchInput = document.querySelector(
@@ -574,14 +562,59 @@ function GenericDropdown<T>({
     setIsActiveDropdown(false);
     setActiveDropdown(null);
     setShowSearchBox(false);
+    setIsTableRefActive(true);
   }
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (value: string) => {
     // if (!event.type === "message") {
-    Log(event.target.value);
-    setInputValue(event.target.value);
+    Log(value);
+    setInputValue(value);
     // }
   };
+
+
+  function handleClick(e) {
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    setHasValue(true);
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
+    }
+
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
+  function handleRowMouseOver(e) {
+    const target = e.target as HTMLElement;
+    target.classList.add(styles["hover"]);
+  }
+
+  const handleResetDefaultValue = (e) => {
+
+    setResetDefaultValue(getHeaderValue(selectItem));
+    setSelectedItem(selectItem);
+    setHasValue(false);
+    setInputValue(getHeaderValue(selectItem));
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = getHeaderValue(selectItem);
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
 
   if (table && Array.isArray(data) && data.length > 0) {
     return (
@@ -605,9 +638,9 @@ function GenericDropdown<T>({
             >
               <input
                 id={propertyInputId}
-                // onChange={handleInputChange}
+                readOnly={true}
                 defaultValue={getHeaderValue(selectItem)}
-                style={{ width: "100%" }}
+                style={{ width: "100%", userSelect: "none" }}
               />
               <span
                 className={cn("material-symbols-outlined", "white")}
@@ -619,6 +652,14 @@ function GenericDropdown<T>({
               >
                 {showSearchBox ? "expand_more" : "expand_less"}
               </span>
+              {hasValue && (
+                      <span className={cn("material-symbols-outlined", "red")}
+                      onClick={handleResetDefaultValue}
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>close</span>
+                    )}
             </label>
           </div>
           <div
