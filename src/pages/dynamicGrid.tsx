@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useRef } from "react";
+import React, { HTMLAttributes, useRef, useState } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 // import GoodColumns from "../../public/GoodColumns.json";
@@ -11,6 +11,7 @@ import {
   isColumnHidden,
   parseValue,
   setColumnWidths,
+  // Payable,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -22,6 +23,12 @@ import dimensions from "../../public/Dimensions.json";
 import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
 import { TableHeaderCell } from "./TableHeaderCell";
+import Script from "next/script";
+import { Payable } from "./dataStructure";
+import useBinaryFile from "./useBinaryFile";
+import { useDB, useDBQuery } from "./useDB";
+import { Database } from "sqlite3";
+
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -89,6 +96,7 @@ function DynamicGrid<T>({
     async function fetchData() {
       try {
         let response = [];
+
         setNumOfItems(numItems ?? 1);
         switch (selectItem) {
           case "GetDimensions":
@@ -110,7 +118,6 @@ function DynamicGrid<T>({
     }
     fetchData();
   }, []);
-
 
   // React.useEffect(() => {
   //   setColumnWidths(tableRef.current as HTMLElement);
@@ -496,13 +503,12 @@ function DynamicGrid<T>({
                   </div>
                 </div>
 
-                  <Pagination
-                    id="pagination1"
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-
+                <Pagination
+                  id="pagination1"
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             </>
           );
@@ -519,23 +525,71 @@ function DynamicGrid<T>({
 
   const table = GenerateTableHtml();
 
+//   function ResultTable( {results: Array<Payable>} ) {
+//     if( !results ) {
+//         return <div></div>
+//     }
+//     return (
+//         <table className="w-full">
+//             <thead>
+//                 <tr>
+//                     {results[0].columns.map( (c) => <th key={c}>{c}</th>)}
+//                 </tr>
+//             </thead>
+//             <tbody>
+//                 {results[0].values.map( (r) => <tr key={r}>
+//                     {r.map( (v) => <td key={v}>{v}</td> )}
+//                 </tr>)}
+//             </tbody>
+//         </table>
+//     )
+// }
+
   function handleDynamicGridMouseEnter(e) {
     // setActiveDropdown(tableRef.current);
     // setIsActiveTableRef(!isActiveTableRef);
     setColumnWidths(tableRef.current as HTMLElement);
   }
 
+  function ResultTable( {} ) {
+    const data = useBinaryFile( sqlliteURL )
+    const db = useDB(data);
+    const [query, setQuery] = useState( "SELECT name FROM  sqlite_schema WHERE type ='table' AND name NOT LIKE 'sqlite_%';" )
+    const results = useDBQuery( db, data, query )
+
+    return <p>You have {results.size} rows</p>
+    return (
+        <table className="w-full">
+            <thead>
+                <tr>
+                    {results[0].columns.map( (c) => <th key={c}>{c}</th>)}
+                </tr>
+            </thead>
+            <tbody>
+                {results[0].values.map( (r) => <tr key={r}>
+                    {r.map( (v) => <td key={v}>{v}</td> )}
+                </tr>)}
+            </tbody>
+        </table>
+    )
+}
+
+
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
     return (
-      <div
-        id="dynamicGridId"
-        className={className}
-        onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
-      >
-        {table}
-      </div>
+      <>
+        <Script type="module" strategy='beforeInteractive' src="/sql-loader.js"/>
+        <div
+          id="dynamicGridId"
+          className={className}
+          onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
+        >
+          {table}
+          {/* {ResultTable(data as any)} */}
+        </div>
+      </>
     );
   }
 }

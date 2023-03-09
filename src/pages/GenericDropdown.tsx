@@ -3,7 +3,7 @@ import React, { HTMLAttributes, useRef } from "react";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
 // import { getAccounts } from "./api/getAccounts";
-import styles from "./SingleGenericDropdown.module.scss";
+import styles from "./GenericDropdown.module.scss";
 import {
   ColumnWidths,
   CustomError,
@@ -46,8 +46,7 @@ async function getFromQuery(table: string, take: number) {
   }
 }
 
-export interface SingleGenericDropdownProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface GenericDropdownProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
   style?: React.CSSProperties;
   showPagination?: boolean;
@@ -58,6 +57,7 @@ export interface SingleGenericDropdownProps
   columns?: string[] | null;
   value?: string | null;
   getHasValue?: boolean | null;
+  isMultiple?: boolean | null;
 }
 
 function GenericDropdown<T>({
@@ -70,7 +70,8 @@ function GenericDropdown<T>({
   numItems,
   value,
   getHasValue,
-}: SingleGenericDropdownProps) {
+  isMultiple,
+}: GenericDropdownProps) {
   const [data, setData] = React.useState<T[]>([]);
   const [selected, setSelected] = React.useState(selectItem);
   const [sortState, setSortState] = React.useState<boolean>(true);
@@ -85,7 +86,9 @@ function GenericDropdown<T>({
   const [isTableRefActive, setIsTableRefActive] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const [hasValue, setHasValue] = React.useState(getHasValue || false);
-  const [resetDefaultValue, setResetDefaultValue] = React.useState(getHeaderValue(selectItem));
+  const [resetDefaultValue, setResetDefaultValue] = React.useState(
+    getHeaderValue(selectItem)
+  );
 
   const propertyInputId = React.useId();
 
@@ -103,7 +106,10 @@ function GenericDropdown<T>({
 
   React.useEffect(() => {
     // activeDropdown === null && setColumnWidths(tableRef.current as HTMLElement);
-    isTableRefActive && !showSearchBox && activeDropdown === tableRef.current && setColumnWidths(tableRef.current as HTMLElement);
+    isTableRefActive &&
+      !showSearchBox &&
+      activeDropdown === tableRef.current &&
+      setColumnWidths(tableRef.current as HTMLElement);
   }, [activeDropdown, isTableRefActive, showSearchBox]);
 
   React.useEffect(() => {
@@ -371,7 +377,7 @@ function GenericDropdown<T>({
                     className={styles["td"]}
                     data-column-id={key}
                     style={{ width: "100px" }}
-                    onClick={handleClick}
+                    onClick={isMultiple ? handleClickAll : handleClick}
                   >
                     {parseValue(value as string, key)}
                   </div>
@@ -456,13 +462,8 @@ function GenericDropdown<T>({
 
   function handleShowSearchBox(e) {
     setActiveDropdown(dropdownRef.current);
-    // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
-    // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
     const container = (dropdownRef.current as HTMLElement).parentElement
       .parentElement;
-    container.querySelector(
-      '[class*="' + cn(styles["dd-container"]) + '"]'
-    ) as HTMLElement;
     container.style.zIndex = "1001";
     // setAllZIndexesHigh();
 
@@ -470,15 +471,9 @@ function GenericDropdown<T>({
   }
 
   function handleMouseLeaveSearchBox(e) {
-    (dropdownRef.current as HTMLElement).style.zIndex = "0";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
     const container = (dropdownRef.current as HTMLElement).parentElement
       .parentElement;
-    container.querySelector(
-      '[class*="' + cn(styles["dd-container"]) + '"]'
-    ) as HTMLElement;
     container.style.zIndex = "0";
-    container.style.border = "";
     // setAllZIndexesLow();
     setActiveDropdown(null);
     setShowSearchBox(false);
@@ -567,15 +562,9 @@ function GenericDropdown<T>({
     setIsTableRefActive(true);
   }
 
-  const handleInputChange = (value: string) => {
-    // if (!event.type === "message") {
-    Log(value);
-    setInputValue(value);
-    // }
-  };
-
-
   function handleClick(e) {
+    Log(e.target);
+    (e.target as HTMLElement).parentElement.style.zIndex = "0";
     setSelectedItem(
       (e.target as HTMLElement).parentElement.children[2].textContent
     );
@@ -595,13 +584,56 @@ function GenericDropdown<T>({
     setActiveDropdown(tableRef.current);
   }
 
+  function handleClickAll(e) {
+    (e.target as HTMLElement).style.zIndex = "0";
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
+    }
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' +
+              getDataColumnId(selectItem) +
+              '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          (child as HTMLElement).querySelectorAll("input")[0].value = value;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            value;
+        });
+        // (cell as HTMLElement).parentElement.children[2].textContent;
+      });
+    }
+
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
   function handleRowMouseOver(e) {
     const target = e.target as HTMLElement;
     target.classList.add(styles["hover"]);
   }
 
   const handleResetDefaultValue = (e) => {
-
     setResetDefaultValue(getHeaderValue(selectItem));
     setSelectedItem(selectItem);
     setHasValue(false);
@@ -615,8 +647,7 @@ function GenericDropdown<T>({
     setShowSearchBox(false);
     setIsTableRefActive(true);
     setActiveDropdown(tableRef.current);
-  }
-
+  };
 
   if (table && Array.isArray(data) && data.length > 0) {
     return (
@@ -655,13 +686,17 @@ function GenericDropdown<T>({
                 {showSearchBox ? "expand_more" : "expand_less"}
               </span>
               {hasValue && (
-                      <span className={cn("material-symbols-outlined", "red")}
-                      onClick={handleResetDefaultValue}
-                      style={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}>close</span>
-                    )}
+                <span
+                  className={cn("material-symbols-outlined", "red")}
+                  onClick={handleResetDefaultValue}
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  close
+                </span>
+              )}
             </label>
           </div>
           <div

@@ -30,7 +30,7 @@
     border-top: 2px solid rgb(105, 105, 105);
     padding-top: 2px;
     padding-bottom: 2px;
-    z-index: 1001;
+    z-index: 0;
 }
 
 .th,
@@ -41,9 +41,7 @@
     margin: 0;
     user-select: none;
     vertical-align: middle;
-    z-index: 0;
     box-sizing: content-box;
-    z-index: 1001;
 }
 
 .th,
@@ -79,6 +77,10 @@
     padding: 0.4em 0.6em;
     // border-left: 2px solid rgb(105, 105, 105);
     // border-right: 2px solid  rgb(105, 105, 105);
+}
+
+.td:hover {
+    z-index: 1001;
 }
 
 // .tr>.td {

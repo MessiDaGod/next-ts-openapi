@@ -12,6 +12,7 @@ import "../styles/algolia.css";
 import "../styles/index.css";
 import "../styles/sandpack.css";
 import Menu from "../../public/menu.json";
+import Script from "next/script";
 
 // if (typeof window !== "undefined") {
 //   if (process.env.NODE_ENV === "production") {
@@ -218,6 +219,7 @@ export default function App({ Component, pageProps }: AppProps) {
           collapsed ? styles["rz-body-collapsed"] : styles["rz-body"]
         )}
       >
+
         <Component {...pageProps} />
       </div>
     </>
