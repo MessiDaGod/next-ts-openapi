@@ -367,16 +367,16 @@ function GenericDropdown<T>({
           (child as HTMLElement).querySelectorAll("input")[0].value = value;
           (child as HTMLElement).querySelectorAll("input")[0].textContent =
             value;
-            const span = document.createElement("span");
-            span.textContent = "close";
-            span.classList.add("material-symbols-outlined", "red");
-            span.style.alignItems = "center";
-            span.style.justifyContent = "center";
-            const input = (child as HTMLElement).querySelector("input");
-            const spanParent = input.parentElement.querySelector("span");
-            spanParent.appendChild(span);
+            // const span = document.createElement("span");
+            // span.textContent = "close";
+            // span.classList.add("material-symbols-outlined", "red");
+            // span.style.alignItems = "center";
+            // span.style.justifyContent = "center";
+            // const input = (child as HTMLElement).querySelector("input");
+            // const spanParent = input.parentElement.querySelector("span");
+            // spanParent.insertAdjacentElement("afterend", span);
+            // span.addEventListener("click", handleResetDefaultValue);
         });
-        // (cell as HTMLElement).parentElement.children[2].textContent;
       });
 
     }
@@ -393,9 +393,9 @@ function GenericDropdown<T>({
   }
 
   const handleResetDefaultValue = (e) => {
+    setHasValue(false);
     setResetDefaultValue(getHeaderValue(selectItem));
     setSelectedItem(selectItem);
-    setHasValue(false);
     setInputValue(getHeaderValue(selectItem));
 
     if (dropdownRef?.current) {
@@ -407,6 +407,23 @@ function GenericDropdown<T>({
     setIsTableRefActive(true);
     setActiveDropdown(tableRef.current);
   };
+
+  const handleResetDefaultValueAll = (e) => {
+    setHasValue(false);
+    setResetDefaultValue(getHeaderValue(selectItem));
+    setSelectedItem(selectItem);
+    setInputValue(getHeaderValue(selectItem));
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = getHeaderValue(selectItem);
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  };
+
   function handleShowSearchBox(e) {
     setActiveDropdown(dropdownRef.current);
     const container = (dropdownRef.current as HTMLElement).parentElement
@@ -697,7 +714,7 @@ function GenericDropdown<T>({
               {hasValue && (
                 <span
                   className={cn("material-symbols-outlined", "red")}
-                  onClick={handleResetDefaultValue}
+                  onClick={isMultiple ? handleResetDefaultValueAll : handleResetDefaultValue}
                   style={{
                     alignItems: "center",
                     justifyContent: "center",

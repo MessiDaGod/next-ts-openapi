@@ -395,9 +395,9 @@ export function setDropdownGridWidths(dropdownRef: HTMLElement | null) {
   return columnWidths;
 }
 
-export function setAllZIndicesToZero() {
+export function setAllZIndicesToZero(elem: HTMLElement) {
   // Get all elements on the page
-  const allElements = document.querySelectorAll("*");
+  const allElements = elem.querySelectorAll("*");
 
   // Loop through each element and set its z-index to 0
   allElements.forEach((element) => {

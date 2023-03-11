@@ -12,6 +12,8 @@ import {
   parseValue,
   setColumnWidths,
   getTableData,
+  setAllZIndicesToZero,
+  setAllZIndicesTo1000,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -442,6 +444,7 @@ function DynamicGrid<T>({
                         columns={columns[getSelectKey(key)]}
                         onChange={handleInputChange}
                         getHasValue={hasValue}
+                        isMultiple={false}
                       />
                     ) : key.toUpperCase() === "DATE" ? (
                       <DatePicker
@@ -559,7 +562,13 @@ function DynamicGrid<T>({
     setColumnWidths(tableRef.current as HTMLElement);
   }
 
+  function handleMouseOver(e) {
+    setAllZIndicesToZero(e.target);
+  }
 
+  function handleMouseLeave(e) {
+    setAllZIndicesTo1000(e.target);
+  }
 
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -572,6 +581,8 @@ function DynamicGrid<T>({
           id="dynamicGridId"
           className={className}
           onMouseEnter={(e) => handleDynamicGridMouseEnter(e)}
+          onMouseOver={(e) => handleMouseOver(e)}
+          onMouseLeave={(e) => handleMouseLeave(e)}
         >
           {table}
         </div>
