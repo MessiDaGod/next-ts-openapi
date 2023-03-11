@@ -169,7 +169,6 @@ function GenericDropdown<T>({
       });
     }
   }
-
   function handleSort(columnName: string) {
     let state = sortState;
     if (Array.isArray(data)) {
@@ -204,17 +203,17 @@ function GenericDropdown<T>({
     curRowHeight: number | undefined,
     nxtRowHeight: number | undefined;
 
-  function removeMouseDownListener(e) {
-    e.preventDefault();
-    document.addEventListener("mouseup", function (e: MouseEvent): void {
-      curRow = null;
-      nxtRow = null;
-      pageY = undefined;
-      curRowHeight = undefined;
-      nxtRowHeight = undefined;
-      console.info("removed mousedown listener");
-    });
-  }
+  // function removeMouseDownListener(e) {
+  //   e.preventDefault();
+  //   document.addEventListener("mouseup", function (e: MouseEvent): void {
+  //     curRow = null;
+  //     nxtRow = null;
+  //     pageY = undefined;
+  //     curRowHeight = undefined;
+  //     nxtRowHeight = undefined;
+  //     console.info("removed mousedown listener");
+  //   });
+  // }
 
   // function handleRowClick(e) {
   //   e.preventDefault();
@@ -292,8 +291,112 @@ function GenericDropdown<T>({
   //   }
   //   return columns;
   // }
+  function handleGenericDropdownMouseEnter(e) {
+    setIsActiveDropdown(true);
+    setShowSearchBox(true);
+    setIsTableRefActive(false);
+    setActiveDropdown(dropdownRef.current);
+    setDropdownGridWidths(dropdownRef.current as HTMLElement);
+    // const searchInput = document.querySelector(
+    //   `#${selected}_label`
+    // ) as HTMLElement;
+    // searchInput.focus();
+  }
 
+  function handleGenericDropdownMouseLeave(e) {
+    setIsActiveDropdown(false);
+    setActiveDropdown(null);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+  }
 
+  function handleClick(e) {
+    (e.target as HTMLElement).parentElement.style.zIndex = "0";
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    setHasValue(true);
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
+    }
+
+    setHasValue(!hasValue);
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
+  function handleClickAll(e) {
+    (e.target as HTMLElement).style.zIndex = "0";
+    setSelectedItem(
+      (e.target as HTMLElement).parentElement.children[2].textContent
+    );
+    const value = (e.target as HTMLElement).parentElement.children[2]
+      .textContent;
+    value && setInputValue(value);
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = value;
+    }
+
+    if (tableRef?.current) {
+      const allCells = Array.from(
+        new Set([
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            'div[data-column-id="' +
+              getDataColumnId(selectItem) +
+              '"][class*="td"]'
+          ),
+        ])
+      );
+      allCells.forEach((cell) => {
+        const children = Array.from(
+          new Set([...(cell as HTMLElement).children])
+        );
+
+        children.forEach((child) => {
+          (child as HTMLElement).querySelectorAll("input")[0].value = value;
+          (child as HTMLElement).querySelectorAll("input")[0].textContent =
+            value;
+        });
+        // (cell as HTMLElement).parentElement.children[2].textContent;
+      });
+    }
+
+    setHasValue(!hasValue);
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
+  function handleRowMouseOver(e) {
+    const target = e.target as HTMLElement;
+    target.classList.add(styles["hover"]);
+  }
+
+  const handleResetDefaultValue = (e) => {
+    setResetDefaultValue(getHeaderValue(selectItem));
+    setSelectedItem(selectItem);
+    setHasValue(!hasValue);
+    setInputValue(getHeaderValue(selectItem));
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = getHeaderValue(selectItem);
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  };
   function handleShowSearchBox(e) {
     setActiveDropdown(dropdownRef.current);
     const container = (dropdownRef.current as HTMLElement).parentElement
@@ -374,111 +477,6 @@ function GenericDropdown<T>({
       }
     }
   }
-
-  function handleGenericDropdownMouseEnter(e) {
-    setIsActiveDropdown(true);
-    setShowSearchBox(true);
-    setIsTableRefActive(false);
-    setActiveDropdown(dropdownRef.current);
-    setDropdownGridWidths(dropdownRef.current as HTMLElement);
-    // const searchInput = document.querySelector(
-    //   `#${selected}_label`
-    // ) as HTMLElement;
-    // searchInput.focus();
-  }
-
-  function handleGenericDropdownMouseLeave(e) {
-    setIsActiveDropdown(false);
-    setActiveDropdown(null);
-    setShowSearchBox(false);
-    setIsTableRefActive(true);
-  }
-
-  function handleClick(e) {
-    (e.target as HTMLElement).parentElement.style.zIndex = "0";
-    setSelectedItem(
-      (e.target as HTMLElement).parentElement.children[2].textContent
-    );
-    setHasValue(true);
-    const value = (e.target as HTMLElement).parentElement.children[2]
-      .textContent;
-    value && setInputValue(value);
-
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = value;
-    }
-
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-    setIsTableRefActive(true);
-    setActiveDropdown(tableRef.current);
-  }
-
-  function handleClickAll(e) {
-    (e.target as HTMLElement).style.zIndex = "0";
-    setSelectedItem(
-      (e.target as HTMLElement).parentElement.children[2].textContent
-    );
-    const value = (e.target as HTMLElement).parentElement.children[2]
-      .textContent;
-    value && setInputValue(value);
-
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = value;
-    }
-
-    if (tableRef?.current) {
-      const allCells = Array.from(
-        new Set([
-          ...(tableRef.current as HTMLElement).querySelectorAll(
-            'div[data-column-id="' +
-              getDataColumnId(selectItem) +
-              '"][class*="td"]'
-          ),
-        ])
-      );
-      allCells.forEach((cell) => {
-        const children = Array.from(
-          new Set([...(cell as HTMLElement).children])
-        );
-
-        children.forEach((child) => {
-          (child as HTMLElement).querySelectorAll("input")[0].value = value;
-          (child as HTMLElement).querySelectorAll("input")[0].textContent =
-            value;
-        });
-        // (cell as HTMLElement).parentElement.children[2].textContent;
-      });
-    }
-
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-    setIsTableRefActive(true);
-    setActiveDropdown(tableRef.current);
-  }
-
-  function handleRowMouseOver(e) {
-    const target = e.target as HTMLElement;
-    target.classList.add(styles["hover"]);
-  }
-
-  const handleResetDefaultValue = (e) => {
-    setResetDefaultValue(getHeaderValue(selectItem));
-    setSelectedItem(selectItem);
-    setHasValue(false);
-    setInputValue(getHeaderValue(selectItem));
-
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = getHeaderValue(selectItem);
-    }
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-    setIsTableRefActive(true);
-    setActiveDropdown(tableRef.current);
-  };
 
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {

@@ -8,9 +8,8 @@ import GenericDropdown from "./GenericDropdown";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
 
-import { GetServerSideProps } from 'next'
-import { Log } from "./utils";
-
+import { GetServerSideProps } from "next";
+import { Log, getTableData } from "./utils";
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -28,7 +27,6 @@ export default function Grid({}) {
   //     driver: sqlite3.Database,
   //   });
   // }
-
 
   async function handleSetItem(e) {
     setItem(e);
@@ -72,12 +70,36 @@ export default function Grid({}) {
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
             <div className="w-full bg-white shadow flex rounded items-center">
-              <Dropdown
-                jsonFileName="GetOptions"
-                label="Choose Item"
-                onItemChange={(e) => handleSetItem(e)}
-                showCheckbox={true}
-              />
+              <div className="flex-1 relative flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                  <Dropdown
+                    jsonFileName="GetOptions"
+                    label="Choose Item"
+                    onItemChange={(e) => handleSetItem(e)}
+                    showCheckbox={true}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="rounded"
+            style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="w-full bg-white shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
+                  <GenericDropdown
+                    selectItem={"GetVendors"}
+                    showPagination={true}
+                    showCheckbox={false}
+                    tableRef={tableRef}
+                    value={inputValue}
+                    isMultiple={true}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div
@@ -107,7 +129,7 @@ export default function Grid({}) {
               <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
                   <GenericDropdown
-                    selectItem={"GetVendors"}
+                    selectItem={"GetAccounts"}
                     showPagination={true}
                     showCheckbox={false}
                     tableRef={tableRef}
@@ -122,22 +144,6 @@ export default function Grid({}) {
             className="rounded"
             style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}
           >
-            <div className="w-full bg-white shadow flex rounded items-center">
-              <div className="flex-1 relative flex items-center">
-                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative white">
-                  <GenericDropdown
-                    selectItem={"GetAccounts"}
-                    showPagination={true}
-                    showCheckbox={false}
-                    tableRef={tableRef}
-                    value={inputValue}
-                    isMultiple={true}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="rounded" style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}>
             <div className="w-full shadow flex rounded items-center">
               <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
@@ -169,11 +175,16 @@ export default function Grid({}) {
               </div>
             </div>
           </div>
-          <div className="rounded" style={{ order: "0", flex: "0 1 auto", alignSelf: "auto" }}>
+          <div
+            className="rounded"
+            style={{ order: "1", flex: "0 1 auto", alignSelf: "auto" }}
+          >
             <div className="w-full shadow flex rounded items-center">
               <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-                  <button>Post Data</button>
+                  <button onClick={getTableData} className="button">
+                    Post Data
+                  </button>
                 </div>
               </div>
             </div>
@@ -184,14 +195,18 @@ export default function Grid({}) {
         style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
         ref={tableRef}
       >
-        {status === "success" && (
-          <DynamicGrid
-            key={item}
-            selectItem={item}
-            showPagination={true}
-            numItems={numItems}
-          />
-        )}
+        <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+          <section style={{ paddingTop: "1rem" }}>
+            {status === "success" && (
+              <DynamicGrid
+                key={item}
+                selectItem={item}
+                showPagination={true}
+                numItems={numItems}
+              />
+            )}
+          </section>
+        </div>
       </div>
     </>
   );

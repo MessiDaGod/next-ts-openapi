@@ -11,7 +11,7 @@ import {
   isColumnHidden,
   parseValue,
   setColumnWidths,
-  // Payable,
+  getTableData,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -469,14 +469,14 @@ function DynamicGrid<T>({
                   </div>
                 )
             )}{" "}
-            {
+            {/* {
               <span
                 className={cn("material-symbols-outlined", styles["share"])}
                 data-row-id={rowIndex + 1}
               >
                 ios_share
               </span>
-            }
+            } */}
             {/* {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>} */}
             {
               <span

@@ -242,8 +242,8 @@ input {
   cursor: pointer;
   margin: 2px;
   border-radius: 15px;
-  display: block;
-  transform: translateY(25%);
+  /* display: block;
+  transform: translateY(25%); */
   margin: 0px;
   z-index: 0;
 }
