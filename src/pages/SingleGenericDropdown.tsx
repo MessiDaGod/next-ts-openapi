@@ -326,6 +326,138 @@ function SingleGenericDropdown<T>({
   //   return columns;
   // }
 
+  function handleGenericDropdownMouseEnter(e) {
+    setIsActiveDropdown(true);
+    setShowSearchBox(true);
+    setActiveDropdown(dropdownRef.current);
+    // const searchInput = document.querySelector(
+    //   `#${selected}_label`
+    // ) as HTMLElement;
+    // searchInput.focus();
+  }
+
+  function handleGenericDropdownMouseLeave(e) {
+    setIsActiveDropdown(false);
+    setActiveDropdown(null);
+    setShowSearchBox(false);
+  }
+
+  const handleInputChange = (event) => {
+    // if (!event.type === "message") {
+    // Log(event.target.value);
+    setInputValue(event.target.value);
+    // }
+  };
+
+  const handleResetDefaultValue = (e) => {
+
+    setResetDefaultValue(getHeaderValue(selectItem));
+    setSelectedItem(selectItem);
+    setHasValue(false);
+    setInputValue(getHeaderValue(selectItem));
+
+    if (dropdownRef?.current) {
+      const input = dropdownRef.current.querySelector("input");
+      if (input) input.value = getHeaderValue(selectItem);
+    }
+    setIsActiveDropdown(false);
+    setShowSearchBox(false);
+    setIsTableRefActive(true);
+    setActiveDropdown(tableRef.current);
+  }
+
+  function handleShowSearchBox(e) {
+    setActiveDropdown(dropdownRef.current);
+    // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
+    // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
+    const container = (dropdownRef.current as HTMLElement).parentElement
+      .parentElement;
+    container.querySelector(
+      '[class*="' + cn(styles["dd-container"]) + '"]'
+    ) as HTMLElement;
+    container.style.zIndex = "10";
+    // setAllZIndexesHigh();
+
+    setShowSearchBox(true);
+  }
+
+  function handleMouseLeaveSearchBox(e) {
+    (dropdownRef.current as HTMLElement).style.zIndex = "0";
+    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
+    const container = (dropdownRef.current as HTMLElement).parentElement
+      .parentElement;
+    container.querySelector(
+      '[class*="' + cn(styles["dd-container"]) + '"]'
+    ) as HTMLElement;
+    container.style.zIndex = "0";
+    container.style.border = "";
+    // setAllZIndexesLow();
+    setActiveDropdown(null);
+    setShowSearchBox(false);
+  }
+
+  const handleCheckboxChange = (event: any) => {
+    setIsChecked(event.target.checked);
+  };
+
+  function Checkbox({}) {
+    return (
+      <label>
+        <br />
+        <input
+          id="checkbox"
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => handleCheckboxChange(e)}
+        />
+      </label>
+    );
+  }
+
+  function getHeaderValue(selectItem: string): string {
+    switch (selectItem) {
+      case "GetVendors":
+        return "Vendors";
+      case "GetPropOptions":
+        return "Properties";
+      case "GetAccounts":
+        return "Accounts";
+      case "GetDimensions":
+        return "Dimensions";
+      case "GetFromQuery":
+        return "Query";
+      default:
+        return selected;
+    }
+  }
+
+  function search(): void {
+    const searchInput = document.querySelector(`#${selected}_label`);
+    searchInput?.addEventListener("input", handleSearchInput);
+
+    function handleSearchInput() {
+      const sidebarItems = document.querySelectorAll(
+        `.${cn(styles["td"])}`
+      ) as NodeListOf<HTMLElement>;
+      let input = searchInput as HTMLInputElement;
+      const query = input.value.toLowerCase();
+
+      for (const item of sidebarItems) {
+        if (item) {
+          let newItem = item as HTMLElement;
+          if (newItem && newItem.dataset.columnId) {
+            const title = newItem.dataset.columnId.toString().toLowerCase();
+            if (title.includes(query)) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          }
+        }
+      }
+    }
+  }
+
   function GenerateTableHtml() {
     if (Array.isArray(data) && data.length > 0) {
       const myType =
@@ -491,141 +623,7 @@ function SingleGenericDropdown<T>({
     }
   }
 
-  function handleShowSearchBox(e) {
-    setActiveDropdown(dropdownRef.current);
-    // (dropdownRef.current as HTMLElement).style.zIndex = "10001";
-    // (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "10001";
-    const container = (dropdownRef.current as HTMLElement).parentElement
-      .parentElement;
-    container.querySelector(
-      '[class*="' + cn(styles["dd-container"]) + '"]'
-    ) as HTMLElement;
-    container.style.zIndex = "10";
-    // setAllZIndexesHigh();
-
-    setShowSearchBox(true);
-  }
-
-  function handleMouseLeaveSearchBox(e) {
-    (dropdownRef.current as HTMLElement).style.zIndex = "0";
-    (dropdownRef.current as HTMLElement).parentElement.style.zIndex = "0";
-    const container = (dropdownRef.current as HTMLElement).parentElement
-      .parentElement;
-    container.querySelector(
-      '[class*="' + cn(styles["dd-container"]) + '"]'
-    ) as HTMLElement;
-    container.style.zIndex = "0";
-    container.style.border = "";
-    // setAllZIndexesLow();
-    setActiveDropdown(null);
-    setShowSearchBox(false);
-  }
-
-  const handleCheckboxChange = (event: any) => {
-    setIsChecked(event.target.checked);
-  };
-
-  function Checkbox({}) {
-    return (
-      <label>
-        <br />
-        <input
-          id="checkbox"
-          type="checkbox"
-          checked={isChecked}
-          onChange={(e) => handleCheckboxChange(e)}
-        />
-      </label>
-    );
-  }
-
-  function getHeaderValue(selectItem: string): string {
-    switch (selectItem) {
-      case "GetVendors":
-        return "Vendors";
-      case "GetPropOptions":
-        return "Properties";
-      case "GetAccounts":
-        return "Accounts";
-      case "GetDimensions":
-        return "Dimensions";
-      case "GetFromQuery":
-        return "Query";
-      default:
-        return selected;
-    }
-  }
-
-  function search(): void {
-    const searchInput = document.querySelector(`#${selected}_label`);
-    searchInput?.addEventListener("input", handleSearchInput);
-
-    function handleSearchInput() {
-      const sidebarItems = document.querySelectorAll(
-        `.${cn(styles["td"])}`
-      ) as NodeListOf<HTMLElement>;
-      let input = searchInput as HTMLInputElement;
-      const query = input.value.toLowerCase();
-
-      for (const item of sidebarItems) {
-        if (item) {
-          let newItem = item as HTMLElement;
-          if (newItem && newItem.dataset.columnId) {
-            const title = newItem.dataset.columnId.toString().toLowerCase();
-            if (title.includes(query)) {
-              item.style.display = "block";
-            } else {
-              item.style.display = "none";
-            }
-          }
-        }
-      }
-    }
-  }
-
   const table = GenerateTableHtml();
-
-  function handleGenericDropdownMouseEnter(e) {
-    setIsActiveDropdown(true);
-    setShowSearchBox(true);
-    setActiveDropdown(dropdownRef.current);
-    // const searchInput = document.querySelector(
-    //   `#${selected}_label`
-    // ) as HTMLElement;
-    // searchInput.focus();
-  }
-
-  function handleGenericDropdownMouseLeave(e) {
-    setIsActiveDropdown(false);
-    setActiveDropdown(null);
-    setShowSearchBox(false);
-  }
-
-  const handleInputChange = (event) => {
-    // if (!event.type === "message") {
-    Log(event.target.value);
-    setInputValue(event.target.value);
-    // }
-  };
-
-  const handleResetDefaultValue = (e) => {
-
-    setResetDefaultValue(getHeaderValue(selectItem));
-    setSelectedItem(selectItem);
-    setHasValue(false);
-    setInputValue(getHeaderValue(selectItem));
-
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = getHeaderValue(selectItem);
-    }
-    setIsActiveDropdown(false);
-    setShowSearchBox(false);
-    setIsTableRefActive(true);
-    setActiveDropdown(tableRef.current);
-  }
-
-
 
   if (table && Array.isArray(data) && data.length > 0) {
     return (

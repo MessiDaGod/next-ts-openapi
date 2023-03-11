@@ -7,9 +7,7 @@ import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
-import sqlite3 from "sqlite3";
-import { open, Database } from "sqlite";
-import { Payable } from "./dataStructure";
+
 import { GetServerSideProps } from 'next'
 import { Log } from "./utils";
 
@@ -18,7 +16,7 @@ export default function Grid({}) {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");
-  const [numItems, setNumItems] = useState<number>(1);
+  const [numItems, setNumItems] = useState<number>(5);
   const tableRef = React.useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = React.useState("");
   const propertyInputId = React.useId();
