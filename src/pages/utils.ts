@@ -1,8 +1,8 @@
-import { openDB, DBSchema } from 'idb';
-import { Payable } from './dataStructure';
+import { openDB, DBSchema } from "idb";
+import { Payable } from "./dataStructure";
 
 interface MyDB extends DBSchema {
-  'dimensions': {
+  dimensions: {
     key: number;
     value: Payable;
   };
@@ -13,7 +13,7 @@ interface MyDB extends DBSchema {
       productCode: string;
     };
     key: string;
-    indexes: { 'by-id': number };
+    indexes: { "by-id": number };
   };
 }
 
@@ -424,38 +424,48 @@ export function dataExtractor() {
 
   let rows;
 
-  rows = table && table.querySelectorAll('div[data-row-id]');
+  rows = table && table.querySelectorAll("div[data-row-id]");
 
-  rows.forEach((row,index)=>{
-      const rowId = row.getAttribute("data-row-id");
+  rows.forEach((row, index) => {
+    const rowId = row.getAttribute("data-row-id");
 
-      const cells = row.querySelectorAll('div[class*=' + "td" + ']');
+    const cells = row.querySelectorAll("div[class*=" + "td" + "]");
 
-      console.log(`----------------------------${rowId}----------------------------------`)
-      cells.forEach((cell, cellIndex)=>{
-          const columnId = cell.getAttribute("data-column-id");
-          // console.log(`rowId: ${rowId} columnId: ${columnId} innerText: ${cell.innerText}`);
-          const input = cell.querySelector('input') as HTMLInputElement;
+    console.log(
+      `----------------------------${rowId}----------------------------------`
+    );
+    cells.forEach((cell, cellIndex) => {
+      const columnId = cell.getAttribute("data-column-id");
+      // console.log(`rowId: ${rowId} columnId: ${columnId} innerText: ${cell.innerText}`);
+      const input = cell.querySelector("input") as HTMLInputElement;
 
-          input && console.log(`${cell.querySelector('input').value} rowId: ${rowId} columnId: ${columnId} cellIndex: ${cellIndex + 1}`);
+      input &&
+        console.log(
+          `${
+            cell.querySelector("input").value
+          } rowId: ${rowId} columnId: ${columnId} cellIndex: ${cellIndex + 1}`
+        );
 
-          !input && console.log(`rowId: ${rowId} columnId: ${columnId} cellIndex: ${cellIndex + 1} innerText: ${cell.innerText}`);
-
-      });
+      !input &&
+        console.log(
+          `rowId: ${rowId} columnId: ${columnId} cellIndex: ${
+            cellIndex + 1
+          } innerText: ${cell.innerText}`
+        );
+    });
   });
 }
 
 export async function getTableData() {
-
   const table = document.querySelectorAll('[id*="gridjs_"]')[0];
 
   let rows: any[] | NodeListOf<HTMLElement>;
 
-  rows = table && table.querySelectorAll('div[data-row-id]');
+  rows = table && table.querySelectorAll("div[data-row-id]");
 
   const tableData = {};
 
-  rows.forEach((row, index)=>{
+  rows.forEach((row, index) => {
     if (index > 0) {
       const rowId = row.getAttribute("data-row-id");
 
@@ -463,15 +473,15 @@ export async function getTableData() {
 
       tableData[rowId] = {};
 
-      cells.forEach((cell, cellIndex)=>{
-          const columnId = cell.getAttribute("data-column-id");
-          const input = cell.querySelector('input') as HTMLInputElement;
+      cells.forEach((cell, cellIndex) => {
+        const columnId = cell.getAttribute("data-column-id");
+        const input = cell.querySelector("input") as HTMLInputElement;
 
-          if (input) {
-            tableData[rowId][columnId] = input.value.trim();
-          } else {
-            tableData[rowId][columnId] = (cell as HTMLElement).innerText.trim();
-          }
+        if (input) {
+          tableData[rowId][columnId] = input.value.trim();
+        } else {
+          tableData[rowId][columnId] = (cell as HTMLElement).innerText.trim();
+        }
       });
     }
   });
@@ -479,19 +489,19 @@ export async function getTableData() {
   const dimensions = JSON.parse(JSON.stringify(tableData)) as Array<Payable>;
   const payables = [...Array.from(dimensions)];
 
-  const db = await openDB<MyDB>('app-db', 1, {
+  const db = await openDB<MyDB>("app-db", 1, {
     upgrade(db) {
-      db.createObjectStore('dimensions');
+      db.createObjectStore("dimensions");
 
-      const dimensionStore = db.createObjectStore('dimension', {
-        keyPath: 'Id',
+      const dimensionStore = db.createObjectStore("dimension", {
+        keyPath: "Id",
       });
-      dimensionStore.createIndex('by-id', 'Id');
+      dimensionStore.createIndex("by-id", "Id");
     },
   });
 
   payables.forEach((dimension) => {
-    return db.put('dimensions', dimension, dimension.Id);
+    return db.put("dimensions", dimension, dimension.Id);
   });
 
   // await db.put('dimensions', dimensions[1], dimensions[1].Id);
