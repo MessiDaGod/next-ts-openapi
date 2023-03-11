@@ -287,3 +287,7 @@ p {
   left: 0;
   background-color: transparent;
 } */
+
+ul, li {
+  color: white;
+}

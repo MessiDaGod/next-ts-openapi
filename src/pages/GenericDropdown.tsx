@@ -85,7 +85,7 @@ function GenericDropdown<T>({
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isTableRefActive, setIsTableRefActive] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
-  const [hasValue, setHasValue] = React.useState(getHasValue || false);
+  const [hasValue, setHasValue] = React.useState(false);
   const [resetDefaultValue, setResetDefaultValue] = React.useState(
     getHeaderValue(selectItem)
   );
@@ -315,7 +315,7 @@ function GenericDropdown<T>({
     setSelectedItem(
       (e.target as HTMLElement).parentElement.children[2].textContent
     );
-    setHasValue(true);
+
     const value = (e.target as HTMLElement).parentElement.children[2]
       .textContent;
     value && setInputValue(value);
@@ -325,12 +325,13 @@ function GenericDropdown<T>({
       if (input) input.value = value;
     }
 
-    setHasValue(!hasValue);
+    setHasValue(true);
     setIsActiveDropdown(false);
     setShowSearchBox(false);
     setIsTableRefActive(true);
     setActiveDropdown(tableRef.current);
   }
+
 
   function handleClickAll(e) {
     (e.target as HTMLElement).style.zIndex = "0";
@@ -339,7 +340,7 @@ function GenericDropdown<T>({
     );
     const value = (e.target as HTMLElement).parentElement.children[2]
       .textContent;
-    value && setInputValue(value);
+    // value && setInputValue(value);
 
     if (dropdownRef?.current) {
       const input = dropdownRef.current.querySelector("input");
@@ -356,6 +357,7 @@ function GenericDropdown<T>({
           ),
         ])
       );
+
       allCells.forEach((cell) => {
         const children = Array.from(
           new Set([...(cell as HTMLElement).children])
@@ -365,12 +367,20 @@ function GenericDropdown<T>({
           (child as HTMLElement).querySelectorAll("input")[0].value = value;
           (child as HTMLElement).querySelectorAll("input")[0].textContent =
             value;
+            const span = document.createElement("span");
+            span.textContent = "close";
+            span.classList.add("material-symbols-outlined", "red");
+            span.style.alignItems = "center";
+            span.style.justifyContent = "center";
+            const input = (child as HTMLElement).querySelector("input");
+            const spanParent = input.parentElement.querySelector("span");
+            spanParent.appendChild(span);
         });
         // (cell as HTMLElement).parentElement.children[2].textContent;
       });
-    }
 
-    setHasValue(!hasValue);
+    }
+    setHasValue(true);
     setIsActiveDropdown(false);
     setShowSearchBox(false);
     setIsTableRefActive(true);
@@ -385,7 +395,7 @@ function GenericDropdown<T>({
   const handleResetDefaultValue = (e) => {
     setResetDefaultValue(getHeaderValue(selectItem));
     setSelectedItem(selectItem);
-    setHasValue(!hasValue);
+    setHasValue(false);
     setInputValue(getHeaderValue(selectItem));
 
     if (dropdownRef?.current) {

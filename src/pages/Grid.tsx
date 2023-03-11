@@ -9,7 +9,7 @@ import GenericDropdown from "./GenericDropdown";
 // import DynamicGridProps from "./DynamicGrid";
 
 import { GetServerSideProps } from "next";
-import { Log, getTableData } from "./utils";
+import { Log, getTableData, upsertTableData } from "./utils";
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -182,8 +182,22 @@ export default function Grid({}) {
             <div className="w-full shadow flex rounded items-center">
               <div className="flex-1 relative flex items-center">
                 <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-                  <button onClick={getTableData} className="button">
+                  <button onClick={upsertTableData} className="button">
                     Post Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="rounded"
+            style={{ order: "1", flex: "0 1 auto", alignSelf: "auto" }}
+          >
+            <div className="w-full shadow flex rounded items-center">
+              <div className="flex-1 relative flex items-center">
+                <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+                  <button onClick={getTableData} className="button">
+                    Get Data
                   </button>
                 </div>
               </div>
@@ -205,6 +219,17 @@ export default function Grid({}) {
                 numItems={numItems}
               />
             )}
+          </section>
+        </div>
+      </div>
+      <div
+        style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
+      >
+        <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+          <section style={{ paddingTop: "1rem" }}>
+
+             <ul id="listElem"></ul>
+
           </section>
         </div>
       </div>

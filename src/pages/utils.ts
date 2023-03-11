@@ -1,8 +1,7 @@
 import { openDB, DBSchema } from "idb";
-import { Payable } from "./dataStructure";
 
 interface MyDB extends DBSchema {
-  dimensions: {
+  'dimensions' : {
     key: number;
     value: Payable;
   };
@@ -12,7 +11,7 @@ interface MyDB extends DBSchema {
       price: number;
       productCode: string;
     };
-    key: string;
+    key: number;
     indexes: { "by-id": number };
   };
 }
@@ -416,47 +415,80 @@ export function setAllZIndicesTo1000(doc: HTMLElement) {
   });
 }
 
-export function dataExtractor() {
-  console.clear();
-  const table = document.querySelectorAll('[id*="' + "gridjs_" + '"]')[0];
 
-  // console.log(table);
-
-  let rows;
-
-  rows = table && table.querySelectorAll("div[data-row-id]");
-
-  rows.forEach((row, index) => {
-    const rowId = row.getAttribute("data-row-id");
-
-    const cells = row.querySelectorAll("div[class*=" + "td" + "]");
-
-    console.log(
-      `----------------------------${rowId}----------------------------------`
-    );
-    cells.forEach((cell, cellIndex) => {
-      const columnId = cell.getAttribute("data-column-id");
-      // console.log(`rowId: ${rowId} columnId: ${columnId} innerText: ${cell.innerText}`);
-      const input = cell.querySelector("input") as HTMLInputElement;
-
-      input &&
-        console.log(
-          `${
-            cell.querySelector("input").value
-          } rowId: ${rowId} columnId: ${columnId} cellIndex: ${cellIndex + 1}`
-        );
-
-      !input &&
-        console.log(
-          `rowId: ${rowId} columnId: ${columnId} cellIndex: ${
-            cellIndex + 1
-          } innerText: ${cell.innerText}`
-        );
-    });
-  });
+export interface Payable {
+  Id: number;
+  TRANNUM: string | null;
+  PERSON: string | null;
+  OFFSET: string | null;
+  ACCRUAL: string | null;
+  POSTMONTH: Date | null;
+  DATE: Date | null;
+  DUEDATE: Date | null;
+  AMOUNT: string | null;
+  PROPERTY: string | null;
+  ACCOUNT: string | null;
+  NOTES: string | null;
+  REF: string | null;
+  CHECKNUM: string | null;
+  DESC: string | null;
+  EXPENSETYPE: string | null;
+  DETAILTAXAMOUNT1: string | null;
+  DETAILTAXAMOUNT2: string | null;
+  DETAILTRANAMOUNT: string | null;
+  DETAILVATTRANTYPEID: string | null;
+  DETAILVATRATEID: string | null;
+  TRANCURRENCYID: string | null;
+  EXCHANGERATE: string | null;
+  EXCHANGERATE2: string | null;
+  AMOUNT2: string | null;
+  DOCUMENTSEQUENCENUMBER: string | null;
+  DISPLAYTYPE: string | null;
+  Company: string | null;
+  FundingEntity: string | null;
+  JOB: string | null;
+  CATEGORY: string | null;
+  CONTRACT: string | null;
+  COSTCODE: string | null;
+  USERDEFINEDFIELD1: string | null;
+  USERDEFINEDFIELD2: string | null;
+  USERDEFINEDFIELD3: string | null;
+  USERDEFINEDFIELD4: string | null;
+  USERDEFINEDFIELD5: string | null;
+  USERDEFINEDFIELD6: string | null;
+  USERDEFINEDFIELD7: string | null;
+  USERDEFINEDFIELD8: string | null;
+  USERDEFINEDFIELD9: string | null;
+  USERDEFINEDFIELD10: string | null;
+  INTERNATIONALPAYMENTTYPE: string | null;
+  WORKFLOW: string | null;
+  WORKFLOWSTATUS: string | null;
+  WORKFLOWSTEP: string | null;
+  DETAILFIELD1: string | null;
+  DETAILFIELD2: string | null;
+  DETAILFIELD3: string | null;
+  DETAILFIELD4: string | null;
+  DETAILFIELD5: string | null;
+  DETAILFIELD6: string | null;
+  DETAILFIELD7: string | null;
+  DETAILFIELD8: string | null;
+  NOTES2: string | null;
+  PONUM: string | null;
+  PODETAILID: string | null;
+  TRANDATE: string | null;
+  RETENTION: string | null;
+  ORIGINALUREF: string | null;
+  CREDITMEMO: string | null;
+  ADJUSTMENT: string | null;
+  Labour: string | null;
+  Material: string | null;
+  CITBLevy: string | null;
+  ManufacturingCosts: string | null;
+  Travel: string | null;
+  NonCisLabor: string | null;
 }
 
-export async function getTableData() {
+export async function upsertTableData() {
   const table = document.querySelectorAll('[id*="gridjs_"]')[0];
 
   let rows: any[] | NodeListOf<HTMLElement>;
@@ -486,8 +518,7 @@ export async function getTableData() {
     }
   });
 
-  const dimensions = JSON.parse(JSON.stringify(tableData)) as Array<Payable>;
-  const payables = [...Array.from(dimensions)];
+  const dimensions = Object.values(tableData) as Array<Payable>;
 
   const db = await openDB<MyDB>("app-db", 1, {
     upgrade(db) {
@@ -500,7 +531,7 @@ export async function getTableData() {
     },
   });
 
-  payables.forEach((dimension) => {
+  dimensions.forEach((dimension) => {
     return db.put("dimensions", dimension, dimension.Id);
   });
 
@@ -509,76 +540,28 @@ export async function getTableData() {
   return JSON.parse(JSON.stringify(tableData));
 }
 
-export declare module Transactions {
-  export interface Payable {
-    Id: number;
-    TRANNUM: string;
-    PERSON: string;
-    OFFSET: string;
-    ACCRUAL: string;
-    POSTMONTH: Date;
-    DATE: Date;
-    DUEDATE: Date;
-    AMOUNT: string;
-    PROPERTY: string;
-    ACCOUNT: string;
-    NOTES: string;
-    REF: string;
-    CHECKNUM: string;
-    DESC: string;
-    EXPENSETYPE: string;
-    DETAILTAXAMOUNT1: string;
-    DETAILTAXAMOUNT2: string;
-    DETAILTRANAMOUNT: string;
-    DETAILVATTRANTYPEID: string;
-    DETAILVATRATEID: string;
-    TRANCURRENCYID: string;
-    EXCHANGERATE: string;
-    EXCHANGERATE2: string;
-    AMOUNT2: string;
-    DOCUMENTSEQUENCENUMBER: string;
-    DISPLAYTYPE: string;
-    Company: string;
-    FundingEntity: string;
-    JOB: string;
-    CATEGORY: string;
-    CONTRACT: string;
-    COSTCODE: string;
-    USERDEFINEDFIELD1: string;
-    USERDEFINEDFIELD2: string;
-    USERDEFINEDFIELD3: string;
-    USERDEFINEDFIELD4: string;
-    USERDEFINEDFIELD5: string;
-    USERDEFINEDFIELD6: string;
-    USERDEFINEDFIELD7: string;
-    USERDEFINEDFIELD8: string;
-    USERDEFINEDFIELD9: string;
-    USERDEFINEDFIELD10: string;
-    INTERNATIONALPAYMENTTYPE: string;
-    WORKFLOW: string;
-    WORKFLOWSTATUS: string;
-    WORKFLOWSTEP: string;
-    DETAILFIELD1: string;
-    DETAILFIELD2: string;
-    DETAILFIELD3: string;
-    DETAILFIELD4: string;
-    DETAILFIELD5: string;
-    DETAILFIELD6: string;
-    DETAILFIELD7: string;
-    DETAILFIELD8: string;
-    NOTES2: string;
-    PONUM: string;
-    PODETAILID: string;
-    TRANDATE: string;
-    RETENTION: string;
-    ORIGINALUREF: string;
-    CREDITMEMO: string;
-    ADJUSTMENT: string;
-    Labour: string;
-    Material: string;
-    CITBLevy: string;
-    ManufacturingCosts: string;
-    Travel: string;
-    NonCisLabor: string;
+export async function getTableData() {
+  const listElem = document.getElementById("listElem") as HTMLElement;
+  const db = await openDB<MyDB>("app-db", 1, {
+    upgrade(db) {
+      db.createObjectStore("dimensions");
+
+      const dimensionStore = db.createObjectStore("dimension", {
+        keyPath: "Id",
+      });
+      dimensionStore.createIndex("by-id", "Id");
+    },
+  });
+  let tx = db.transaction('dimensions');
+  let dimensionStore = tx.objectStore('dimensions');
+
+  let dims = await dimensionStore.getAll();
+
+  if (dims.length) {
+    listElem.innerHTML = dims.map(book => `<li>
+      TRANNUM: ${book.TRANNUM}, Property: ${book.PROPERTY}
+      </li>`).join('');
+  } else {
+    listElem.innerHTML = '<li>No books yet. Please add books.</li>'
   }
 }
