@@ -9,10 +9,11 @@ import { ga } from "../utils/analytics";
 import cn from "classnames";
 import "styles/globals.css";
 import "../styles/algolia.css";
-import "../styles/index.css";
+// import "../styles/index.css";
 import "../styles/sandpack.css";
 import Menu from "../../public/menu.json";
 import Script from "next/script";
+import { Log } from "./utils";
 
 // if (typeof window !== "undefined") {
 //   if (process.env.NODE_ENV === "production") {
@@ -219,7 +220,6 @@ export default function App({ Component, pageProps }: AppProps) {
           collapsed ? styles["rz-body-collapsed"] : styles["rz-body"]
         )}
       >
-
         <Component {...pageProps} />
       </div>
     </>

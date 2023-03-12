@@ -18,6 +18,9 @@ module.exports = {
 
     return config;
   },
+  server: {
+    maxPayload: 1024 * 1024 * 50, // 50MB
+  },
 }
 
 module.exports = nextConfig

@@ -68,7 +68,7 @@ export function Pagination({
     <div id={id} className={styles["paginationDiv"]} style={style}>
       <div className="tfoot">
         <div
-          className="tr"
+          className="tr tfoot"
           style={{
             height: "50px",
             textAlign: "center",

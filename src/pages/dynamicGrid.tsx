@@ -14,6 +14,7 @@ import {
   getTableData,
   setAllZIndicesToZero,
   setAllZIndicesTo1000,
+  Payable,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -28,17 +29,6 @@ import { TableHeaderCell } from "./TableHeaderCell";
 import { ResultTable } from "./ResultsTable";
 
 
-// export const getServerSideProps: GetServerSideProps<{ data: Payable[] }> = async (context) => {
-//   const res = await fetch('public/Dimensions.json')
-//   const data: Payable[] = await res.json()
-
-//   Log(data);
-//   return {
-//     props: {
-//       data,
-//     },
-//   }
-// }
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -419,7 +409,7 @@ function DynamicGrid<T>({
             role="row"
           >
             <div
-              key={`${rowIndex }`}
+              key={`${rowIndex}`}
               className={styles["rowdivider"]}
               // onMouseDown={handleRowClick}
             ></div>
@@ -537,25 +527,25 @@ function DynamicGrid<T>({
 
   const table = GenerateTableHtml();
 
-//   function ResultTable( {results: Array<Payable>} ) {
-//     if( !results ) {
-//         return <div></div>
-//     }
-//     return (
-//         <table className="w-full">
-//             <thead>
-//                 <tr>
-//                     {results[0].columns.map( (c) => <th key={c}>{c}</th>)}
-//                 </tr>
-//             </thead>
-//             <tbody>
-//                 {results[0].values.map( (r) => <tr key={r}>
-//                     {r.map( (v) => <td key={v}>{v}</td> )}
-//                 </tr>)}
-//             </tbody>
-//         </table>
-//     )
-// }
+  //   function ResultTable( {results: Array<Payable>} ) {
+  //     if( !results ) {
+  //         return <div></div>
+  //     }
+  //     return (
+  //         <table className="w-full">
+  //             <thead>
+  //                 <tr>
+  //                     {results[0].columns.map( (c) => <th key={c}>{c}</th>)}
+  //                 </tr>
+  //             </thead>
+  //             <tbody>
+  //                 {results[0].values.map( (r) => <tr key={r}>
+  //                     {r.map( (v) => <td key={v}>{v}</td> )}
+  //                 </tr>)}
+  //             </tbody>
+  //         </table>
+  //     )
+  // }
 
   function handleDynamicGridMouseEnter(e) {
     // setActiveDropdown(tableRef.current);
@@ -573,8 +563,6 @@ function DynamicGrid<T>({
 
   if (table && Array.isArray(data) && data.length > 0) {
     const totalPages = Math.ceil(data.length / itemsPerPage);
-
-
 
     return (
       <>

@@ -80,7 +80,8 @@ function GenericDropdown<T>({
   const [showSearchBox, setShowSearchBox] = React.useState(false);
   const [hasPagination] = React.useState(showPagination ?? false);
   const [selectedItem, setSelectedItem] = React.useState(null);
-  const dropdownRef = useRef<HTMLDivElement | undefined>(undefined);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLInputElement | null>(null);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
   const [isTableRefActive, setIsTableRefActive] = React.useState(false);
@@ -89,8 +90,8 @@ function GenericDropdown<T>({
   const [resetDefaultValue, setResetDefaultValue] = React.useState(
     getHeaderValue(selectItem)
   );
-
-  const propertyInputId = React.useId();
+  const [query, setQuery] = React.useState("");
+  // const searchInput = React.useId();
 
   itemsPerPage = itemsPerPage ?? 10;
   numItems = numItems ?? 100;
@@ -119,6 +120,18 @@ function GenericDropdown<T>({
   React.useEffect(() => {
     setDropdownGridWidths(dropdownRef.current as HTMLElement);
   }, [currentPage]);
+
+  React.useEffect(() => {
+    const searchInput = searchRef.current;
+    if (searchInput) {
+      searchInput.addEventListener("input", handleSearchInput);
+    }
+    return () => {
+      if (searchInput) {
+        searchInput.removeEventListener("input", handleSearchInput);
+      }
+    };
+  }, [query]);
 
   React.useEffect(() => {
     console.info("Generic Dropdown useEffect ran");
@@ -332,7 +345,6 @@ function GenericDropdown<T>({
     setActiveDropdown(tableRef.current);
   }
 
-
   function handleClickAll(e) {
     (e.target as HTMLElement).style.zIndex = "0";
     setSelectedItem(
@@ -367,18 +379,17 @@ function GenericDropdown<T>({
           (child as HTMLElement).querySelectorAll("input")[0].value = value;
           (child as HTMLElement).querySelectorAll("input")[0].textContent =
             value;
-            // const span = document.createElement("span");
-            // span.textContent = "close";
-            // span.classList.add("material-symbols-outlined", "red");
-            // span.style.alignItems = "center";
-            // span.style.justifyContent = "center";
-            // const input = (child as HTMLElement).querySelector("input");
-            // const spanParent = input.parentElement.querySelector("span");
-            // spanParent.insertAdjacentElement("afterend", span);
-            // span.addEventListener("click", handleResetDefaultValue);
+          // const span = document.createElement("span");
+          // span.textContent = "close";
+          // span.classList.add("material-symbols-outlined", "red");
+          // span.style.alignItems = "center";
+          // span.style.justifyContent = "center";
+          // const input = (child as HTMLElement).querySelector("input");
+          // const spanParent = input.parentElement.querySelector("span");
+          // spanParent.insertAdjacentElement("afterend", span);
+          // span.addEventListener("click", handleResetDefaultValue);
         });
       });
-
     }
     setHasValue(true);
     setIsActiveDropdown(false);
@@ -478,31 +489,36 @@ function GenericDropdown<T>({
     }
   }
 
-  function search(): void {
-    const searchInput = document.querySelector(`#${selected}_label`);
-    searchInput?.addEventListener("input", handleSearchInput);
-
-    function handleSearchInput() {
-      const sidebarItems = document.querySelectorAll(
+  function handleSearchInput(e) {
+    const allRows =
+      searchRef.current.parentElement.parentElement.parentElement.querySelectorAll(
+        `.${cn(styles["tr"])}`
+      ) as NodeListOf<HTMLElement>;
+    const cells =
+      searchRef.current.parentElement.parentElement.parentElement.querySelectorAll(
         `.${cn(styles["td"])}`
       ) as NodeListOf<HTMLElement>;
-      let input = searchInput as HTMLInputElement;
-      const query = input.value.toLowerCase();
 
-      for (const item of sidebarItems) {
-        if (item) {
-          let newItem = item as HTMLElement;
-          if (newItem && newItem.dataset.columnId) {
-            const title = newItem.dataset.columnId.toString().toLowerCase();
-            if (title.includes(query)) {
-              item.style.display = "block";
-            } else {
-              item.style.display = "none";
-            }
-          }
-        }
+    const rowsWithData = [];
+    // get rid of the header row so we don't remove it
+    Array.from(allRows).slice(1);
+
+    const myQuery = e.target.value;
+    setQuery(myQuery);
+    cells.forEach((cell) => {
+      cell.textContent.toLowerCase().includes(myQuery) &&
+        rowsWithData.push(cell.parentElement);
+    });
+
+    allRows.forEach((row) => {
+      if (rowsWithData.includes(row)) {
+        row.style.display = "block";
+      } else {
+        Log(row.classList);
+        if (!row.children[0].classList.contains(cn(styles["th"])) && !row.classList.contains("tfoot"))
+          row.style.display = "none";
       }
-    }
+    });
   }
 
   function GenerateTableHtml() {
@@ -611,13 +627,14 @@ function GenericDropdown<T>({
                 >
                   <div className={styles["thead"]}>
                     {
-                      <div className={styles["search-panel"]}>
+                      <div className={"search-panel"}>
                         <input
                           id="search-input"
                           type="search"
                           className={styles["findcomponent"]}
                           placeholder=" Search..."
                           autoComplete="on"
+                          onChange={handleSearchInput}
                         ></input>
                         <span
                           className={cn(
@@ -641,7 +658,7 @@ function GenericDropdown<T>({
                     {rows.slice(1)}
                   </div>
                   {hasPagination && (
-                    <div className={styles["tr"]}>
+                    <div className={cn(styles["tr"], "tfoot")}>
                       <Pagination
                         id="pagination"
                         currentPage={currentPage}
@@ -672,7 +689,6 @@ function GenericDropdown<T>({
     }
   }
 
-
   const table = GenerateTableHtml();
 
   if (table && Array.isArray(data) && data.length > 0) {
@@ -693,10 +709,9 @@ function GenericDropdown<T>({
                 display: "inline-flex",
                 borderRadius: `${hasPagination ? "6px" : "0px"}`,
               }}
-              htmlFor={propertyInputId}
             >
               <input
-                id={propertyInputId}
+                ref={searchRef}
                 readOnly={true}
                 defaultValue={getHeaderValue(selectItem)}
                 style={{ width: "100%", userSelect: "none" }}
@@ -714,7 +729,11 @@ function GenericDropdown<T>({
               {hasValue && (
                 <span
                   className={cn("material-symbols-outlined", "red")}
-                  onClick={isMultiple ? handleResetDefaultValueAll : handleResetDefaultValue}
+                  onClick={
+                    isMultiple
+                      ? handleResetDefaultValueAll
+                      : handleResetDefaultValue
+                  }
                   style={{
                     alignItems: "center",
                     justifyContent: "center",

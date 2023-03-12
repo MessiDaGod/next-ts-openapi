@@ -3,6 +3,7 @@ import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
 import GenericDropdown from "./GenericDropdown";
+import cn from 'classnames';
 // import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
@@ -15,6 +16,8 @@ import { exportToCsv, exportToPdf, exportToXlsx } from "./exportUtils";
 import DataGrid from "react-data-grid";
 import dimensions from "../../public/Dimensions.json";
 import ReactDataGrid from "./ReactDataGrid";
+
+
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -72,6 +75,50 @@ export default function Grid({}) {
     numItems={numItems}
   />
   );
+
+
+  function handleNotifs(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    const notificationsIcon = document.getElementById("notifications-icon");
+    const notificationsPopup = document.getElementById("notifications-popup");
+
+    // Toggle the popup's visibility when the icon is clicked
+    notificationsPopup.style.display =
+      notificationsPopup.style.display === "none" ? "flex" : "none";
+
+      notificationsPopup.style.placeContent = "flex-end";
+      notificationsPopup.style.alignItems = "flex-end";
+
+    notificationsIcon.style.color =
+      notificationsPopup.style.display === "none" ? "white" : "lime";
+    // // Position the popup below and to the left of the icon
+    // notificationsPopup.style.top = `${
+    //   notificationsIcon.offsetTop + notificationsIcon.offsetHeight
+    // }px`;
+    // notificationsPopup.style.left = `${notificationsIcon.offsetLeft}px`;
+  }
+
+  if (typeof window !== "undefined") {
+    // code that uses the document object goes here
+    document.addEventListener("click", (event) => {
+      const notificationsPopup = document.getElementById("notifications-popup");
+      const targetNode = event.target as Node;
+      if (notificationsPopup && !notificationsPopup.contains(targetNode)) {
+        // hide the popup
+      }
+    });
+  }
+
+  function handleMarkAsRead(e) {
+    const marIcon = e.target as HTMLElement;
+    marIcon.style.transition = "200ms cubic-bezier(.4,0,.2,1) 0ms";
+    marIcon.style.transform = "scale(1.2)";
+    marIcon.style.fill = "lime";
+    setTimeout(() => {
+      marIcon.style.fill = "black";
+    }, 1000);
+  }
 
   return (
     <>
@@ -253,20 +300,80 @@ export default function Grid({}) {
           </section>
         </div>
       </div>
-      {/* <div style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}>
-        <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-          <section style={{ paddingTop: "1rem" }}>
-            <ReactDataGrid direction={"ltr"} />
-          </section>
+
+
+
+
+      <span
+        id="notifications-icon"
+        className={cn("material-symbols-outlined", "white")}
+        style={{
+          paddingLeft: "10px",
+          zIndex: 1000,
+          top: "1rem",
+          right: "1rem",
+          order: 0,
+          position: "fixed",
+        }}
+        onClick={handleNotifs}
+      >
+        notifications
+      </span>
+      <div id="notifications-popup" className="notifications-popup">
+        <div className="mud-popover-provider">
+          <div
+            id="popovercontent"
+            data-ticks="638142089517979340"
+            className="mud-popover mud-popover-open mud-popover-top-left mud-popover-anchor-bottom-left mud-popover-overflow-flip-onopen mud-paper mud-elevation-8"
+            style={{
+              transitionDuration: "251ms",
+              transitionDelay: "0ms",
+              zIndex: "calc(var(--mud-zindex-popover) + 3)",
+              // left: "1825.63px",
+              // top: "32.3264px",
+            }}
+            data-mudpopover-flip="flipped"
+          >
+            <div className="mud-list mud-list-padding">
+              <div className="d-flex justify-space-between align-center px-2">
+                <h6 className="mud-typography mud-typography-subtitle2">
+                  Notifications
+                </h6>
+                <button
+                  type="button"
+                  className="mud-button-root mud-button mud-button-text mud-button-text-primary mud-button-text-size-medium mud-ripple ml-16 mr-n2 mud-text-white"
+                >
+                  <span className="mud-button-label" >
+                    <span className="mud-button-icon-start mud-button-icon-size-medium">
+                      <svg
+                        className="mud-icon-root mud-svg-icon mud-icon-size-medium"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        onClick={handleMarkAsRead}
+                      >
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path>
+                      </svg>
+                    </span>
+                    Mark as read
+                  </span>
+                </button>
+              </div>
+              <div
+                id="nothingnew"
+                className="d-flex justify-center align-center px-2 py-8 relative"
+              >
+                <h6 className="mud-typography mud-typography-subtitle2 mud-text-white my-12">
+                  Nothing new :(
+                </h6>
+              </div>
+            </div>
+          </div>
         </div>
-      </div> */}
-      <div style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}>
-        <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-          <section style={{ paddingTop: "1rem" }}>
-            <ul id="listElem"></ul>
-          </section>
-        </div>
+        <ul></ul>
       </div>
+
     </>
   );
 }

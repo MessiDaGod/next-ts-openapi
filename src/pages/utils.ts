@@ -1,7 +1,7 @@
 import { openDB, DBSchema } from "idb";
-
+import axios from "axios";
 interface MyDB extends DBSchema {
-  'dimensions' : {
+  dimensions: {
     key: number;
     value: Payable;
   };
@@ -415,7 +415,6 @@ export function setAllZIndicesTo1000(doc: HTMLElement) {
   });
 }
 
-
 export interface Payable {
   Id: number;
   TRANNUM: string | null;
@@ -535,9 +534,9 @@ export async function upsertTableData() {
     return db.put("dimensions", dimension, dimension.Id);
   });
 
-  // await db.put('dimensions', dimensions[1], dimensions[1].Id);
+  const result = await putDimensions(JSON.stringify(tableData));
 
-  return JSON.parse(JSON.stringify(tableData));
+  return result;
 }
 
 export async function getTableData() {
@@ -552,16 +551,48 @@ export async function getTableData() {
       dimensionStore.createIndex("by-id", "Id");
     },
   });
-  let tx = db.transaction('dimensions');
-  let dimensionStore = tx.objectStore('dimensions');
+  let tx = db.transaction("dimensions");
+  let dimensionStore = tx.objectStore("dimensions");
 
   let dims = await dimensionStore.getAll();
 
   if (dims.length) {
-    listElem.innerHTML = dims.map(book => `<li>
+    listElem.innerHTML = dims
+      .map(
+        (book) => `<li>
       TRANNUM: ${book.TRANNUM}, Property: ${book.PROPERTY}
-      </li>`).join('');
+      </li>`
+      )
+      .join("");
   } else {
-    listElem.innerHTML = '<li>No books yet. Please add books.</li>'
+    listElem.innerHTML = "<li>No books yet. Please add books.</li>";
+  }
+}
+
+async function putDimensions(dimension: string | null = null) {
+  const jsonObject = JSON.parse(dimension);
+  for (const key in jsonObject) {
+    delete jsonObject[key].Id;
+  }
+  const parsedJson = Object.values(JSON.parse(JSON.stringify(jsonObject)));
+  try {
+    let url = `https://localhost:5006/api/data/PutDimensions${
+      parsedJson
+        ? `?value=${encodeURIComponent(JSON.stringify(parsedJson))}`
+        : ""
+    }`;
+    axios.post(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const listElem = (document.getElementById("notifications-popup") as HTMLElement).querySelector("ul") as HTMLElement;
+
+    listElem.innerHTML = `<li>
+        ${"Dimensions added successfully!"}
+        </li>`
+
+  } catch (error) {
+    return error.message;
   }
 }
