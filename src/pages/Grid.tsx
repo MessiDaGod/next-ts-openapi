@@ -7,9 +7,13 @@ import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
-
+import { ExportButton } from "./ExportButton";
 import { GetServerSideProps } from "next";
 import { Log, getTableData, upsertTableData } from "./utils";
+import { css } from "@linaria/core";
+import { exportToCsv, exportToPdf, exportToXlsx } from "./exportUtils";
+import DataGrid from "react-data-grid";
+import dimensions from "../../public/Dimensions.json";
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -19,14 +23,6 @@ export default function Grid({}) {
   const tableRef = React.useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = React.useState("");
   const propertyInputId = React.useId();
-
-  // // Initialize the database
-  // async function initializeDb() {
-  //   const db = await open({
-  //     filename: dbPath,
-  //     driver: sqlite3.Database,
-  //   });
-  // }
 
   async function handleSetItem(e) {
     setItem(e);
@@ -53,6 +49,19 @@ export default function Grid({}) {
       setError(err);
     }
   }
+
+  const myColumns = Object.keys(dimensions[0]).map((key) => ({
+    key,
+    name: key,
+  }));
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const myRows = Object.values(dimensions).map((row, index: number) => ({
+    index,
+    ...row,
+  }));
+  const gridElement = (
+    <DataGrid columns={myColumns} rows={myRows} direction={"ltr"} />
+  );
 
   return (
     <>
@@ -203,14 +212,31 @@ export default function Grid({}) {
               </div>
             </div>
           </div>
+
+          <div className={"toolbarClassname"}>
+            <ExportButton
+              onExport={() => exportToCsv(gridElement, "Dimensions.csv")}
+            >
+              Export to CSV
+            </ExportButton>
+            <ExportButton
+              onExport={() => exportToXlsx(gridElement, "Dimensions.xlsx")}
+            >
+              Export to XSLX
+            </ExportButton>
+            <ExportButton
+              onExport={() => exportToPdf(gridElement, "Dimensions.pdf")}
+            >
+              Export to PDF
+            </ExportButton>
+          </div>
         </section>
       </>
       <div
         style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
-        ref={tableRef}
       >
         <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
-          <section style={{ paddingTop: "1rem" }}>
+          <section style={{ paddingTop: "1rem" }} ref={tableRef}>
             {status === "success" && (
               <DynamicGrid
                 key={item}
@@ -222,14 +248,10 @@ export default function Grid({}) {
           </section>
         </div>
       </div>
-      <div
-        style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}
-      >
+      <div style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}>
         <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
           <section style={{ paddingTop: "1rem" }}>
-
-             <ul id="listElem"></ul>
-
+            <ul id="listElem"></ul>
           </section>
         </div>
       </div>

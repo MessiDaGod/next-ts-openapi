@@ -291,3 +291,10 @@ p {
 ul, li {
   color: white;
 }
+
+.toolbarClassname {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-block-end: 8px;
+}
