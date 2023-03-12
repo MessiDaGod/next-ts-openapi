@@ -298,3 +298,18 @@ ul, li {
   gap: 8px;
   margin-block-end: 8px;
 }
+
+.search-panel {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0.1rem;
+  margin-top: 0rem;
+  padding: 5px;
+  height: 45px;
+  width: 100%;
+  cursor: text;
+}
+
+.search-panel:hover {
+  border: white;
+}

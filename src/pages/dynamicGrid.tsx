@@ -414,8 +414,9 @@ function DynamicGrid<T>({
         .map((row, rowIndex: number) => (
           <div
             key={`${rowIndex + 1}`}
-            className={styles["tr"]}
+            className={cn(styles["tr"])}
             data-row-id={rowIndex + 1}
+            role="row"
           >
             <div
               key={`${rowIndex }`}
@@ -504,7 +505,7 @@ function DynamicGrid<T>({
                   ref={tableRef}
                   className={styles["divTable"]}
                 >
-                  <div className={styles["thead"]}>
+                  <div className={cn("rdg-header-row", styles["thead"])}>
                     <div className={styles["tr"]} data-row-id="0">
                       {header}
                     </div>

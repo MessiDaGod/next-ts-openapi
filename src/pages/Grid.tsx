@@ -14,6 +14,7 @@ import { css } from "@linaria/core";
 import { exportToCsv, exportToPdf, exportToXlsx } from "./exportUtils";
 import DataGrid from "react-data-grid";
 import dimensions from "../../public/Dimensions.json";
+import ReactDataGrid from "./ReactDataGrid";
 
 export default function Grid({}) {
   const [error, setError] = useState(null);
@@ -61,6 +62,15 @@ export default function Grid({}) {
   }));
   const gridElement = (
     <DataGrid columns={myColumns} rows={myRows} direction={"ltr"} />
+  );
+
+  const dynamicGrid = (
+    <DynamicGrid
+    key={item}
+    selectItem={item}
+    showPagination={true}
+    numItems={numItems}
+  />
   );
 
   return (
@@ -215,17 +225,17 @@ export default function Grid({}) {
 
           <div className={"toolbarClassname"}>
             <ExportButton
-              onExport={() => exportToCsv(gridElement, "Dimensions.csv")}
+              onExport={() => exportToCsv(dynamicGrid, "Dimensions.csv")}
             >
               Export to CSV
             </ExportButton>
             <ExportButton
-              onExport={() => exportToXlsx(gridElement, "Dimensions.xlsx")}
+              onExport={() => exportToXlsx(dynamicGrid, "Dimensions.xlsx")}
             >
               Export to XSLX
             </ExportButton>
             <ExportButton
-              onExport={() => exportToPdf(gridElement, "Dimensions.pdf")}
+              onExport={() => exportToPdf(dynamicGrid, "Dimensions.pdf")}
             >
               Export to PDF
             </ExportButton>
@@ -238,16 +248,18 @@ export default function Grid({}) {
         <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
           <section style={{ paddingTop: "1rem" }} ref={tableRef}>
             {status === "success" && (
-              <DynamicGrid
-                key={item}
-                selectItem={item}
-                showPagination={true}
-                numItems={numItems}
-              />
+              dynamicGrid
             )}
           </section>
         </div>
       </div>
+      {/* <div style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}>
+        <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
+          <section style={{ paddingTop: "1rem" }}>
+            <ReactDataGrid direction={"ltr"} />
+          </section>
+        </div>
+      </div> */}
       <div style={{ flexDirection: "column", flexWrap: "wrap", order: 5 }}>
         <div className="text-sm font-medium text-gray-700 pl-4 pr-8 py-6 relative">
           <section style={{ paddingTop: "1rem" }}>
