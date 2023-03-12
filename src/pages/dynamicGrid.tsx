@@ -11,7 +11,6 @@ import {
   isColumnHidden,
   parseValue,
   setColumnWidths,
-  getTableData,
   setAllZIndicesToZero,
   setAllZIndicesTo1000,
   Payable,
@@ -66,7 +65,7 @@ function DynamicGrid<T>({
   // const [endDate, setEndDate] = React.useState(new Date());
   // const [inputValue, setInputValue] = React.useState("");
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 15;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -89,6 +88,11 @@ function DynamicGrid<T>({
   // React.useEffect(() => {
   //   setColumnWidths(tableRef.current)
   // }, [activeDropdown, isActiveTableRef]);
+
+
+  // React.useEffect(() => {
+  //   setColumnWidths(tableRef.current as HTMLElement);
+  // }, [selected]);
 
   React.useEffect(() => {
     setNumOfItems((numItems ?? 1) + 1);
@@ -119,9 +123,6 @@ function DynamicGrid<T>({
     fetchData();
   }, []);
 
-  // React.useEffect(() => {
-  //   setColumnWidths(tableRef.current as HTMLElement);
-  // }, [selected]);
 
   function handleSort(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -333,7 +334,7 @@ function DynamicGrid<T>({
     }
   }
 
-  function GenerateTableHtml() {
+  function Render() {
     if (Array.isArray(data) && data.length > 0) {
       const columns = Object.keys(data[0]);
       const header = columns.map((cols, idx: number) => {
@@ -525,7 +526,7 @@ function DynamicGrid<T>({
     }
   }
 
-  const table = GenerateTableHtml();
+  const table = Render();
 
   //   function ResultTable( {results: Array<Payable>} ) {
   //     if( !results ) {

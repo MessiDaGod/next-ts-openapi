@@ -75,7 +75,6 @@ export interface Payable {
   NonCisLabor: string | null;
 }
 
-
 export type PayableType = Payable[]
 
 export interface AppState {

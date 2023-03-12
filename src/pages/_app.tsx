@@ -47,11 +47,18 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [menu, setMenu] = useState<Menu>();
+  const [hasNotifications, setHasNotifications] = useState(false);
 
   function isMobile() {
     if (typeof window === "undefined") {
       return false; // or throw an error, depending on your use case
     }
+
+    const listElem = (
+      document.getElementById("notifications-popup") as HTMLElement
+    ).querySelector("ul") as HTMLElement;
+    const children = listElem.children;
+    if (!children[0].textContent.includes(":(")) setHasNotifications(true);
 
     const userAgent = window.navigator.userAgent.toLowerCase();
     const mobileKeywords = [
@@ -95,6 +102,13 @@ export default function App({ Component, pageProps }: AppProps) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (hasNotifications) {
+      const notificationsIcon = document.getElementById("notifications-icon");
+      notificationsIcon.style.color = "lime";
+    }
+  }, [hasNotifications]);
+
   const handleCollapse = () => {
     setCollapsed(!collapsed);
   };
@@ -136,6 +150,66 @@ export default function App({ Component, pageProps }: AppProps) {
     <span className="material-symbols-outlined white">computer</span>
   );
 
+  function handleNotifs(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    const notificationsIcon = document.getElementById("notifications-icon");
+    const notificationsPopup = document.getElementById("notifications-popup");
+
+    // Toggle the popup's visibility when the icon is clicked
+    notificationsPopup.style.display =
+      notificationsPopup.style.display === "none" ? "flex" : "none";
+
+    notificationsPopup.style.placeContent = "flex-end";
+    notificationsPopup.style.alignItems = "flex-end";
+
+    // notificationsIcon.style.color =
+    //   notificationsPopup.style.display === "none" ? "white" : "lime";
+    // // Position the popup below and to the left of the icon
+    // notificationsPopup.style.top = `${
+    //   notificationsIcon.offsetTop + notificationsIcon.offsetHeight
+    // }px`;
+    // notificationsPopup.style.left = `${notificationsIcon.offsetLeft}px`;
+  }
+
+  if (typeof window !== "undefined") {
+    // code that uses the document object goes here
+    document.addEventListener("click", (event) => {
+      const notificationsPopup = document.getElementById("notifications-popup");
+      const targetNode = event.target as Node;
+      if (notificationsPopup && !notificationsPopup.contains(targetNode)) {
+        // hide the popup
+      }
+    });
+  }
+
+  function handleMarkAsRead(e) {
+    const marIcon = e.target as HTMLElement;
+    marIcon.style.transition = "200ms cubic-bezier(.4,0,.2,1) 0ms";
+    marIcon.style.fill = "lime";
+    const ul = document.getElementById("notifications-ul");
+    ul.innerHTML = "";
+    const li = document.createElement("li");
+    li.innerHTML = "Nothing new :(";
+    ul.appendChild(li);
+    setTimeout(() => {
+      marIcon.style.fill = "black";
+    }, 1000);
+  }
+
+  function toffleNotifs(e) {
+    if (typeof window !== "undefined") {
+      const notificationsPopup = document.getElementById("notifications-popup");
+
+      // Toggle the popup's visibility when the icon is clicked
+      notificationsPopup.style.display =
+        notificationsPopup.style.display === "none" ? "flex" : "none";
+
+      notificationsPopup.style.placeContent = "flex-end";
+      notificationsPopup.style.alignItems = "flex-end";
+    }
+  }
+
   return (
     <>
       <Head>
@@ -156,7 +230,7 @@ export default function App({ Component, pageProps }: AppProps) {
         className={cn("material-symbols-outlined")}
         style={{
           paddingLeft: "10px",
-          color: "white",
+          fill: hasNotifications ? "green" : "white",
           zIndex: 1000,
           order: 0,
           position: "fixed",
@@ -165,6 +239,81 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         menu
       </span>
+
+        <span
+          id="notifications-icon"
+          className={cn("material-symbols-outlined", "white")}
+          style={{
+            paddingLeft: "10px",
+            zIndex: 1000,
+            top: "1rem",
+            right: "1rem",
+            order: 0,
+            position: "fixed",
+          }}
+          onClick={handleNotifs}
+        >
+          notifications
+        </span>
+        <div id="notifications-popup" className="notifications-popup">
+          <div
+            id="popovercontent"
+            className="mud-popover mud-popover-open mud-popover-top-left mud-popover-anchor-bottom-left mud-popover-overflow-flip-onopen mud-paper mud-elevation-8"
+            style={{
+              transitionDuration: "251ms",
+              transitionDelay: "0ms",
+              zIndex: "calc(var(--mud-zindex-popover) + 3)",
+              right: "1rem",
+              top: "50px",
+              position: "fixed",
+            }}
+          >
+            <div className="mud-list mud-list-padding">
+              <div className="d-flex justify-space-between align-center px-2">
+                <h6 className="mud-typography mud-typography-subtitle2">
+                  Notifications
+                </h6>
+                <button
+                  type="button"
+                  className="mud-button-root mud-button mud-button-text mud-button-text-primary mud-button-text-size-medium mud-ripple ml-16 mr-n2 mud-text-white"
+                >
+                  <span className="mud-button-label">
+                    <span className="mud-button-icon-start mud-button-icon-size-medium">
+                      <svg
+                        className="mud-icon-root mud-svg-icon mud-icon-size-medium"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        onClick={handleMarkAsRead}
+                      >
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path>
+                      </svg>
+                    </span>
+                    Mark as read
+                  </span>
+                </button>
+              </div>
+              <div
+                id="nothingnew"
+                className="d-flex justify-center align-center px-2 py-8 relative"
+              >
+                <h6 className="mud-typography mud-typography-subtitle2 mud-text-white my-12">
+                  <ul
+                    id="notifications-ul"
+                    style={{
+                      zIndex: 10000,
+                    }}
+                  >
+                    <li>Nothing new :(</li>
+                  </ul>
+                </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       <div style={{ display: "flex", flexDirection: "column" }}>
         <nav
           className={`${styles["sidebar"]} ${

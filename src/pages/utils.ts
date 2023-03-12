@@ -1,5 +1,10 @@
 import { openDB, DBSchema } from "idb";
 import axios from "axios";
+import fs from "fs";
+import * as readline from "node:readline/promises";
+import { stdin as input, once, stdout as output } from "node:process";
+import { Payable } from "./dataStructure";
+
 interface MyDB extends DBSchema {
   dimensions: {
     key: number;
@@ -415,77 +420,6 @@ export function setAllZIndicesTo1000(doc: HTMLElement) {
   });
 }
 
-export interface Payable {
-  Id: number;
-  TRANNUM: string | null;
-  PERSON: string | null;
-  OFFSET: string | null;
-  ACCRUAL: string | null;
-  POSTMONTH: Date | null;
-  DATE: Date | null;
-  DUEDATE: Date | null;
-  AMOUNT: string | null;
-  PROPERTY: string | null;
-  ACCOUNT: string | null;
-  NOTES: string | null;
-  REF: string | null;
-  CHECKNUM: string | null;
-  DESC: string | null;
-  EXPENSETYPE: string | null;
-  DETAILTAXAMOUNT1: string | null;
-  DETAILTAXAMOUNT2: string | null;
-  DETAILTRANAMOUNT: string | null;
-  DETAILVATTRANTYPEID: string | null;
-  DETAILVATRATEID: string | null;
-  TRANCURRENCYID: string | null;
-  EXCHANGERATE: string | null;
-  EXCHANGERATE2: string | null;
-  AMOUNT2: string | null;
-  DOCUMENTSEQUENCENUMBER: string | null;
-  DISPLAYTYPE: string | null;
-  Company: string | null;
-  FundingEntity: string | null;
-  JOB: string | null;
-  CATEGORY: string | null;
-  CONTRACT: string | null;
-  COSTCODE: string | null;
-  USERDEFINEDFIELD1: string | null;
-  USERDEFINEDFIELD2: string | null;
-  USERDEFINEDFIELD3: string | null;
-  USERDEFINEDFIELD4: string | null;
-  USERDEFINEDFIELD5: string | null;
-  USERDEFINEDFIELD6: string | null;
-  USERDEFINEDFIELD7: string | null;
-  USERDEFINEDFIELD8: string | null;
-  USERDEFINEDFIELD9: string | null;
-  USERDEFINEDFIELD10: string | null;
-  INTERNATIONALPAYMENTTYPE: string | null;
-  WORKFLOW: string | null;
-  WORKFLOWSTATUS: string | null;
-  WORKFLOWSTEP: string | null;
-  DETAILFIELD1: string | null;
-  DETAILFIELD2: string | null;
-  DETAILFIELD3: string | null;
-  DETAILFIELD4: string | null;
-  DETAILFIELD5: string | null;
-  DETAILFIELD6: string | null;
-  DETAILFIELD7: string | null;
-  DETAILFIELD8: string | null;
-  NOTES2: string | null;
-  PONUM: string | null;
-  PODETAILID: string | null;
-  TRANDATE: string | null;
-  RETENTION: string | null;
-  ORIGINALUREF: string | null;
-  CREDITMEMO: string | null;
-  ADJUSTMENT: string | null;
-  Labour: string | null;
-  Material: string | null;
-  CITBLevy: string | null;
-  ManufacturingCosts: string | null;
-  Travel: string | null;
-  NonCisLabor: string | null;
-}
 
 export async function upsertTableData() {
   const table = document.querySelectorAll('[id*="gridjs_"]')[0];
@@ -539,34 +473,54 @@ export async function upsertTableData() {
   return result;
 }
 
-export async function getTableData() {
-  const listElem = document.getElementById("listElem") as HTMLElement;
-  const db = await openDB<MyDB>("app-db", 1, {
-    upgrade(db) {
-      db.createObjectStore("dimensions");
+export async function exportCsv() {
+  const table = document.querySelectorAll('[id*="gridjs_"]')[0];
+  const headers = Array.from(table.querySelectorAll('[data-column-id]')).map(cell => cell.getAttribute('data-column-id'));
+  const uniqueHeaders = [...new Set(headers)];
+  const rowsData = [uniqueHeaders];
+  let rows: any[] | NodeListOf<HTMLElement>;
 
-      const dimensionStore = db.createObjectStore("dimension", {
-        keyPath: "Id",
+  rows = table && table.querySelectorAll("div[data-row-id]");
+  rows.forEach((row, index) => {
+    if (index > 0) {
+      // const rowId = row.getAttribute("data-row-id");
+
+      const cells = row.querySelectorAll('div[class*="td"]');
+
+      const rowData = [];
+
+      cells.forEach((cell) => {
+        // const columnId = cell.getAttribute("data-column-id");
+        const input = cell.querySelector("input") as HTMLInputElement;
+
+        if (input) {
+          rowData.push(input.value.trim());
+        } else {
+          rowData.push((cell as HTMLElement).innerText.trim());
+        }
       });
-      dimensionStore.createIndex("by-id", "Id");
-    },
+      rowsData.push(rowData);
+    }
   });
-  let tx = db.transaction("dimensions");
-  let dimensionStore = tx.objectStore("dimensions");
 
-  let dims = await dimensionStore.getAll();
+  const csvData = rowsData.map((row) => row.join(",")).join("\n");
 
-  if (dims.length) {
-    listElem.innerHTML = dims
-      .map(
-        (book) => `<li>
-      TRANNUM: ${book.TRANNUM}, Property: ${book.PROPERTY}
-      </li>`
-      )
-      .join("");
-  } else {
-    listElem.innerHTML = "<li>No books yet. Please add books.</li>";
-  }
+  // fs.writeFileSync("table-data.csv", csvData);
+
+  const csvBlob = new Blob([csvData], { type: "text/csv" });
+  const csvUrl = URL.createObjectURL(csvBlob);
+
+  const downloadLink = document.createElement("a");
+  downloadLink.href = csvUrl;
+  downloadLink.download = "table-data.csv";
+  downloadLink.style.display = "none";
+
+  document.body.appendChild(downloadLink);
+
+  downloadLink.click();
+
+  document.body.removeChild(downloadLink);
+
 }
 
 async function putDimensions(dimension: string | null = null) {
@@ -575,6 +529,7 @@ async function putDimensions(dimension: string | null = null) {
     delete jsonObject[key].Id;
   }
   const parsedJson = Object.values(JSON.parse(JSON.stringify(jsonObject)));
+  Log(JSON.stringify(parsedJson));
   try {
     let url = `https://localhost:5006/api/data/PutDimensions${
       parsedJson
@@ -586,12 +541,14 @@ async function putDimensions(dimension: string | null = null) {
         "Content-Type": "application/json",
       },
     });
-    const listElem = (document.getElementById("notifications-popup") as HTMLElement).querySelector("ul") as HTMLElement;
-
-    listElem.innerHTML = `<li>
-        ${"Dimensions added successfully!"}
-        </li>`
-
+    const listElem = (
+      document.getElementById("notifications-popup") as HTMLElement
+    ).querySelector("ul") as HTMLElement;
+    const children = listElem.children;
+    if (children[0].textContent.includes(":(")) listElem.innerHTML = "";
+    const li = document.createElement("li");
+    li.innerHTML = "Dimensions added successfully!";
+    listElem.appendChild(li);
   } catch (error) {
     return error.message;
   }

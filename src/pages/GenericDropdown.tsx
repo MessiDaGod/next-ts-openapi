@@ -503,7 +503,7 @@ function GenericDropdown<T>({
     // get rid of the header row so we don't remove it
     Array.from(allRows).slice(1);
 
-    const myQuery = e.target.value;
+    const myQuery = e.target.value.toLowerCase();
     setQuery(myQuery);
     cells.forEach((cell) => {
       cell.textContent.toLowerCase().includes(myQuery) &&
@@ -521,7 +521,7 @@ function GenericDropdown<T>({
     });
   }
 
-  function GenerateTableHtml() {
+  function Render() {
     if (Array.isArray(data) && data.length > 0) {
       const myType =
         selected === "GetPropOptions"
@@ -577,9 +577,6 @@ function GenericDropdown<T>({
           return filteredProps;
         });
 
-      // const IColumns = createColumnsFromJson(GoodColumns);
-      // console.log(IColumns);
-      // console.log(columnKeys);
       const rows = [...filteredData]
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
         .map((row, rowIndex: number) => (
@@ -689,7 +686,7 @@ function GenericDropdown<T>({
     }
   }
 
-  const table = GenerateTableHtml();
+  const table = Render();
 
   if (table && Array.isArray(data) && data.length > 0) {
     return (
