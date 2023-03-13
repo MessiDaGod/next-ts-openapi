@@ -93,7 +93,7 @@ function GenericDropdown<T>({
   const [query, setQuery] = React.useState("");
   // const searchInput = React.useId();
 
-  itemsPerPage = itemsPerPage ?? 10;
+  itemsPerPage = itemsPerPage ?? 15;
   numItems = numItems ?? 100;
   const zIndex = 0;
 
@@ -111,7 +111,7 @@ function GenericDropdown<T>({
       !showSearchBox &&
       activeDropdown === tableRef.current &&
       setColumnWidths(tableRef.current as HTMLElement);
-  }, [activeDropdown, isTableRefActive, showSearchBox]);
+  }, [activeDropdown, isTableRefActive, showSearchBox, tableRef]);
 
   React.useEffect(() => {
     setDropdownGridWidths(dropdownRef.current as HTMLElement);

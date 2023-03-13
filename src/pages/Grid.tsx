@@ -17,7 +17,7 @@ import DataGrid from "react-data-grid";
 import dimensions from "../../public/Dimensions.json";
 import ReactDataGrid from "./ReactDataGrid";
 
-export default function Grid({}) {
+export default function Grid() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");

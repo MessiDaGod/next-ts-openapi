@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/google-font-display */
 import { Html, Head, Main, NextScript } from "next/document";
 import Link from "next/link";
 import Script from "next/script";
@@ -10,7 +11,7 @@ export default function Document() {
       </Head>
       <body className="font-sans antialiased text-lg bg-wash dark:bg-wash-dark text-secondary dark:text-secondary-dark leading-base">
         <script
-          dangerouslySetInnerHTML={{
+dangerouslySetInnerHTML={{
             __html: `
                 (function () {
                   function setTheme(newTheme) {
