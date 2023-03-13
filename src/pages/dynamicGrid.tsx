@@ -25,6 +25,7 @@ import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
 import { TableHeaderCell } from "./TableHeaderCell";
 import { ResultTable } from "./ResultsTable";
+import { Payable } from "./dataStructure";
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -126,6 +127,39 @@ function DynamicGrid<T>({
     columnName: string
   ) {
     let state = sortState;
+    const table = tableRef.current;
+
+    let rows: any[] | NodeListOf<HTMLElement>;
+
+    rows = table && table.querySelectorAll("div[data-row-id]");
+
+    const tableData = {};
+
+    rows.forEach((row, index) => {
+      if (index > 0) {
+        const rowId = row.getAttribute("data-row-id");
+
+        const cells = row.querySelectorAll('div[class*="td"]');
+
+        tableData[rowId] = {};
+
+        cells.forEach((cell, cellIndex) => {
+          const columnId = cell.getAttribute("data-column-id");
+          const input = cell.querySelector("input") as HTMLInputElement;
+
+          if (input) {
+            tableData[rowId][columnId] = input.value.trim();
+          } else {
+            tableData[rowId][columnId] = (cell as HTMLElement).innerText.trim();
+          }
+        });
+      }
+    });
+
+    const dimensions = Object.values(tableData) as Array<Payable>;
+    [...data].forEach((item, index: number) => {
+      item[columnName] = dimensions[index][columnName];
+    })
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
         const aValue = a[columnName];
