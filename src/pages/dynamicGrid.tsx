@@ -13,7 +13,6 @@ import {
   setColumnWidths,
   setAllZIndicesToZero,
   setAllZIndicesTo1000,
-  Payable,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -26,8 +25,6 @@ import GenericDropdown from "./GenericDropdown";
 import { removeAllListeners } from "process";
 import { TableHeaderCell } from "./TableHeaderCell";
 import { ResultTable } from "./ResultsTable";
-
-
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -58,9 +55,11 @@ function DynamicGrid<T>({
   // const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   // const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
-  const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
+  // const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
-  const [startDate, setStartDate] = React.useState(new Date());
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [selectedPostMonth, setSelectedPostMonth] = React.useState(new Date());
+  const [selectedDueDate, setSelectedDueDate] = React.useState(new Date());
   const [hasValue, setHasValue] = React.useState(getHasValue || false);
   // const [endDate, setEndDate] = React.useState(new Date());
   // const [inputValue, setInputValue] = React.useState("");
@@ -88,7 +87,6 @@ function DynamicGrid<T>({
   // React.useEffect(() => {
   //   setColumnWidths(tableRef.current)
   // }, [activeDropdown, isActiveTableRef]);
-
 
   // React.useEffect(() => {
   //   setColumnWidths(tableRef.current as HTMLElement);
@@ -122,7 +120,6 @@ function DynamicGrid<T>({
     }
     fetchData();
   }, []);
-
 
   function handleSort(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -336,8 +333,15 @@ function DynamicGrid<T>({
 
   function Render() {
     if (Array.isArray(data) && data.length > 0) {
+      const statusHeader = (
+        <TableHeaderCell key={"STATUS"} columnName={"STATUS"}>
+          <div className={styles["coldivider"]}></div>
+        </TableHeaderCell>
+      );
+
       const columns = Object.keys(data[0]);
-      const header = columns.map((cols, idx: number) => {
+      const header = [statusHeader];
+      const remainingHeaders = columns.map((cols, idx: number) => {
         return (
           !isColumnHidden(data, cols) && (
             <TableHeaderCell
@@ -353,6 +357,8 @@ function DynamicGrid<T>({
           )
         );
       });
+
+      remainingHeaders.forEach((x) => header.push(x));
 
       function getSelectItem(key: string) {
         switch (key) {
@@ -393,9 +399,21 @@ function DynamicGrid<T>({
         (e.target as HTMLElement).focus();
       }
 
-      // const handleInputChange = (event) => {
-      //   setInputValue(event.target.value);
-      // }
+      function handleDateSelect(e) {
+        // Log(e.toString());
+      }
+
+      function handleDateChange(e) {
+        setSelectedDate(e);
+      }
+
+      function handlePostMonthChange(e) {
+        setSelectedPostMonth(e);
+      }
+
+      function handleDueDateChange(e) {
+        setSelectedDueDate(e);
+      }
 
       const rows = [...data]
         .slice(
@@ -409,11 +427,21 @@ function DynamicGrid<T>({
             data-row-id={rowIndex + 1}
             role="row"
           >
-            <div
-              key={`${rowIndex}`}
-              className={styles["rowdivider"]}
-              // onMouseDown={handleRowClick}
-            ></div>
+            {
+              <div
+                key={`${"STATUS"}_${rowIndex}`}
+                className={styles["td"]}
+                data-column-id={"STATUS"}
+                style={{ width: "100px" }}
+              >
+                <span
+                  className={cn("material-symbols-outlined", "white")}
+                  data-row-id={rowIndex + 1}
+                >
+                  send
+                </span>
+              </div>
+            }
             {Object.entries(row).map(
               ([key, value], index: number) =>
                 !isColumnHidden(data, key) && (
@@ -440,18 +468,21 @@ function DynamicGrid<T>({
                       />
                     ) : key.toUpperCase() === "DATE" ? (
                       <DatePicker
-                        selected={new Date()}
-                        onChange={(date) => setStartDate(date)}
+                        selected={selectedDate}
+                        onSelect={(date) => handleDateSelect(date)}
+                        onChange={(date) => handleDateChange(date)}
                       />
                     ) : key.toUpperCase() === "POSTMONTH" ? (
                       <DatePicker
-                        selected={new Date()}
-                        onChange={(date) => setStartDate(date)}
+                        selected={selectedPostMonth}
+                        onSelect={(date) => handleDateSelect(date)}
+                        onChange={(date) => handlePostMonthChange(date)}
                       />
                     ) : key.toUpperCase() === "DUEDATE" ? (
                       <DatePicker
-                        selected={new Date()}
-                        onChange={(date) => setStartDate(date)}
+                        selected={selectedDueDate}
+                        onSelect={(date) => handleDateSelect(date)}
+                        onChange={(date) => handleDueDateChange(date)}
                       />
                     ) : (
                       parseValue(
@@ -464,15 +495,6 @@ function DynamicGrid<T>({
                   </div>
                 )
             )}{" "}
-            {/* {
-              <span
-                className={cn("material-symbols-outlined", styles["share"])}
-                data-row-id={rowIndex + 1}
-              >
-                ios_share
-              </span>
-            } */}
-            {/* {<span className={cn("material-symbols-outlined", styles["add"])} data-row-id={rowIndex}>content_copy</span>} */}
             {
               <span
                 className={cn("material-symbols-outlined", styles["delete"])}

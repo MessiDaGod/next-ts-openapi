@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./yardiInterface.module.scss";
+import styles from "./DynamicGrid.module.scss";
 import { Vendor, emptyVendor } from "./api/Objects/Vendor";
 import { getVendors } from "./api/getVendors";
 import { GetDataDictionary, DataTable } from "./api/DataObject";

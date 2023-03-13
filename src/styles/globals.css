@@ -1799,7 +1799,6 @@ svg {
   list-style-type: circle;
   opacity: 1;
   transition: opacity;
-  border: 1px solid blue;
   justify-content: center;
   width: inherit;
   color: black;
