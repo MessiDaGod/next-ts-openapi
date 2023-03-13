@@ -553,3 +553,31 @@ async function putDimensions(dimension: string | null = null) {
     return error.message;
   }
 }
+
+
+
+export function getSelectItem(key: string) {
+  switch (key) {
+    case "PROPERTY":
+      return "GetPropOptions";
+    case "ACCOUNT":
+      return "GetAccounts";
+    case "PERSON":
+      return "GetVendors";
+    default:
+      return "Property";
+  }
+}
+
+export function getSelectKey(key: string) {
+  switch (key) {
+    case "PROPERTY":
+      return "Property";
+    case "ACCOUNT":
+      return "Account";
+    case "PERSON":
+      return "Vendor";
+    default:
+      return "Property";
+  }
+}

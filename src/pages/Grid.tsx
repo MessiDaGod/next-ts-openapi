@@ -3,25 +3,20 @@ import React from "react";
 import Dropdown from "./dropdown";
 import DynamicGrid from "./DynamicGrid";
 import GenericDropdown from "./GenericDropdown";
-import cn from "classnames";
-// import GenericDropdown from "./GenericDropdown";
 // import GoodColumns from "../../public/GoodColumns.json";
 // import dimensions from "../../public/Dimensions.json";
 // import DynamicGridProps from "./DynamicGrid";
 import { ExportButton } from "./ExportButton";
-import { GetServerSideProps } from "next";
 import { Log, exportCsv, upsertTableData } from "./utils";
-import { css } from "@linaria/core";
-import { exportToCsv, exportToPdf, exportToXlsx } from "./exportUtils";
+import { exportToPdf, exportToXlsx } from "./exportUtils";
 import DataGrid from "react-data-grid";
 import dimensions from "../../public/Dimensions.json";
-import ReactDataGrid from "./ReactDataGrid";
 
 export default function Grid() {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("typing");
   const [item, setItem] = useState("");
-  const [numItems, setNumItems] = useState<number>(1);
+  const [numItems, setNumItems] = useState<number>(2);
   const tableRef = React.useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = React.useState("");
   const propertyInputId = React.useId();

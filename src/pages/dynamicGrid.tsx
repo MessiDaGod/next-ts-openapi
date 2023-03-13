@@ -13,6 +13,8 @@ import {
   setColumnWidths,
   setAllZIndicesToZero,
   setAllZIndicesTo1000,
+  getSelectItem,
+  getSelectKey,
 } from "./utils";
 import cn from "classnames";
 import DatePicker from "react-datepicker";
@@ -26,6 +28,7 @@ import { removeAllListeners } from "process";
 import { TableHeaderCell } from "./TableHeaderCell";
 import { ResultTable } from "./ResultsTable";
 import { Payable } from "./dataStructure";
+import { TableBodyCell } from "./TableBodyCell";
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -159,7 +162,7 @@ function DynamicGrid<T>({
     const dimensions = Object.values(tableData) as Array<Payable>;
     [...data].forEach((item, index: number) => {
       item[columnName] = dimensions[index][columnName];
-    })
+    });
     if (Array.isArray(data)) {
       const sortedData = [...data].sort((a, b) => {
         const aValue = a[columnName];
@@ -368,7 +371,11 @@ function DynamicGrid<T>({
   function Render() {
     if (Array.isArray(data) && data.length > 0) {
       const statusHeader = (
-        <TableHeaderCell key={"STATUS"} columnName={"STATUS"}>
+        <TableHeaderCell
+          key={"STATUS"}
+          columnName={"STATUS"}
+          onClickDelete={(e) => handleColumnDeleteClick(e, "STATUS")}
+        >
           <div className={styles["coldivider"]}></div>
         </TableHeaderCell>
       );
@@ -382,6 +389,7 @@ function DynamicGrid<T>({
               key={cols}
               columnName={cols}
               onClick={(e) => handleSort(e, cols)}
+              onClickDelete={(e) => handleColumnDeleteClick(e, cols)}
             >
               <div
                 className={styles["coldivider"]}
@@ -394,38 +402,22 @@ function DynamicGrid<T>({
 
       remainingHeaders.forEach((x) => header.push(x));
 
-      function getSelectItem(key: string) {
-        switch (key) {
-          case "PROPERTY":
-            return "GetPropOptions";
-          case "ACCOUNT":
-            return "GetAccounts";
-          case "PERSON":
-            return "GetVendors";
-          default:
-            return "Property";
-        }
-      }
-
-      function getSelectKey(key: string) {
-        switch (key) {
-          case "PROPERTY":
-            return "Property";
-          case "ACCOUNT":
-            return "Account";
-          case "PERSON":
-            return "Vendor";
-          default:
-            return "Property";
-        }
-      }
-
       function handleDeleteClick(e) {
         (tableRef.current as HTMLElement)
           .querySelector(
             '[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]'
           )
           .remove();
+      }
+
+      function handleColumnDeleteClick(e, columnName: string) {
+        [
+          ...(tableRef.current as HTMLElement).querySelectorAll(
+            '[data-column-id="' + columnName + '"]'
+          ),
+        ].forEach((x) => {
+          x.remove();
+        });
       }
 
       function handleFocus(e) {
@@ -479,13 +471,10 @@ function DynamicGrid<T>({
             {Object.entries(row).map(
               ([key, value], index: number) =>
                 !isColumnHidden(data, key) && (
-                  <div
-                    key={`${key}_${index}`}
-                    className={styles["td"]}
-                    data-column-id={key}
-                    style={{ width: "100px" }}
-                    ref={dropdownRef}
-                    // onClick={handleFocus}
+                  <TableBodyCell
+                    key={`${key}_${rowIndex}`}
+                    columnName={key}
+                    rowIndex={rowIndex}
                   >
                     {key.toUpperCase() === "PROPERTY" ||
                     key.toUpperCase() === "ACCOUNT" ||
@@ -503,7 +492,6 @@ function DynamicGrid<T>({
                     ) : key.toUpperCase() === "DATE" ? (
                       <DatePicker
                         selected={selectedDate}
-                        onSelect={(date) => handleDateSelect(date)}
                         onChange={(date) => handleDateChange(date)}
                       />
                     ) : key.toUpperCase() === "POSTMONTH" ? (
@@ -526,7 +514,7 @@ function DynamicGrid<T>({
                         key
                       )
                     )}
-                  </div>
+                  </TableBodyCell>
                 )
             )}{" "}
             {
