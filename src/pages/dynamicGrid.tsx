@@ -29,6 +29,8 @@ import { TableHeaderCell } from "./TableHeaderCell";
 import { ResultTable } from "./ResultsTable";
 import { Payable } from "./dataStructure";
 import { TableBodyCell } from "./TableBodyCell";
+import SDatePicker from "./SDatePicker";
+import { TableBodyCellValue } from "./TableBodyCellValue";
 
 interface DynamicGridProps extends HTMLAttributes<HTMLDivElement> {
   selectItem?: string;
@@ -56,45 +58,16 @@ function DynamicGrid<T>({
   const [selected, setSelected] = React.useState("");
   const [sortState, setSortState] = React.useState<boolean>(true);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  // const [goodColumns, setGoodColumns] = React.useState<string[]>([""]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
-  // const [isActiveDropdown, setIsActiveDropdown] = React.useState(false);
-  // const [isActiveTableRef, setIsActiveTableRef] = React.useState(false);
   const [numOfItems, setNumOfItems] = React.useState(numItems ?? 1 + 1);
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [selectedPostMonth, setSelectedPostMonth] = React.useState(new Date());
-  const [selectedDueDate, setSelectedDueDate] = React.useState(new Date());
   const [hasValue, setHasValue] = React.useState(getHasValue || false);
-  // const [endDate, setEndDate] = React.useState(new Date());
-  // const [inputValue, setInputValue] = React.useState("");
+  const [text, setText] = useState("");
 
   const itemsPerPage = 15;
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
   }
-
-  // function handleDropdownOpen(key) {
-  //   setActiveDropdown(key);
-  // }
-
-  // function handleDropdownClose() {
-  //   setActiveDropdown(null);
-  // }
-
-  // React.useEffect(() => {
-  //   if (selected) {
-  //     setGoodColumns(JSON.parse(JSON.stringify(GoodColumns)));
-  //   }
-  // }, [data]);
-
-  // React.useEffect(() => {
-  //   setColumnWidths(tableRef.current)
-  // }, [activeDropdown, isActiveTableRef]);
-
-  // React.useEffect(() => {
-  //   setColumnWidths(tableRef.current as HTMLElement);
-  // }, [selected]);
 
   React.useEffect(() => {
     setNumOfItems((numItems ?? 1) + 1);
@@ -227,78 +200,7 @@ function DynamicGrid<T>({
     }
   }
 
-  // function handleRowClick(e) {
-  //   let pageY: number | undefined,
-  //     curRow: HTMLElement | null,
-  //     nxtRow: HTMLElement | null,
-  //     curRowHeight: number | undefined,
-  //     nxtRowHeight: number | undefined;
-  //   console.log("handleRowClick from dynamicGrid.tsx");
-  //   e.preventDefault();
-  //   const target = e.target as HTMLElement;
-  //   const divTable = document.querySelectorAll(
-  //     '[class*="' + cn(styles["ddTable"]) + '"]'
-  //   )[0] as HTMLElement;
 
-  //   const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
-  //   const table = tables[0] as HTMLElement;
-  //   nxtRow = target.parentElement as HTMLElement;
-  //   const tmp = nxtRow
-  //     ? document.querySelectorAll(
-  //         '[data-row-id="' + (parseInt(nxtRow.dataset.rowId) - 1) + '"]'
-  //       )
-  //     : null;
-  //   curRow = tmp ? (tmp[0] as HTMLElement) : null;
-
-  //   pageY = e.pageY;
-  //   const padding = curRow ? paddingDiffY(curRow) : 0;
-
-  //   curRowHeight =
-  //     curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
-  //       ? curRow.offsetHeight - padding
-  //       : 0;
-  //   nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
-  //   document.addEventListener("mousemove", function (e3) {
-  //     e3.preventDefault();
-  //     const diffY = e3.pageY - (pageY ?? 0);
-
-  //     if (curRow) {
-  //       let allCells = Array.from(
-  //         new Set([
-  //           ...divTable.querySelectorAll(
-  //             '[data-row-id="' + curRow.dataset.rowId + '"]'
-  //           ),
-  //         ])
-  //       );
-  //       if (allCells) {
-  //         curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
-  //         curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
-  //         curRow.style.width = "100%";
-  //         allCells.forEach((cell) => {
-  //           (cell as HTMLElement).style.minHeight =
-  //             (curRowHeight ?? 0) + diffY + "px";
-  //           (cell as HTMLElement).style.height =
-  //             (curRowHeight ?? 0) + diffY + "px";
-  //         });
-  //       }
-  //     }
-
-  //     if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
-  //       let allCells = Array.from(
-  //         new Set([
-  //           ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
-  //         ])
-  //       );
-
-  //       allCells.forEach((cell) => {
-  //         (cell as HTMLElement).style.minHeight =
-  //           (curRowHeight ?? 0) + diffY + "px";
-  //         (cell as HTMLElement).style.height =
-  //           (curRowHeight ?? 0) + diffY + "px";
-  //       });
-  //     }
-  //   });
-  // }
 
   function setListeners(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     let pageX: number | undefined;
@@ -368,6 +270,28 @@ function DynamicGrid<T>({
     }
   }
 
+  function handleDeleteClick(e) {
+    (tableRef.current as HTMLElement)
+      .querySelector(
+        '[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]'
+      )
+      .remove();
+  }
+
+  function handleColumnDeleteClick(e, columnName: string) {
+    [
+      ...(tableRef.current as HTMLElement).querySelectorAll(
+        '[data-column-id="' + columnName + '"]'
+      ),
+    ].forEach((x) => {
+      x.remove();
+    });
+  }
+
+  function handleChange(e) {
+    setText(e.target.value);
+  }
+
   function Render() {
     if (Array.isArray(data) && data.length > 0) {
       const statusHeader = (
@@ -402,45 +326,6 @@ function DynamicGrid<T>({
 
       remainingHeaders.forEach((x) => header.push(x));
 
-      function handleDeleteClick(e) {
-        (tableRef.current as HTMLElement)
-          .querySelector(
-            '[data-row-id="' + (e.target as HTMLElement).dataset.rowId + '"]'
-          )
-          .remove();
-      }
-
-      function handleColumnDeleteClick(e, columnName: string) {
-        [
-          ...(tableRef.current as HTMLElement).querySelectorAll(
-            '[data-column-id="' + columnName + '"]'
-          ),
-        ].forEach((x) => {
-          x.remove();
-        });
-      }
-
-      function handleFocus(e) {
-        console.info("focusinig element.");
-        (e.target as HTMLElement).focus();
-      }
-
-      function handleDateSelect(e) {
-        // Log(e.toString());
-      }
-
-      function handleDateChange(e) {
-        setSelectedDate(e);
-      }
-
-      function handlePostMonthChange(e) {
-        setSelectedPostMonth(e);
-      }
-
-      function handleDueDateChange(e) {
-        setSelectedDueDate(e);
-      }
-
       const rows = [...data]
         .slice(
           (currentPage - 1) * itemsPerPage,
@@ -469,7 +354,7 @@ function DynamicGrid<T>({
               </div>
             }
             {Object.entries(row).map(
-              ([key, value], index: number) =>
+              ([key, value]) =>
                 !isColumnHidden(data, key) && (
                   <TableBodyCell
                     key={`${key}_${rowIndex}`}
@@ -485,27 +370,13 @@ function DynamicGrid<T>({
                         showCheckbox={false}
                         tableRef={tableRef}
                         columns={columns[getSelectKey(key)]}
-                        onChange={handleInputChange}
                         getHasValue={hasValue}
                         isMultiple={false}
-                      />
-                    ) : key.toUpperCase() === "DATE" ? (
-                      <DatePicker
-                        selected={selectedDate}
-                        onChange={(date) => handleDateChange(date)}
-                      />
-                    ) : key.toUpperCase() === "POSTMONTH" ? (
-                      <DatePicker
-                        selected={selectedPostMonth}
-                        onSelect={(date) => handleDateSelect(date)}
-                        onChange={(date) => handlePostMonthChange(date)}
-                      />
-                    ) : key.toUpperCase() === "DUEDATE" ? (
-                      <DatePicker
-                        selected={selectedDueDate}
-                        onSelect={(date) => handleDateSelect(date)}
-                        onChange={(date) => handleDueDateChange(date)}
-                      />
+                      ></GenericDropdown>
+                    ) : key.toUpperCase() === "DATE" ||
+                      key.toUpperCase() === "POSTMONTH" ||
+                      key.toUpperCase() === "DUEDATE" ? (
+                      <SDatePicker />
                     ) : (
                       parseValue(
                         (value as string)
@@ -572,29 +443,7 @@ function DynamicGrid<T>({
 
   const table = Render();
 
-  //   function ResultTable( {results: Array<Payable>} ) {
-  //     if( !results ) {
-  //         return <div></div>
-  //     }
-  //     return (
-  //         <table className="w-full">
-  //             <thead>
-  //                 <tr>
-  //                     {results[0].columns.map( (c) => <th key={c}>{c}</th>)}
-  //                 </tr>
-  //             </thead>
-  //             <tbody>
-  //                 {results[0].values.map( (r) => <tr key={r}>
-  //                     {r.map( (v) => <td key={v}>{v}</td> )}
-  //                 </tr>)}
-  //             </tbody>
-  //         </table>
-  //     )
-  // }
-
   function handleDynamicGridMouseEnter(e) {
-    // setActiveDropdown(tableRef.current);
-    // setIsActiveTableRef(!isActiveTableRef);
     setColumnWidths(tableRef.current as HTMLElement);
   }
 

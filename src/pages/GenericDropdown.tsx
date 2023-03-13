@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useRef } from "react";
+import React, { HTMLAttributes, useRef, useState } from "react";
 // import { getVendors } from "./api/getVendors";
 import { Pagination } from "./pagination";
 // import { getPropOptionsAsync } from "./api/getPropOptions";
@@ -23,6 +23,8 @@ import vendors from "../../public/vendors.json";
 import properties from "../../public/propOptions.json";
 import accounts from "../../public/accounts.json";
 import GoodColumns from "../../public/GoodColumns.json";
+import { TableBodyCell } from "./TableBodyCell";
+import { TableBodyCellValue } from "./TableBodyCellValue";
 
 async function getFromQuery(table: string, take: number) {
   const url = "https://localhost:5006/api/data/RunSqlQuery";
@@ -55,9 +57,10 @@ export interface GenericDropdownProps extends HTMLAttributes<HTMLDivElement> {
   itemsPerPage?: number | null;
   numItems?: number | null;
   columns?: string[] | null;
-  value?: string | null;
+  dropdownValue?: string | null;
   getHasValue?: boolean | null;
   isMultiple?: boolean | null;
+  children?: React.ReactNode;
 }
 
 function GenericDropdown<T>({
@@ -68,7 +71,7 @@ function GenericDropdown<T>({
   tableRef,
   itemsPerPage,
   numItems,
-  value,
+  dropdownValue,
   getHasValue,
   isMultiple,
 }: GenericDropdownProps) {
@@ -91,7 +94,6 @@ function GenericDropdown<T>({
     getHeaderValue(selectItem)
   );
   const [query, setQuery] = React.useState("");
-  // const searchInput = React.useId();
 
   itemsPerPage = itemsPerPage ?? 15;
   numItems = numItems ?? 100;
@@ -210,100 +212,6 @@ function GenericDropdown<T>({
     }
   }
 
-  let pageY: number | undefined,
-    curRow: HTMLElement | null,
-    nxtRow: HTMLElement | null,
-    curRowHeight: number | undefined,
-    nxtRowHeight: number | undefined;
-
-  // function removeMouseDownListener(e) {
-  //   e.preventDefault();
-  //   document.addEventListener("mouseup", function (e: MouseEvent): void {
-  //     curRow = null;
-  //     nxtRow = null;
-  //     pageY = undefined;
-  //     curRowHeight = undefined;
-  //     nxtRowHeight = undefined;
-  //     console.info("removed mousedown listener");
-  //   });
-  // }
-
-  // function handleRowClick(e) {
-  //   e.preventDefault();
-  //   const target = e.target as HTMLElement;
-  //   const divTable = document.querySelectorAll(
-  //     '[class*="' + cn(styles["ddTable"]) + '"]'
-  //   )[0] as HTMLElement;
-
-  //   const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
-  //   const table = tables[0] as HTMLElement;
-  //   nxtRow = target.parentElement as HTMLElement;
-  //   const tmp = nxtRow
-  //     ? document.querySelectorAll(
-  //         '[data-row-id="' + (parseInt(nxtRow.dataset.rowId) - 1) + '"]'
-  //       )
-  //     : null;
-  //   curRow = tmp ? (tmp[0] as HTMLElement) : null;
-
-  //   pageY = e.pageY;
-  //   const padding = curRow ? paddingDiffY(curRow) : 0;
-
-  //   curRowHeight =
-  //     curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
-  //       ? curRow.offsetHeight - padding
-  //       : 0;
-  //   nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
-  //   document.addEventListener("mousemove", function (e3) {
-  //     e3.preventDefault();
-  //     const diffY = e3.pageY - (pageY ?? 0);
-
-  //     if (curRow) {
-  //       let allCells = Array.from(
-  //         new Set([
-  //           ...divTable.querySelectorAll(
-  //             '[data-row-id="' + curRow.dataset.rowId + '"]'
-  //           ),
-  //         ])
-  //       );
-  //       if (allCells) {
-  //         curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
-  //         curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
-  //         curRow.style.width = "100%";
-  //         allCells.forEach((cell) => {
-  //           (cell as HTMLElement).style.minHeight =
-  //             (curRowHeight ?? 0) + diffY + "px";
-  //           (cell as HTMLElement).style.height =
-  //             (curRowHeight ?? 0) + diffY + "px";
-  //         });
-  //       }
-  //     }
-
-  //     if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
-  //       let allCells = Array.from(
-  //         new Set([
-  //           ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
-  //         ])
-  //       );
-
-  //       allCells.forEach((cell) => {
-  //         (cell as HTMLElement).style.minHeight =
-  //           (curRowHeight ?? 0) + diffY + "px";
-  //         (cell as HTMLElement).style.height =
-  //           (curRowHeight ?? 0) + diffY + "px";
-  //       });
-  //     }
-  //   });
-  // }
-
-  // function createColumnsFromJson(json) {
-  //   const columns = {};
-  //   for (const key in json) {
-  //     if (Object.hasOwnProperty.call(json, key)) {
-  //       columns[key] = json[key].map((col) => col.Name);
-  //     }
-  //   }
-  //   return columns;
-  // }
   function handleGenericDropdownMouseEnter(e) {
     setIsActiveDropdown(true);
     setShowSearchBox(true);
@@ -325,18 +233,19 @@ function GenericDropdown<T>({
 
   function handleClick(e) {
     (e.target as HTMLElement).parentElement.style.zIndex = "0";
-    setSelectedItem(
-      (e.target as HTMLElement).parentElement.children[2].textContent
-    );
+    Log(e.target);
+    // setSelectedItem(
+    //   (e.target as HTMLElement).parentElement.children[2].textContent
+    // );
 
-    const value = (e.target as HTMLElement).parentElement.children[2]
-      .textContent;
-    value && setInputValue(value);
+    // const value = (e.target as HTMLElement).parentElement.children[2]
+    //   .textContent;
+    // value && setInputValue(value);
 
-    if (dropdownRef?.current) {
-      const input = dropdownRef.current.querySelector("input");
-      if (input) input.value = value;
-    }
+    // if (dropdownRef?.current) {
+    //   const input = dropdownRef.current.querySelector("input");
+    //   if (input) input.value = value;
+    // }
 
     setHasValue(true);
     setIsActiveDropdown(false);
@@ -515,10 +424,17 @@ function GenericDropdown<T>({
         row.style.display = "block";
       } else {
         Log(row.classList);
-        if (!row.children[0].classList.contains(cn(styles["th"])) && !row.classList.contains("tfoot"))
+        if (
+          !row.children[0].classList.contains(cn(styles["th"])) &&
+          !row.classList.contains("tfoot")
+        )
           row.style.display = "none";
       }
     });
+  }
+
+  function handleChange(e) {
+    setInputValue(e.target.value);
   }
 
   function Render() {
@@ -587,25 +503,18 @@ function GenericDropdown<T>({
             className={cn(styles["tr"])}
             onMouseOver={handleRowMouseOver}
           >
-            <div
-              key={`${rowIndex}`}
-              className={styles["rowdivider"]}
-              // onMouseDown={handleRowClick}
-              // onMouseUp={removeMouseDownListener}
-            ></div>
+            <div key={`${rowIndex}`} className={styles["rowdivider"]}></div>
             {Object.entries(row).map(
-              ([key, value], index: number) =>
+              ([key, val]) =>
                 !isColumnHidden(data, key) && (
-                  <div
-                    id={`td_${row[columnKeys[0].Name]}_${index}`}
-                    key={`td_${row[columnKeys[0].Name]}_${index}`}
-                    className={styles["td"]}
-                    data-column-id={key}
-                    style={{ width: "100px" }}
+                  <TableBodyCell
+                    key={`${key}_${rowIndex}`}
+                    columnName={key}
+                    rowIndex={rowIndex}
                     onClick={isMultiple ? handleClickAll : handleClick}
                   >
-                    {parseValue(value as string, key)}
-                  </div>
+                    {parseValue(val as string, key)}
+                  </TableBodyCell>
                 )
             )}
           </div>

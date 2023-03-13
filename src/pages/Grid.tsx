@@ -110,7 +110,7 @@ export default function Grid() {
                   showPagination={true}
                   showCheckbox={false}
                   tableRef={tableRef}
-                  value={inputValue}
+                  dropdownValue={inputValue}
                   isMultiple={true}
                 />
               </div>
@@ -129,7 +129,7 @@ export default function Grid() {
                   showPagination={true}
                   showCheckbox={false}
                   tableRef={tableRef}
-                  value={inputValue}
+                  dropdownValue={inputValue}
                   isMultiple={true}
                 />
               </div>
@@ -148,7 +148,7 @@ export default function Grid() {
                   showPagination={true}
                   showCheckbox={false}
                   tableRef={tableRef}
-                  value={inputValue}
+                  dropdownValue={inputValue}
                   isMultiple={true}
                 />
               </div>

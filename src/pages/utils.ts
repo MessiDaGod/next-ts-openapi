@@ -581,3 +581,98 @@ export function getSelectKey(key: string) {
       return "Property";
   }
 }
+
+let pageY: number | undefined,
+curRow: HTMLElement | null,
+nxtRow: HTMLElement | null,
+curRowHeight: number | undefined,
+nxtRowHeight: number | undefined;
+
+// function removeMouseDownListener(e) {
+//   e.preventDefault();
+//   document.addEventListener("mouseup", function (e: MouseEvent): void {
+//     curRow = null;
+//     nxtRow = null;
+//     pageY = undefined;
+//     curRowHeight = undefined;
+//     nxtRowHeight = undefined;
+//     console.info("removed mousedown listener");
+//   });
+// }
+
+// function handleRowClick(e) {
+//   e.preventDefault();
+//   const target = e.target as HTMLElement;
+//   const divTable = document.querySelectorAll(
+//     '[class*="' + cn(styles["ddTable"]) + '"]'
+//   )[0] as HTMLElement;
+
+//   const tables = [...document.querySelectorAll('[id*="' + "gridjs_" + '"]')];
+//   const table = tables[0] as HTMLElement;
+//   nxtRow = target.parentElement as HTMLElement;
+//   const tmp = nxtRow
+//     ? document.querySelectorAll(
+//         '[data-row-id="' + (parseInt(nxtRow.dataset.rowId) - 1) + '"]'
+//       )
+//     : null;
+//   curRow = tmp ? (tmp[0] as HTMLElement) : null;
+
+//   pageY = e.pageY;
+//   const padding = curRow ? paddingDiffY(curRow) : 0;
+
+//   curRowHeight =
+//     curRow && curRow.offsetHeight > 0 && curRow.offsetHeight > padding
+//       ? curRow.offsetHeight - padding
+//       : 0;
+//   nxtRowHeight = divTable ? divTable.offsetHeight - padding : 0;
+//   document.addEventListener("mousemove", function (e3) {
+//     e3.preventDefault();
+//     const diffY = e3.pageY - (pageY ?? 0);
+
+//     if (curRow) {
+//       let allCells = Array.from(
+//         new Set([
+//           ...divTable.querySelectorAll(
+//             '[data-row-id="' + curRow.dataset.rowId + '"]'
+//           ),
+//         ])
+//       );
+//       if (allCells) {
+//         curRow.style.minHeight = (curRowHeight ?? 0) + diffY + "px";
+//         curRow.style.height = (curRowHeight ?? 0) + diffY + "px";
+//         curRow.style.width = "100%";
+//         allCells.forEach((cell) => {
+//           (cell as HTMLElement).style.minHeight =
+//             (curRowHeight ?? 0) + diffY + "px";
+//           (cell as HTMLElement).style.height =
+//             (curRowHeight ?? 0) + diffY + "px";
+//         });
+//       }
+//     }
+
+//     if (curRow === undefined && nxtRow.dataset.rowId === "-1") {
+//       let allCells = Array.from(
+//         new Set([
+//           ...divTable.querySelectorAll('[data-row-id="' + "-1" + '"]'),
+//         ])
+//       );
+
+//       allCells.forEach((cell) => {
+//         (cell as HTMLElement).style.minHeight =
+//           (curRowHeight ?? 0) + diffY + "px";
+//         (cell as HTMLElement).style.height =
+//           (curRowHeight ?? 0) + diffY + "px";
+//       });
+//     }
+//   });
+// }
+
+// function createColumnsFromJson(json) {
+//   const columns = {};
+//   for (const key in json) {
+//     if (Object.hasOwnProperty.call(json, key)) {
+//       columns[key] = json[key].map((col) => col.Name);
+//     }
+//   }
+//   return columns;
+// }
